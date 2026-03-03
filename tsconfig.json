@@ -3,6 +3,7 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "baseUrl": ".",
     "strict": true,
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
@@ -12,24 +13,13 @@
     "isolatedModules": true,
     "experimentalDecorators": true,
     "paths": {
-      "core": [
-        "./dist/core"
-      ],
-      "guards": [
-        "./dist/guards"
-      ],
-      "models": [
-        "./dist/models"
-      ],
-      "services": [
-        "./dist/services"
-      ],
-      "shared": [
-        "./dist/shared"
-      ],
-      "ui": [
-        "./dist/ui"
-      ]
+      "@core/*": ["projects/core/src/lib/*"],
+      "@shared/*": ["projects/shared/src/lib/*"],
+      "@ui": ["projects/ui/src/public-api.ts"],
+      "@ui/*": ["projects/ui/src/lib/*"],
+      "@models/*": ["projects/models/src/lib/*"],
+      "@services/*": ["projects/services/src/lib/*"],
+      "@guards/*": ["projects/guards/src/lib/*"]
     },
     "importHelpers": true,
     "target": "ES2022",

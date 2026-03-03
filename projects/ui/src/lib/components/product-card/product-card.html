@@ -1,0 +1,60 @@
+<div class="h-full flex flex-col bg-white rounded-xl shadow-sm hover:shadow-md transition duration-300 overflow-hidden group">
+
+    <!-- Image -->
+    <div class="relative overflow-hidden h-56 shrink-0">
+        <img [src]="product.image" [alt]="product.name"
+            class="w-full h-56 object-cover group-hover:scale-105 transition duration-300" />
+
+        <!-- Discount Badge -->
+        <div *ngIf="product.discountPrice"
+            class="absolute top-3 left-3 bg-red-500 text-white text-xs px-2 py-1 rounded-md">
+            -{{ discountPercentage }}%
+        </div>
+
+        <!-- Wishlist Icon -->
+        <button class="absolute top-3 right-3 bg-white rounded-full p-2 shadow hover:bg-gray-100">
+            <mat-icon class="text-gray-600">favorite_border</mat-icon>
+        </button>
+    </div>
+
+    <!-- Content -->
+    <div class="p-4 flex flex-col flex-1">
+
+        <!-- Vendor -->
+        <p class="text-xs text-gray-500 mb-1">
+            {{ product.vendorName }}
+        </p>
+
+        <!-- Title -->
+        <h3 class="text-sm font-semibold text-gray-800 line-clamp-2 mb-2">
+            {{ product.name }}
+        </h3>
+
+        <!-- Rating -->
+        <div class="flex items-center text-yellow-500 text-sm mb-2">
+            <mat-icon class="text-base">star</mat-icon>
+            <span class="ml-1 text-gray-700">
+                {{ product.rating || 0 }}
+            </span>
+            <span class="ml-2 text-gray-400 text-xs">
+                ({{ product.reviewCount || 0 }})
+            </span>
+        </div>
+
+        <!-- Price -->
+        <div class="flex items-center gap-2 mt-auto pt-2">
+            <span class="text-lg font-bold text-indigo-600">
+                {{
+                product.discountPrice
+                ? product.discountPrice
+                : product.price
+                | currency }}
+            </span>
+
+            <span *ngIf="product.discountPrice" class="text-sm text-gray-400 line-through">
+                {{ product.price | currency }}
+            </span>
+        </div>
+
+    </div>
+</div>
