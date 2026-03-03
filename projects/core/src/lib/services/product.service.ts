@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { Product } from '@models/product.model';
+import { ApiService } from './api.service';
 
 interface FakeStoreProduct {
   id: number;
@@ -20,10 +21,10 @@ interface FakeStoreProduct {
 export class ProductService {
   private apiUrl = 'https://fakestoreapi.com/products'; // temporary demo API
 
-  constructor(private http: HttpClient) {}
+  constructor(private apiService: ApiService) {}
 
   getProducts(): Observable<Product[]> {
-    return this.http.get<FakeStoreProduct[]>(this.apiUrl).pipe(
+    return this.apiService.get<FakeStoreProduct[]>(this.apiUrl).pipe(
       map((items) =>
         items.map((item) => ({
           _id: String(item.id),
@@ -34,13 +35,13 @@ export class ProductService {
           rating: item.rating.rate,
           reviewCount: item.rating.count,
           vendorName: item.category,
-        }))
-      )
+        })),
+      ),
     );
   }
 
   getProductById(id: string): Observable<Product> {
-    return this.http.get<FakeStoreProduct>(`${this.apiUrl}/${id}`).pipe(
+    return this.apiService.get<FakeStoreProduct>(`${this.apiUrl}/${id}`).pipe(
       map((item) => ({
         _id: String(item.id),
         name: item.title,
@@ -50,7 +51,7 @@ export class ProductService {
         rating: item.rating.rate,
         reviewCount: item.rating.count,
         vendorName: item.category,
-      }))
+      })),
     );
   }
 }

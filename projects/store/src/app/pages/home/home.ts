@@ -6,7 +6,7 @@ import { ProductCard } from '@ui/components/product-card/product-card';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [ProductCard],
+  imports: [],
   templateUrl: './home.html',
   styleUrl: './home.scss',
 })
