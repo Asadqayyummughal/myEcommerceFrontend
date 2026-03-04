@@ -1,15 +1,13 @@
-<div class="max-w-7xl mx-auto px-4 py-8">
+<!-- <div class="max-w-7xl mx-auto px-4 py-8">
   <h1 class="text-2xl font-bold mb-6">
     All Products
   </h1>
-  <!-- Loader -->
   @if (loading) {
   <div class="text-center py-20">
     Loading products...
   </div>
 
   }
-  <!-- Product Grid -->
   @if (!loading) {
   <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
     @for (product of products; track product._id) {
@@ -18,5 +16,198 @@
   </div>
 
   }
+
+</div> -->
+
+<div class="bg-gray-100 min-h-screen">
+
+  <!-- HERO SECTION -->
+  <section class="max-w-7xl mx-auto px-4 pt-6">
+    <div
+      class="relative rounded-xl overflow-hidden bg-gradient-to-r from-blue-900 via-blue-800 to-blue-700 text-white p-12">
+      <div class="max-w-xl">
+        <h1 class="text-4xl md:text-5xl font-bold leading-tight">
+          BIG SUMMER SALE
+        </h1>
+        <p class="text-3xl md:text-4xl font-semibold mt-4">
+          UP TO <span class="text-yellow-400">50% OFF</span>
+        </p>
+        <button class="mt-6 bg-blue-500 hover:bg-blue-600 px-6 py-3 rounded-full font-medium transition">
+          SHOP NOW
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATEGORIES -->
+  <section class="max-w-7xl mx-auto px-4 mt-10">
+    <h2 class="text-xl font-semibold mb-6">Categories</h2>
+
+    <div class="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-6">
+      <div class="flex flex-col items-center bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition">
+        <div class="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-full mb-3">
+          ⚡
+        </div>
+        <span class="text-sm font-medium">Electronics</span>
+      </div>
+
+      <!-- Repeat category item -->
+      <div class="flex flex-col items-center bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition">
+        <div class="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-full mb-3">
+          👗
+        </div>
+        <span class="text-sm font-medium">Fashion</span>
+      </div>
+
+      <div class="flex flex-col items-center bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition">
+        <div class="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-full mb-3">
+          🏠
+        </div>
+        <span class="text-sm font-medium">Home</span>
+      </div>
+
+      <div class="flex flex-col items-center bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition">
+        <div class="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-full mb-3">
+          💄
+        </div>
+        <span class="text-sm font-medium">Beauty</span>
+      </div>
+
+      <div class="flex flex-col items-center bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition">
+        <div class="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-full mb-3">
+          🌿
+        </div>
+        <span class="text-sm font-medium">Sports</span>
+      </div>
+
+      <div class="flex flex-col items-center bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition">
+        <div class="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-full mb-3">
+          📚
+        </div>
+        <span class="text-sm font-medium">Books</span>
+      </div>
+
+      <div class="flex flex-col items-center bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition">
+        <div class="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-full mb-3">
+          ☕
+        </div>
+        <span class="text-sm font-medium">Food</span>
+      </div>
+
+      <div class="flex flex-col items-center bg-white p-6 rounded-xl shadow-sm hover:shadow-md transition">
+        <div class="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-full mb-3">
+          📷
+        </div>
+        <span class="text-sm font-medium">Photography</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED PRODUCTS -->
+  <section class="max-w-7xl mx-auto px-4 mt-14">
+    <h2 class="text-xl font-semibold mb-6">Featured Products</h2>
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+      <div class="bg-white rounded-xl shadow-sm p-4">
+        <div class="h-40 bg-gray-200 rounded-md mb-4"></div>
+        <h3 class="text-sm font-medium mb-1">Product Name</h3>
+        <div class="flex items-center gap-2">
+          <span class="font-bold text-indigo-600">$30.00</span>
+          <span class="text-gray-400 line-through text-sm">$50.00</span>
+        </div>
+      </div>
+
+      <!-- Repeat product card -->
+    </div>
+  </section>
+
+  <!-- BEST SELLERS + COUNTDOWN -->
+  <section class="max-w-7xl mx-auto px-4 mt-14 grid md:grid-cols-2 gap-10">
+
+    <!-- Countdown -->
+    <div>
+      <h2 class="text-xl font-semibold mb-4">Best Sellers</h2>
+      <div class="bg-white rounded-xl shadow-sm p-8">
+        <div class="text-4xl font-bold tracking-widest text-gray-800">
+          03:45:12
+        </div>
+        <p class="text-gray-500 mt-2">LIMITED-TIME OFFERS</p>
+      </div>
+    </div>
+
+    <!-- Promotions -->
+    <div>
+      <h2 class="text-xl font-semibold mb-4">Promotions</h2>
+      <div class="grid grid-cols-2 gap-6">
+        <div class="bg-white rounded-xl shadow-sm p-4">
+          <div class="h-32 bg-gray-200 rounded-md mb-3"></div>
+          <p class="text-sm font-medium">Promo Product</p>
+          <span class="font-bold text-indigo-600">$39.00</span>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm p-4">
+          <div class="h-32 bg-gray-200 rounded-md mb-3"></div>
+          <p class="text-sm font-medium">Promo Product</p>
+          <span class="font-bold text-indigo-600">$79.00</span>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- NEW ARRIVALS BANNER -->
+  <section class="max-w-7xl mx-auto px-4 mt-14">
+    <h2 class="text-xl font-semibold mb-6">New Arrivals</h2>
+
+    <div class="relative bg-white rounded-xl shadow-sm overflow-hidden flex items-center">
+      <div class="p-10">
+        <h3 class="text-2xl font-bold">SOUND PERFECT</h3>
+      </div>
+      <div class="flex-1 h-60 bg-gray-300"></div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="mt-20 bg-white border-t">
+    <div class="max-w-7xl mx-auto px-4 py-12 grid md:grid-cols-4 gap-10">
+
+      <div>
+        <h3 class="font-semibold mb-4">Links</h3>
+        <ul class="space-y-2 text-gray-600 text-sm">
+          <li>About</li>
+          <li>Careers</li>
+          <li>Blog</li>
+          <li>Privacy</li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="font-semibold mb-4">Stay Updated</h3>
+        <div class="flex">
+          <input type="email" placeholder="Enter your email"
+            class="border rounded-l-full px-4 py-2 w-full focus:outline-none">
+          <button class="bg-blue-500 text-white px-5 rounded-r-full">
+            Subscribe
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <h3 class="font-semibold mb-4">Help</h3>
+        <ul class="space-y-2 text-gray-600 text-sm">
+          <li>Shipping</li>
+          <li>Returns</li>
+          <li>FAQ</li>
+        </ul>
+      </div>
+
+      <div>
+        <h3 class="font-semibold mb-4">Contact</h3>
+        <p class="text-gray-600 text-sm">support@ecommerce.com</p>
+        <p class="text-gray-600 text-sm mt-2">+1 200 123 456</p>
+      </div>
+
+    </div>
+  </footer>
 
 </div>

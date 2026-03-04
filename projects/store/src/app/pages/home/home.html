@@ -1,15 +1,32 @@
 <app-hero></app-hero>
 
-<app-category-grid [categories]="categories">
-</app-category-grid>
+<div class="max-w-7xl mx-auto px-4 py-8">
+    <!-- 2. Top Categories Grid -->
+    <app-category-grid></app-category-grid>
+    <!-- 3. Featured Products + Best Sellers (top) — side by side -->
+    <div class="grid grid-cols-2 gap-8 mb-6">
+        <app-product-section title="Featured Products" [products]="featured" variant="grid">
+        </app-product-section>
+        <app-product-section title="Best Sellers" [products]="bestSellers" variant="grid">
+        </app-product-section>
+    </div>
+    <!-- 5 & 6 & 4. Left: countdown Best Sellers + New Arrivals  |  Right: Promotions -->
+    <div class="grid grid-cols-2 gap-8">
+        <!-- Left column -->
+        <div>
+            <!-- 5. Best Sellers countdown -->
+            <app-product-section title="Best Sellers" [products]="countdownProducts" variant="countdown">
+            </app-product-section>
 
-<app-product-section title="Featured Products" [products]="featured">
-</app-product-section>
+            <!-- 6. New Arrivals banner -->
+            <app-product-section title="New Arrivals" [products]="newArrivals" variant="banner">
+            </app-product-section>
+        </div>
+        <!-- Right column: 4. Promotional Banner / Promotions grid -->
+        <app-product-section title="Promotions" [products]="promotions" variant="promotions">
+        </app-product-section>
+    </div>
+</div>
 
-<app-product-section title="Best Sellers" [products]="bestSellers">
-</app-product-section>
-
-<app-product-section title="New Arrivals" [products]="newArrivals">
-</app-product-section>
-
+<!-- 7. Newsletter Section -->
 <app-newsletter></app-newsletter>

@@ -1,1 +1,49 @@
-<p>hero works!</p>
+<div class="relative overflow-hidden min-h-[450px] flex items-center"
+  style="background: linear-gradient(135deg, #0a1628 0%, #0d2052 45%, #1a3875 100%)">
+
+  <!-- Decorative circles -->
+  <div class="absolute -left-16 -top-16 w-64 h-64 rounded-full border-2 border-teal-400/20 pointer-events-none"></div>
+  <div class="absolute left-28 bottom-0 w-36 h-36 rounded-full border border-teal-400/15 pointer-events-none"></div>
+  <div class="absolute -right-24 -top-12 w-80 h-80 rounded-full bg-blue-700/25 pointer-events-none"></div>
+  <div class="absolute right-36 bottom-4 w-24 h-24 rounded-full border border-teal-300/20 pointer-events-none"></div>
+  <div class="absolute right-12 top-6 w-14 h-14 rounded-full border-2 border-teal-400/25 pointer-events-none"></div>
+
+  <!-- Leaf decorative shapes -->
+  <svg class="absolute left-0 bottom-0 opacity-10 pointer-events-none" width="120" height="120" viewBox="0 0 120 120">
+    <path d="M10 110 Q40 20 110 10 Q60 60 10 110Z" fill="#4dd9ac" />
+  </svg>
+  <svg class="absolute right-0 top-0 opacity-10 pointer-events-none" width="100" height="100" viewBox="0 0 100 100">
+    <path d="M90 10 Q60 80 10 90 Q50 40 90 10Z" fill="#4dd9ac" />
+  </svg>
+
+  <!-- Slide content -->
+  <div class="relative z-10 w-full max-w-5xl mx-auto px-8 py-12">
+    @for (slide of slides; track slide.title; let i = $index) {
+    @if (i === currentSlide) {
+    <div class="slide-in">
+      <h1 class="text-white font-black text-5xl leading-tight mb-1 tracking-wide uppercase">
+        {{ slide.title }}&nbsp;<span class="text-white/50 text-3xl">{{ slide.tag }}</span>
+      </h1>
+      <div class="flex items-center gap-4 mb-6">
+        <h2 class="text-white font-black text-4xl leading-tight tracking-wide uppercase">
+          {{ slide.subtitle }}&nbsp;<span class="text-yellow-400">{{ slide.highlight }}</span>
+        </h2>
+        <a href="#"
+          class="ml-4 inline-block bg-blue-500 hover:bg-blue-400 text-white font-bold px-8 py-3 rounded-full text-sm tracking-widest transition-colors whitespace-nowrap">
+          SHOP NOW
+        </a>
+      </div>
+    </div>
+    }
+    }
+  </div>
+
+  <!-- Slider dots -->
+  <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+    @for (slide of slides; track slide.title; let i = $index) {
+    <button (click)="goToSlide(i)" class="h-2 rounded-full transition-all duration-300" [class.w-6]="i === currentSlide"
+      [class.w-2]="i !== currentSlide" [class.bg-white]="i === currentSlide" [class.bg-white/40]="i !== currentSlide">
+    </button>
+    }
+  </div>
+</div>

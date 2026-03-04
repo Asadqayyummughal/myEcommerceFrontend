@@ -19,7 +19,7 @@ interface FakeStoreProduct {
   providedIn: 'root',
 })
 export class ProductService {
-  private apiUrl = 'https://fakestoreapi.com/products'; // temporary demo API
+  private apiUrl = 'products'; // temporary demo API
 
   constructor(private apiService: ApiService) {}
 

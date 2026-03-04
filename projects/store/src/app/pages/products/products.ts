@@ -4,7 +4,7 @@ import { Product } from '@models/product.model';
 import { ProductCard } from '@ui/components/product-card/product-card';
 @Component({
   selector: 'app-products',
-  imports: [ProductCard],
+  imports: [],
   templateUrl: './products.html',
   styleUrl: './products.scss',
 })

@@ -1,11 +1,59 @@
-import { Component } from '@angular/core';
+import { Component, input, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+import { Product } from '@models/product.model';
 
 @Component({
   selector: 'app-product-section',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule, MatIconModule],
   templateUrl: './product-section.html',
   styleUrl: './product-section.scss',
 })
-export class ProductSection {
+export class ProductSection implements OnInit, OnDestroy {
+  readonly title = input<string>('');
+  readonly products = input<Product[]>([]);
+  readonly variant = input<'grid' | 'countdown' | 'promotions' | 'banner'>('grid');
 
+  hours = 3;
+  minutes = 45;
+  seconds = 12;
+  readonly stars = [1, 2, 3, 4, 5];
+
+  private timerInterval: ReturnType<typeof setInterval> | null = null;
+
+  ngOnInit() {
+    if (this.variant() === 'countdown') {
+      this.timerInterval = setInterval(() => this.tick(), 1000);
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.timerInterval) clearInterval(this.timerInterval);
+  }
+
+  tick() {
+    if (this.seconds > 0) {
+      this.seconds--;
+    } else if (this.minutes > 0) {
+      this.minutes--;
+      this.seconds = 59;
+    } else if (this.hours > 0) {
+      this.hours--;
+      this.minutes = 59;
+      this.seconds = 59;
+    }
+  }
+
+  pad(n: number): string {
+    return n.toString().padStart(2, '0');
+  }
+
+  get countdownStr(): string {
+    return `${this.pad(this.hours)}:${this.pad(this.minutes)}:${this.pad(this.seconds)}`;
+  }
+
+  mockOriginal(price: number): number {
+    return Math.round(price * 1.6 * 100) / 100;
+  }
 }
