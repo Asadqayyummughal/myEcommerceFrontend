@@ -54,4 +54,15 @@ export class ProductService {
       })),
     );
   }
+  getFeaturedProducts() {
+    return this.apiService.get<Product[]>('products?featured=true');
+  }
+
+  getBestSellers() {
+    return this.apiService.get<Product[]>('products?sort=popular');
+  }
+
+  getNewArrivals() {
+    return this.apiService.get<Product[]>('products?sort=newest');
+  }
 }
