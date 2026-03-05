@@ -2,7 +2,7 @@ import { Component, input, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { Product } from '@models/product.model';
-
+import { environment } from 'projects/core/src/environments/environment';
 @Component({
   selector: 'app-product-section',
   standalone: true,
@@ -14,13 +14,12 @@ export class ProductSection implements OnInit, OnDestroy {
   readonly title = input<string>('');
   readonly products = input<Product[]>([]);
   readonly variant = input<'grid' | 'countdown' | 'promotions' | 'banner'>('grid');
-
   hours = 3;
   minutes = 45;
   seconds = 12;
   readonly stars = [1, 2, 3, 4, 5];
-
   private timerInterval: ReturnType<typeof setInterval> | null = null;
+  public apiUrl = 'http://localhost:3000/';
 
   ngOnInit() {
     if (this.variant() === 'countdown') {
