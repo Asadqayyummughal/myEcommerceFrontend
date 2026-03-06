@@ -1,0 +1,111 @@
+<div class="min-h-screen flex">
+
+  <!-- Left panel — brand -->
+  <div class="hidden lg:flex w-2/5 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-600 flex-col justify-between p-12 relative overflow-hidden">
+    <!-- Decorative circles -->
+    <div class="absolute -top-16 -left-16 w-64 h-64 rounded-full bg-white/5"></div>
+    <div class="absolute bottom-0 right-0 w-80 h-80 rounded-full bg-white/5"></div>
+
+    <div class="relative z-10">
+      <div class="flex items-center gap-3 mb-12">
+        <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+          <mat-icon class="text-white text-lg">shopping_bag</mat-icon>
+        </div>
+        <span class="text-white font-bold text-xl">MyEcommerce</span>
+      </div>
+      <h1 class="text-white font-black text-4xl leading-tight mb-4">
+        Welcome<br>back!
+      </h1>
+      <p class="text-blue-200 text-base leading-relaxed">
+        Sign in to access your orders, wishlist, and personalized recommendations.
+      </p>
+    </div>
+
+    <div class="relative z-10">
+      <div class="flex items-center gap-3 bg-white/10 rounded-xl p-4">
+        <div class="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center shrink-0">
+          <mat-icon class="text-white text-base">verified_user</mat-icon>
+        </div>
+        <p class="text-blue-100 text-sm">Your data is safe with us. We use industry-standard encryption.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right panel — form -->
+  <div class="flex-1 flex items-center justify-center p-6 bg-gray-50">
+    <div class="w-full max-w-md">
+
+      <!-- Mobile logo -->
+      <div class="flex items-center gap-2 mb-8 lg:hidden">
+        <div class="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center">
+          <mat-icon class="text-white text-base">shopping_bag</mat-icon>
+        </div>
+        <span class="font-bold text-lg text-gray-900">MyEcommerce</span>
+      </div>
+
+      <h2 class="text-2xl font-bold text-gray-900 mb-1">Sign in</h2>
+      <p class="text-gray-500 text-sm mb-8">
+        Don't have an account?
+        <a routerLink="/auth/signup" class="text-blue-600 font-medium hover:underline">Create one</a>
+      </p>
+
+      <!-- Error -->
+      @if (errorMessage) {
+      <div class="flex items-center gap-2 bg-red-50 border border-red-200 text-red-600 rounded-lg px-4 py-3 mb-6 text-sm">
+        <mat-icon class="text-base shrink-0">error_outline</mat-icon>
+        {{ errorMessage }}
+      </div>
+      }
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-5">
+
+        <!-- Email -->
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Email address</mat-label>
+          <input matInput type="email" formControlName="email" placeholder="you@example.com" autocomplete="email" />
+          <mat-icon matIconPrefix class="text-gray-400 mr-1">mail_outline</mat-icon>
+          @if (email.touched && email.hasError('required')) {
+          <mat-error>Email is required</mat-error>
+          } @else if (email.touched && email.hasError('email')) {
+          <mat-error>Enter a valid email</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Password -->
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Password</mat-label>
+          <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password"
+            placeholder="Min. 6 characters" autocomplete="current-password" />
+          <mat-icon matIconPrefix class="text-gray-400 mr-1">lock_outline</mat-icon>
+          <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword"
+            [attr.aria-label]="'Toggle password visibility'">
+            <mat-icon class="text-gray-400 text-base">{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+          @if (password.touched && password.hasError('required')) {
+          <mat-error>Password is required</mat-error>
+          } @else if (password.touched && password.hasError('minlength')) {
+          <mat-error>Minimum 6 characters</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Forgot password -->
+        <div class="flex justify-end -mt-2">
+          <a routerLink="/auth/forgot-password" class="text-sm text-blue-600 hover:underline">Forgot password?</a>
+        </div>
+
+        <!-- Submit -->
+        <button type="submit" mat-flat-button [disabled]="loading"
+          class="w-full !bg-blue-600 !text-white !rounded-lg !py-3 !text-sm !font-semibold hover:!bg-blue-700 transition-colors !h-12">
+          @if (loading) {
+          <mat-spinner diameter="20" class="inline-block mr-2"></mat-spinner>
+          } @else {
+          Sign In
+          }
+        </button>
+
+      </form>
+
+    </div>
+  </div>
+
+</div>
