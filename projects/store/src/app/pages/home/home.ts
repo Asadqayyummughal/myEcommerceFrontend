@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ProductService } from '@core/services/product.service';
+import { CategoryService } from '@core/services/category-service';
 import { Product } from '@models/product.model';
+import { Category } from '@models/category.model';
 import { Hero } from './sections/hero/hero';
 import { CategoryGrid } from './sections/category-grid/category-grid';
 import { ProductSection } from './sections/product-section/product-section';
@@ -19,8 +21,12 @@ export class Home implements OnInit {
   countdownProducts: Product[] = [];
   promotions: Product[] = [];
   newArrivals: Product[] = [];
+  categories: Category[] = [];
 
-  constructor(private productService: ProductService) {}
+  constructor(
+    private productService: ProductService,
+    private categoryService: CategoryService,
+  ) {}
 
   ngOnInit(): void {
     this.productService.getProducts().subscribe((products) => {
@@ -29,6 +35,11 @@ export class Home implements OnInit {
       this.countdownProducts = products.slice(0, 2);
       this.promotions = products.slice(6, 11);
       this.newArrivals = products.slice(11, 14);
+    });
+
+    this.categoryService.getCategories().subscribe({
+      next: (res) => (this.categories = res.data),
+      error: () => {},
     });
   }
 }

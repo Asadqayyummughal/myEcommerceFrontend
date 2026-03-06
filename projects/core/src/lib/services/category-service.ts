@@ -9,6 +9,6 @@ export class CategoryService {
   constructor(private ApiService: ApiService) {}
 
   getCategories() {
-    return this.ApiService.get<Category[]>('categories');
+    return this.ApiService.get<{ success: boolean; data: Category[] }>('product/categories');
   }
 }

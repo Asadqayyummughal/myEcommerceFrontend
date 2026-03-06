@@ -2,7 +2,7 @@
 
 <div class="max-w-7xl mx-auto px-4 py-8">
     <!-- 2. Top Categories Grid -->
-    <app-category-grid></app-category-grid>
+    <app-category-grid [categories]="categories"></app-category-grid>
     <!-- 3. Featured Products + Best Sellers (top) — side by side -->
     <div class="grid grid-cols-2 gap-8 mb-6">
         <app-product-section title="Featured Products" [products]="featured" variant="grid">

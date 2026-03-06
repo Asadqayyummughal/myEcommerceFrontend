@@ -21,18 +21,19 @@ export class ProductService {
     );
   }
 
+  listProducts(params: {
+    page?: number;
+    limit?: number;
+    q?: string;
+    minPrice?: number;
+    maxPrice?: number;
+    categories?: string;
+    sort?: string;
+  }): Observable<{ success: boolean; data: { items: Product[]; meta: { total: number; page: number; limit: number; pages: number } } }> {
+    return this.apiService.get(this.apiUrl, params);
+  }
+
   getProductById(id: string): Observable<Product> {
     return this.apiService.get<Product>(`${this.apiUrl}/${id}`);
-  }
-  getFeaturedProducts() {
-    return this.apiService.get<Product[]>('products?featured=true');
-  }
-
-  getBestSellers() {
-    return this.apiService.get<Product[]>('products?sort=popular');
-  }
-
-  getNewArrivals() {
-    return this.apiService.get<Product[]>('products?sort=newest');
   }
 }

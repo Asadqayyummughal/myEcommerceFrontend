@@ -1,32 +1,158 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 import { ProductService } from '@core/services/product.service';
-import { Product } from '@models/product.model';
+import { CategoryService } from '@core/services/category-service';
 import { ProductCard } from '@ui/components/product-card/product-card';
+import { Product } from '@models/product.model';
+import { Category } from '@models/category.model';
+
 @Component({
   selector: 'app-products',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule, FormsModule, ProductCard],
   templateUrl: './products.html',
   styleUrl: './products.scss',
 })
-export class Products {
+export class Products implements OnInit, OnDestroy {
   products: Product[] = [];
-  loading = true;
+  categories: Category[] = [];
+  loading = false;
 
-  constructor(private productService: ProductService) {}
+  searchQuery = '';
+  selectedCategories: string[] = [];
+  minPrice: number | null = null;
+  maxPrice: number | null = null;
+  sortBy = 'createdAt:desc';
+
+  currentPage = 1;
+  totalPages = 1;
+  totalItems = 0;
+  readonly limit = 12;
+
+  private searchSubject = new Subject<string>();
+  private subs: Subscription[] = [];
+
+  constructor(
+    private productService: ProductService,
+    private categoryService: CategoryService,
+    private route: ActivatedRoute,
+  ) {}
 
   ngOnInit(): void {
+    // Pre-select filters from URL query params (e.g. coming from home page category click)
+    const params = this.route.snapshot.queryParamMap;
+    const categoriesParam = params.get('categories');
+    if (categoriesParam) {
+      this.selectedCategories = categoriesParam.split(',').filter(Boolean);
+    }
+
+    this.loadCategories();
+    this.loadProducts();
+    this.subs.push(
+      this.searchSubject.pipe(debounceTime(400)).subscribe(() => {
+        this.currentPage = 1;
+        this.loadProducts();
+      }),
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.subs.forEach((s) => s.unsubscribe());
+  }
+
+  loadCategories(): void {
+    this.categoryService.getCategories().subscribe({
+      next: (res) => (this.categories = res.data),
+      error: () => {},
+    });
+  }
+
+  loadProducts(): void {
+    this.loading = true;
+    const params: any = { page: this.currentPage, limit: this.limit, sort: this.sortBy };
+    if (this.searchQuery.trim()) params.q = this.searchQuery.trim();
+    if (this.minPrice != null) params.minPrice = this.minPrice;
+    if (this.maxPrice != null) params.maxPrice = this.maxPrice;
+    if (this.selectedCategories.length) params.categories = this.selectedCategories.join(',');
+
+    this.subs.push(
+      this.productService.listProducts(params).subscribe({
+        next: (res) => {
+          this.products = res.data.items;
+          this.totalPages = res.data.meta.pages;
+          this.totalItems = res.data.meta.total;
+          this.loading = false;
+        },
+        error: () => (this.loading = false),
+      }),
+    );
+  }
+
+  onSearchChange(): void {
+    this.searchSubject.next(this.searchQuery);
+  }
+
+  toggleCategory(id: string): void {
+    const idx = this.selectedCategories.indexOf(id);
+    if (idx === -1) this.selectedCategories.push(id);
+    else this.selectedCategories.splice(idx, 1);
+    this.currentPage = 1;
     this.loadProducts();
   }
 
-  loadProducts() {
-    this.productService.getProducts().subscribe({
-      next: (res: any) => {
-        this.products = res;
-        this.loading = false;
-      },
-      error: () => {
-        this.loading = false;
-      },
-    });
+  isCategorySelected(id: string): boolean {
+    return this.selectedCategories.includes(id);
+  }
+
+  applyPriceFilter(): void {
+    this.currentPage = 1;
+    this.loadProducts();
+  }
+
+  clearFilters(): void {
+    this.searchQuery = '';
+    this.selectedCategories = [];
+    this.minPrice = null;
+    this.maxPrice = null;
+    this.sortBy = 'createdAt:desc';
+    this.currentPage = 1;
+    this.loadProducts();
+  }
+
+  onSortChange(): void {
+    this.currentPage = 1;
+    this.loadProducts();
+  }
+
+  goToPage(page: number): void {
+    if (page < 1 || page > this.totalPages || page === this.currentPage) return;
+    this.currentPage = page;
+    this.loadProducts();
+  }
+
+  get visiblePages(): number[] {
+    const range = 2;
+    const pages: number[] = [];
+    for (
+      let i = Math.max(1, this.currentPage - range);
+      i <= Math.min(this.totalPages, this.currentPage + range);
+      i++
+    ) {
+      pages.push(i);
+    }
+    return pages;
+  }
+
+  get hasActiveFilters(): boolean {
+    return (
+      !!this.searchQuery ||
+      this.selectedCategories.length > 0 ||
+      this.minPrice != null ||
+      this.maxPrice != null
+    );
   }
 }

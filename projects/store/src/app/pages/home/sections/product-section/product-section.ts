@@ -1,12 +1,13 @@
 import { Component, input, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { Product } from '@models/product.model';
 import { environment } from 'projects/core/src/environments/environment';
 @Component({
   selector: 'app-product-section',
   standalone: true,
-  imports: [CommonModule, MatIconModule],
+  imports: [CommonModule, RouterLink, MatIconModule],
   templateUrl: './product-section.html',
   styleUrl: './product-section.scss',
 })
