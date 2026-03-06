@@ -33,7 +33,7 @@ export class ProductService {
     return this.apiService.get(this.apiUrl, params);
   }
 
-  getProductById(id: string): Observable<Product> {
-    return this.apiService.get<Product>(`${this.apiUrl}/${id}`);
+  getProductById(id: string): Observable<{ success: boolean; data: Product }> {
+    return this.apiService.get(`${this.apiUrl}/${id}`);
   }
 }
