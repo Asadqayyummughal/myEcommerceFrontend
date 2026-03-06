@@ -43,6 +43,10 @@ export const routes: Routes = [
           import('./pages/product-detail/product-detail').then((m) => m.ProductDetail),
       },
       {
+        path: 'wishlist',
+        loadComponent: () => import('./pages/wishlist/wishlist').then((m) => m.Wishlist),
+      },
+      {
         path: '',
         pathMatch: 'full',
         redirectTo: 'home',

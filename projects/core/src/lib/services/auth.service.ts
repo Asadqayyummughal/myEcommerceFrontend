@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { ApiService } from './api.service';
+import { CartService } from './cart.service';
+import { WishlistService } from './wishlist.service';
 
 export interface AuthUser {
   id: string;
@@ -23,7 +25,11 @@ export class AuthService {
   private currentUserSubject = new BehaviorSubject<AuthUser | null>(this.loadUser());
   currentUser$ = this.currentUserSubject.asObservable();
 
-  constructor(private api: ApiService) {}
+  constructor(
+    private api: ApiService,
+    private cartService: CartService,
+    private wishlistService: WishlistService,
+  ) {}
 
   get currentUser(): AuthUser | null {
     return this.currentUserSubject.value;
@@ -46,6 +52,7 @@ export class AuthService {
       tap((res) => {
         if (res.success) {
           this.storeSession(res.data.user, res.data.accessToken, res.data.refreshToken);
+          this.onLoginSuccess();
         }
       }),
     );
@@ -71,6 +78,30 @@ export class AuthService {
     localStorage.removeItem(this.ACCESS_KEY);
     localStorage.removeItem(this.REFRESH_KEY);
     this.currentUserSubject.next(null);
+    this.cartService.clearGuestCart();
+    this.wishlistService.clearGuestWishlist();
+  }
+
+  private onLoginSuccess(): void {
+    // Sync guest cart to backend, then reload auth cart
+    const guestCart = this.cartService.items;
+    if (guestCart.length > 0) {
+      this.cartService.syncGuestCart().subscribe({
+        next: () => this.cartService.loadAuthCart(),
+        error: () => this.cartService.loadAuthCart(),
+      });
+    } else {
+      this.cartService.loadAuthCart();
+    }
+    // Sync guest wishlist, then load auth wishlist ids
+    if (this.wishlistService.hasGuestItems) {
+      this.wishlistService.syncGuestWishlist().subscribe({
+        next: () => this.wishlistService.loadAuthWishlist(),
+        error: () => this.wishlistService.loadAuthWishlist(),
+      });
+    } else {
+      this.wishlistService.loadAuthWishlist();
+    }
   }
 
   private storeSession(user: AuthUser, accessToken: string, refreshToken: string): void {

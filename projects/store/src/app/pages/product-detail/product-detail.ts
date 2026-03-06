@@ -13,6 +13,7 @@ import { ReviewService } from '@core/services/review.service';
 import { AuthService } from '@core/services/auth.service';
 import { Product, IProductVariant } from '@models/product.model';
 import { ProductReview } from '@models/review.model';
+import { FrontendCartItem, GuestWishlistItem } from '@models/cart.model';
 
 @Component({
   selector: 'app-product-detail',
@@ -34,7 +35,6 @@ export class ProductDetail implements OnInit {
   loading = true;
   reviewsLoading = false;
   addingToCart = false;
-  inWishlist = false;
   wishlistLoading = false;
   errorMessage = '';
 
@@ -184,15 +184,33 @@ export class ProductDetail implements OnInit {
   }
 
   addToCart(): void {
+    if (!this.canAddToCart) return;
+
     if (!this.authService.isLoggedIn) {
-      this.snackBar.open('Please sign in to add items to cart', 'Sign In', { duration: 3000 });
+      // Guest flow: save to localStorage
+      const variantLabel = Object.entries(this.selectedAttributes)
+        .map(([k, v]) => `${k}: ${v}`)
+        .join(' · ');
+      const item: FrontendCartItem = {
+        productId: this.product!._id,
+        title: this.product!.title,
+        image: this.allImages[0] ?? '',
+        variantSku: this.selectedVariant?.sku ?? '',
+        variantLabel,
+        price: this.displayPrice,
+        quantity: this.quantity,
+      };
+      this.cartService.addGuestItem(item);
+      this.snackBar.open('Added to cart!', 'View Cart', { duration: 3000 })
+        .onAction().subscribe(() => this.cartService.openDrawer());
       return;
     }
-    if (!this.canAddToCart) return;
+
     this.addingToCart = true;
     const sku = this.selectedVariant?.sku ?? '';
     this.cartService.addToCart(this.product!._id, this.quantity, sku).subscribe({
       next: () => {
+        this.cartService.loadAuthCart();
         this.snackBar.open('Added to cart!', '✓', {
           duration: 2500,
           panelClass: ['snack-success'],
@@ -209,17 +227,30 @@ export class ProductDetail implements OnInit {
   }
 
   // ── Wishlist ───────────────────────────────────
+  get inWishlistCurrent(): boolean {
+    return this.wishlistService.isInWishlist(this.product?._id ?? '');
+  }
+
   toggleWishlist(): void {
+    if (!this.product) return;
+
     if (!this.authService.isLoggedIn) {
-      this.snackBar.open('Please sign in to save items', 'Sign In', { duration: 3000 });
+      // Guest flow
+      const item: GuestWishlistItem = {
+        productId: this.product._id,
+        title: this.product.title,
+        image: this.allImages[0] ?? '',
+        price: this.displayPrice,
+      };
+      this.wishlistService.toggleGuest(item);
+      const added = this.wishlistService.isInWishlist(this.product._id);
+      this.snackBar.open(added ? 'Saved to wishlist' : 'Removed from wishlist', '✓', { duration: 2000 });
       return;
     }
+
     this.wishlistLoading = true;
-    this.wishlistService.toggle(this.product!._id).subscribe({
-      next: () => {
-        this.inWishlist = !this.inWishlist;
-        this.wishlistLoading = false;
-      },
+    this.wishlistService.toggle(this.product._id).subscribe({
+      next: () => (this.wishlistLoading = false),
       error: () => (this.wishlistLoading = false),
     });
   }

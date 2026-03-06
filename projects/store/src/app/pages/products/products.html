@@ -103,7 +103,9 @@
       @if (!loading && products.length > 0) {
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         @for (product of products; track product._id) {
-        <lib-product-card [product]="product" />
+        <a [routerLink]="['/products', product._id]" class="block">
+          <lib-product-card [product]="product" (quickAddToCart)="onQuickAdd($event)" />
+        </a>
         }
       </div>
       }

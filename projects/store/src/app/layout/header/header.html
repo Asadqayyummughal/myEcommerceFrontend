@@ -28,12 +28,24 @@
 
         <a routerLink="/products" class="text-sm text-gray-600 hover:text-gray-900 hidden md:block">All Products</a>
 
-        <button mat-icon-button class="text-gray-600 hover:text-gray-900">
+        <!-- Wishlist -->
+        <a routerLink="/wishlist" class="relative flex items-center justify-center w-10 h-10 rounded-full text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors">
           <mat-icon>favorite_border</mat-icon>
-        </button>
+          @if (wishlistService.count > 0) {
+          <span class="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1 leading-none">
+            {{ wishlistService.count > 99 ? '99+' : wishlistService.count }}
+          </span>
+          }
+        </a>
 
-        <button mat-icon-button class="text-gray-600 hover:text-gray-900">
+        <!-- Cart -->
+        <button class="relative flex items-center justify-center w-10 h-10 rounded-full text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors" (click)="cartService.openDrawer()">
           <mat-icon>shopping_cart</mat-icon>
+          @if (cartService.totalCount > 0) {
+          <span class="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] bg-blue-600 text-white text-[10px] font-bold rounded-full flex items-center justify-center px-1 leading-none">
+            {{ cartService.totalCount > 99 ? '99+' : cartService.totalCount }}
+          </span>
+          }
         </button>
 
         <!-- Logged OUT -->

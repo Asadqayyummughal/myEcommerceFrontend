@@ -1,19 +1,23 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ProductService } from '@core/services/product.service';
 import { CategoryService } from '@core/services/category-service';
+import { CartService } from '@core/services/cart.service';
+import { AuthService } from '@core/services/auth.service';
 import { ProductCard } from '@ui/components/product-card/product-card';
 import { Product } from '@models/product.model';
 import { Category } from '@models/category.model';
+import { FrontendCartItem } from '@models/cart.model';
 
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProductCard],
+  imports: [CommonModule, FormsModule, RouterLink, ProductCard, MatSnackBarModule],
   templateUrl: './products.html',
   styleUrl: './products.scss',
 })
@@ -40,6 +44,10 @@ export class Products implements OnInit, OnDestroy {
     private productService: ProductService,
     private categoryService: CategoryService,
     private route: ActivatedRoute,
+    private router: Router,
+    private cartService: CartService,
+    private authService: AuthService,
+    private snackBar: MatSnackBar,
   ) {}
 
   ngOnInit(): void {
@@ -154,5 +162,37 @@ export class Products implements OnInit, OnDestroy {
       this.minPrice != null ||
       this.maxPrice != null
     );
+  }
+
+  onQuickAdd(product: Product): void {
+    // If product has variants, navigate to detail page to select them
+    if (product.variants?.length > 0) {
+      this.router.navigate(['/products', product._id]);
+      return;
+    }
+    // No variants — add directly to cart
+    if (this.authService.isLoggedIn) {
+      this.cartService.addToCart(product._id, 1, '').subscribe({
+        next: () => {
+          this.cartService.loadAuthCart();
+          this.snackBar.open('Added to cart!', 'View', { duration: 2500 })
+            .onAction().subscribe(() => this.cartService.openDrawer());
+        },
+        error: (err) => this.snackBar.open(err?.error?.message ?? 'Could not add to cart', 'Close', { duration: 3000 }),
+      });
+    } else {
+      const item: FrontendCartItem = {
+        productId: product._id,
+        title: product.title,
+        image: product.images?.[0] ?? '',
+        variantSku: '',
+        variantLabel: '',
+        price: product.salePrice ?? product.price,
+        quantity: 1,
+      };
+      this.cartService.addGuestItem(item);
+      this.snackBar.open('Added to cart!', 'View Cart', { duration: 2500 })
+        .onAction().subscribe(() => this.cartService.openDrawer());
+    }
   }
 }

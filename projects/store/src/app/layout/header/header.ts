@@ -6,6 +6,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDividerModule } from '@angular/material/divider';
 import { AuthService } from '@core/services/auth.service';
+import { CartService } from '@core/services/cart.service';
+import { WishlistService } from '@core/services/wishlist.service';
 
 @Component({
   selector: 'app-header',
@@ -17,6 +19,8 @@ import { AuthService } from '@core/services/auth.service';
 export class Header {
   constructor(
     public authService: AuthService,
+    public cartService: CartService,
+    public wishlistService: WishlistService,
     private router: Router,
   ) {}
 

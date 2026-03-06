@@ -1,0 +1,118 @@
+<!-- Backdrop -->
+<div
+  [class]="'fixed inset-0 bg-black/50 transition-opacity duration-300 ' + (cartService.drawerOpen ? 'opacity-100 z-[1040]' : 'opacity-0 pointer-events-none -z-10')"
+  (click)="cartService.closeDrawer()"></div>
+
+<!-- Drawer -->
+<div
+  [class]="'fixed top-0 right-0 h-screen w-full max-w-sm bg-white shadow-2xl flex flex-col transform transition-transform duration-300 z-[1050] ' +
+    (cartService.drawerOpen ? 'translate-x-0' : 'translate-x-full')">
+
+  <!-- Header -->
+  <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100 shrink-0">
+    <div class="flex items-center gap-2">
+      <mat-icon class="text-gray-700">shopping_cart</mat-icon>
+      <h2 class="text-base font-semibold text-gray-900">Your Cart</h2>
+      @if (cartService.totalCount > 0) {
+      <span class="bg-blue-600 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+        {{ cartService.totalCount }}
+      </span>
+      }
+    </div>
+    <button mat-icon-button (click)="cartService.closeDrawer()" class="text-gray-400 hover:text-gray-700">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Items -->
+  <div class="flex-1 overflow-y-auto px-5 py-4 space-y-4">
+
+    @if ((cartService.items$ | async)?.length === 0) {
+    <div class="flex flex-col items-center justify-center h-full text-center py-16">
+      <mat-icon class="text-gray-200 mb-3" style="font-size:64px;width:64px;height:64px">shopping_cart</mat-icon>
+      <p class="text-gray-500 font-medium mb-1">Your cart is empty</p>
+      <p class="text-gray-400 text-sm mb-5">Add items to get started</p>
+      <a routerLink="/products" (click)="cartService.closeDrawer()"
+        class="bg-blue-600 text-white text-sm font-semibold px-5 py-2.5 rounded-lg hover:bg-blue-700 transition-colors">
+        Browse Products
+      </a>
+    </div>
+    }
+
+    @for (item of cartService.items$ | async; track item.productId + item.variantSku) {
+    <div class="flex gap-3 pb-4 border-b border-gray-50 last:border-0">
+      <!-- Image -->
+      <div class="w-16 h-16 rounded-xl border border-gray-100 overflow-hidden bg-gray-50 shrink-0">
+        <img [src]="item.image ? apiUrl + item.image : 'placeholderImage.jpg'" [alt]="item.title"
+          (error)="onImgError($event)" class="w-full h-full object-contain p-1" />
+      </div>
+
+      <!-- Info -->
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-semibold text-gray-800 truncate">{{ item.title }}</p>
+        @if (item.variantLabel) {
+        <p class="text-xs text-gray-400 mt-0.5">{{ item.variantLabel }}</p>
+        }
+        <p class="text-sm font-bold text-gray-900 mt-1">{{ item.price | currency }}</p>
+
+        <!-- Qty controls -->
+        <div class="flex items-center gap-2 mt-2">
+          <button (click)="decreaseQty(item)"
+            class="w-6 h-6 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors">
+            <mat-icon style="font-size:14px;width:14px;height:14px;line-height:14px">remove</mat-icon>
+          </button>
+          <span class="text-sm font-semibold text-gray-800 w-5 text-center">{{ item.quantity }}</span>
+          <button (click)="increaseQty(item)"
+            class="w-6 h-6 rounded-full border border-gray-300 flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors">
+            <mat-icon style="font-size:14px;width:14px;height:14px;line-height:14px">add</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <!-- Remove -->
+      <button (click)="removeItem(item)" mat-icon-button class="text-gray-300 hover:text-red-400 shrink-0 self-start">
+        <mat-icon style="font-size:18px;width:18px;height:18px;line-height:18px">delete_outline</mat-icon>
+      </button>
+    </div>
+    }
+
+  </div>
+
+  <!-- Footer -->
+  @if ((cartService.items$ | async)?.length! > 0) {
+  <div class="border-t border-gray-100 px-5 py-4 space-y-3 shrink-0">
+    <div class="flex justify-between items-center">
+      <span class="text-sm text-gray-500">Subtotal</span>
+      <span class="text-base font-bold text-gray-900">{{ subtotal | currency }}</span>
+    </div>
+    <p class="text-xs text-gray-400">Shipping and taxes calculated at checkout</p>
+
+    @if (!authService.isLoggedIn) {
+    <div class="bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+      <p class="text-xs text-amber-700 font-medium">
+        <a routerLink="/auth/login" (click)="cartService.closeDrawer()" class="underline">Sign in</a>
+        to save your cart and checkout
+      </p>
+    </div>
+    }
+
+    @if (authService.isLoggedIn) {
+    <a routerLink="/checkout" (click)="cartService.closeDrawer()"
+      class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-center py-3 rounded-xl transition-colors">
+      Proceed to Checkout
+    </a>
+    } @else {
+    <a routerLink="/auth/login" (click)="cartService.closeDrawer()"
+      class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-center py-3 rounded-xl transition-colors">
+      Sign In to Checkout
+    </a>
+    }
+
+    <button (click)="cartService.closeDrawer()" routerLink="/products"
+      class="block w-full text-center text-sm text-gray-500 hover:text-gray-800 transition-colors py-1">
+      Continue Shopping
+    </button>
+  </div>
+  }
+
+</div>
