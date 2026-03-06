@@ -1,5 +1,4 @@
 @switch (variant()) {
-
 <!-- ───────────────────── GRID (Featured / Best-Sellers top row) ───────────────────── -->
 @case ('grid') {
 <div class="mb-6">
@@ -9,7 +8,8 @@
     <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 hover:shadow-md transition-shadow">
       <!-- Image -->
       <div class="relative bg-gray-50 h-28">
-        <img [src]="product.images[0]" [alt]="product.title" class="w-full h-full object-contain p-2" />
+        <img [src]="product.images.length > 0 ? apiUrl + product.images[0] : 'placeholderImage.jpg'"
+          [alt]="product.title" (error)="onImgError($event)" class="w-full h-full object-contain p-2" />
         <span class="absolute top-1.5 right-1.5 bg-gray-200 text-gray-600
                            text-[9px] font-bold px-1.5 py-0.5 rounded tracking-wide">
           POPULAR
@@ -65,8 +65,8 @@
     @for (product of products().slice(0, 2); track product._id) {
     <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
       <div class="bg-gray-50 h-24">
-        <img [src]="product.images.length > 0 ? apiUrl + product.images[0] : 'assets/images/placeholder.jpg'"
-          [alt]="product.title" class="w-full h-full object-contain p-1.5" />
+        <img [src]="product.images.length > 0 ? apiUrl + product.images[0] : 'placeholderImage.jpg'"
+          [alt]="product.title" (error)="onImgError($event)" class="w-full h-full object-contain p-1.5" />
       </div>
       <div class="p-2">
         <p class="text-[11px] text-gray-700 line-clamp-2 leading-snug mb-1">{{ product.title }}</p>
@@ -95,8 +95,8 @@
     @for (product of products().slice(0, 3); track product._id) {
     <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 hover:shadow-md transition-shadow">
       <div class="relative bg-gray-50 h-28">
-        <img [src]="product.images.length > 0 ? apiUrl + product.images[0] : 'assets/images/placeholder.jpg'"
-          [alt]="product.title" class="w-full h-full object-contain p-2" />
+        <img [src]="product.images.length > 0 ? apiUrl + product.images[0] : 'placeholderImage.jpg'"
+          [alt]="product.title" (error)="onImgError($event)" class="w-full h-full object-contain p-2" />
         <span class="absolute top-1.5 right-1.5 bg-gray-200 text-gray-600
                            text-[9px] font-bold px-1.5 py-0.5 rounded tracking-wide">
           POPULAR
@@ -130,8 +130,8 @@
     @for (product of products().slice(3, 5); track product._id) {
     <div class="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100 hover:shadow-md transition-shadow">
       <div class="relative bg-gray-50 h-28">
-        <img [src]="product.images.length > 0 ? apiUrl + product.images[0] : 'assets/images/placeholder.jpg'"
-          [alt]="product.title" class="w-full h-full object-contain p-2" />
+        <img [src]="product.images.length > 0 ? apiUrl + product.images[0] : 'placeholderImage.jpg'"
+          [alt]="product.title" (error)="onImgError($event)" class="w-full h-full object-contain p-2" />
         <span class="absolute top-1.5 right-1.5 bg-gray-200 text-gray-600
                            text-[9px] font-bold px-1.5 py-0.5 rounded tracking-wide">
           POPULAR
@@ -163,8 +163,8 @@
   <div class="relative h-40 rounded-xl overflow-hidden bg-gray-200">
     <!-- Product image on right -->
     @if (products().length > 0) {
-    <img [src]="products()[0].images.length > 0 ? apiUrl + products()[0].images[0] : 'assets/images/placeholder.jpg'"
-      [alt]="'New arrival'" class="absolute right-8 top-0 h-full w-auto object-contain" />
+    <img [src]="products()[0].images.length > 0 ? apiUrl + products()[0].images[0] : 'placeholderImage.jpg'"
+      [alt]="'New arrival'" (error)="onImgError($event)" class="absolute right-8 top-0 h-full w-auto object-contain" />
     }
     <!-- Text overlay on left -->
     <div class="absolute inset-0 flex items-center"

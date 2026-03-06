@@ -3,8 +3,8 @@
 
     <!-- Image -->
     <div class="relative overflow-hidden h-56 shrink-0">
-        <img [src]="product.image" [alt]="product.name"
-            class="w-full h-56 object-cover group-hover:scale-105 transition duration-300" />
+        <img [src]="product.images.length > 0 ? apiUrl + product.images[0] : 'assets/images/placeholder.jpg'"
+            [alt]="product.title" class="w-full h-56 object-cover group-hover:scale-105 transition duration-300" />
 
         <!-- Discount Badge -->
         <div *ngIf="product.discountPrice"
@@ -23,19 +23,19 @@
 
         <!-- Vendor -->
         <p class="text-xs text-gray-500 mb-1">
-            {{ product.vendorName }}
+            {{ product.title }}
         </p>
 
         <!-- Title -->
         <h3 class="text-sm font-semibold text-gray-800 line-clamp-2 mb-2">
-            {{ product.name }}
+            {{ product.title }}
         </h3>
 
         <!-- Rating -->
         <div class="flex items-center text-yellow-500 text-sm mb-2">
             <mat-icon class="text-base">star</mat-icon>
             <span class="ml-1 text-gray-700">
-                {{ product.rating || 0 }}
+                {{ product.reviewCount || 0 }}
             </span>
             <span class="ml-2 text-gray-400 text-xs">
                 ({{ product.reviewCount || 0 }})

@@ -12,6 +12,7 @@ import { Product } from '@models/product.model';
 })
 export class ProductCard {
   @Input() product!: Product;
+  public apiUrl = 'http://localhost:3000/';
 
   get discountPercentage(): number {
     if (!this.product.discountPrice) return 0;

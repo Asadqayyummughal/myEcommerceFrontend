@@ -19,7 +19,7 @@ export class ProductSection implements OnInit, OnDestroy {
   seconds = 12;
   readonly stars = [1, 2, 3, 4, 5];
   private timerInterval: ReturnType<typeof setInterval> | null = null;
-  public apiUrl = 'http://localhost:3000/';
+  public apiUrl = 'http://localhost:3000';
 
   ngOnInit() {
     if (this.variant() === 'countdown') {
@@ -54,5 +54,9 @@ export class ProductSection implements OnInit, OnDestroy {
 
   mockOriginal(price: number): number {
     return Math.round(price * 1.6 * 100) / 100;
+  }
+
+  onImgError(event: Event): void {
+    (event.target as HTMLImageElement).src = 'placeholderImage.jpg';
   }
 }
