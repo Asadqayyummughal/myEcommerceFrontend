@@ -3,3 +3,4 @@
  */
 
 export * from './lib/guards';
+export { authGuard } from './lib/auth.guard';

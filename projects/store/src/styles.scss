@@ -3,6 +3,7 @@
 // components according to the Material 3 design spec.
 // Learn more about theming and how to use it for your application's
 // custom components at https://material.angular.dev/guide/theming
+@use '@angular/cdk/overlay-prebuilt.css';
 @use '@angular/material' as mat;
 @use '../../ui/src/lib/styles/_variables.scss';
 @use '../../ui/src/lib/styles/typography';
@@ -43,6 +44,21 @@ body {
 }
 /* You can add global styles to this file, and also import other style files */
 
+/* Cart drawer dialog — flush to top-right, full height, no rounded corners */
+.cart-dialog-panel {
+  .mat-mdc-dialog-container {
+    border-radius: 0 !important;
+    padding: 0 !important;
+    box-shadow: -4px 0 32px rgba(0, 0, 0, 0.15) !important;
+    height: 100vh;
+  }
+  .mdc-dialog__surface {
+    border-radius: 0 !important;
+    padding: 0 !important;
+    height: 100%;
+  }
+}
+
 body {
   font-family: var(--font-family);
   background: var(--color-bg);
@@ -57,3 +73,4 @@ body {
   margin: 0;
   font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
+

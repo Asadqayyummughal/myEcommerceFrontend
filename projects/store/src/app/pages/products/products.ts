@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
@@ -17,7 +17,7 @@ import { FrontendCartItem } from '@models/cart.model';
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, ProductCard, MatSnackBarModule],
+  imports: [CommonModule, FormsModule, ProductCard, MatSnackBarModule],
   templateUrl: './products.html',
   styleUrl: './products.scss',
 })
@@ -162,6 +162,10 @@ export class Products implements OnInit, OnDestroy {
       this.minPrice != null ||
       this.maxPrice != null
     );
+  }
+
+  navigateToProduct(id: string): void {
+    this.router.navigate(['/products', id]);
   }
 
   onQuickAdd(product: Product): void {

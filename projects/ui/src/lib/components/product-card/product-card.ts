@@ -3,6 +3,7 @@ import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import { Product } from '@models/product.model';
 import { WishlistService } from '@core/services/wishlist.service';
+import { AuthService } from '@core/services/auth.service';
 import { GuestWishlistItem } from '@models/cart.model';
 
 @Component({
@@ -17,6 +18,7 @@ export class ProductCard {
   @Output() quickAddToCart = new EventEmitter<Product>();
 
   wishlistService = inject(WishlistService);
+  authService = inject(AuthService);
   public apiUrl = 'http://localhost:3000';
 
   get discountPercentage(): number {
@@ -33,13 +35,18 @@ export class ProductCard {
   toggleWishlist(event: Event): void {
     event.preventDefault();
     event.stopPropagation();
-    const item: GuestWishlistItem = {
-      productId: this.product._id,
-      title: this.product.title,
-      image: this.product.images?.[0] ?? '',
-      price: this.product.salePrice ?? this.product.price,
-    };
-    this.wishlistService.toggleGuest(item);
+
+    if (this.authService.isLoggedIn) {
+      this.wishlistService.toggle(this.product._id).subscribe();
+    } else {
+      const item: GuestWishlistItem = {
+        productId: this.product._id,
+        title: this.product.title,
+        image: this.product.images?.[0] ?? '',
+        price: this.product.salePrice ?? this.product.price,
+      };
+      this.wishlistService.toggleGuest(item);
+    }
   }
 
   onQuickAdd(event: Event): void {

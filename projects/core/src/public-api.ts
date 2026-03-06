@@ -9,3 +9,4 @@ export * from './lib/services/cart.service';
 export * from './lib/services/review.service';
 export * from './lib/services/wishlist.service';
 export * from './lib/interceptors/auth.interceptor';
+export * from './lib/services/order.service';

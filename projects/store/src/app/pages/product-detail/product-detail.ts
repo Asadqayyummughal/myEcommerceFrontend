@@ -211,16 +211,12 @@ export class ProductDetail implements OnInit {
     this.cartService.addToCart(this.product!._id, this.quantity, sku).subscribe({
       next: () => {
         this.cartService.loadAuthCart();
-        this.snackBar.open('Added to cart!', '✓', {
-          duration: 2500,
-          panelClass: ['snack-success'],
-        });
         this.addingToCart = false;
+        this.snackBar.open('Added to cart!', 'View Cart', { duration: 3000 })
+          .onAction().subscribe(() => this.cartService.openDrawer());
       },
       error: (err) => {
-        this.snackBar.open(err?.error?.message ?? 'Could not add to cart', 'Close', {
-          duration: 3000,
-        });
+        this.snackBar.open(err?.error?.message ?? 'Could not add to cart', 'Close', { duration: 3000 });
         this.addingToCart = false;
       },
     });

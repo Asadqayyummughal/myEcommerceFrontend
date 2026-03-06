@@ -3,6 +3,7 @@ import { CommonModule, CurrencyPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialogRef } from '@angular/material/dialog';
 import { CartService } from '@core/services/cart.service';
 import { AuthService } from '@core/services/auth.service';
 import { FrontendCartItem } from '@models/cart.model';
@@ -16,11 +17,21 @@ import { FrontendCartItem } from '@models/cart.model';
 export class CartDrawer {
   cartService = inject(CartService);
   authService = inject(AuthService);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private dialogRef = inject<MatDialogRef<any>>(MatDialogRef, { optional: true });
 
   readonly apiUrl = 'http://localhost:3000';
 
   get subtotal(): number {
     return this.cartService.items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+  }
+
+  close(): void {
+    if (this.dialogRef) {
+      this.dialogRef.close();
+    } else {
+      this.cartService.closeDrawer();
+    }
   }
 
   decreaseQty(item: FrontendCartItem): void {

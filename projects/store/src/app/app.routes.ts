@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { StoreLayout } from './layout/store-layout/store-layout';
+import { authGuard } from '@guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -45,6 +46,11 @@ export const routes: Routes = [
       {
         path: 'wishlist',
         loadComponent: () => import('./pages/wishlist/wishlist').then((m) => m.Wishlist),
+      },
+      {
+        path: 'checkout',
+        canActivate: [authGuard],
+        loadComponent: () => import('./pages/checkout/checkout').then((m) => m.Checkout),
       },
       {
         path: '',

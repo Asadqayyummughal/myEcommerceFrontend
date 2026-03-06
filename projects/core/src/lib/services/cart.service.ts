@@ -10,7 +10,9 @@ export class CartService {
   private itemsSubject = new BehaviorSubject<FrontendCartItem[]>(this.loadGuestCart());
   items$ = this.itemsSubject.asObservable();
 
-  drawerOpen = false;
+  readonly drawerSubject = new BehaviorSubject<boolean>(false);
+  /** Emit true to open the cart panel, false to close */
+  drawerOpen$ = this.drawerSubject.asObservable();
 
   constructor(private api: ApiService) {}
 
@@ -23,11 +25,11 @@ export class CartService {
   }
 
   openDrawer(): void {
-    this.drawerOpen = true;
+    this.drawerSubject.next(true);
   }
 
   closeDrawer(): void {
-    this.drawerOpen = false;
+    this.drawerSubject.next(false);
   }
 
   // ── Guest cart (localStorage) ───────────────────────
