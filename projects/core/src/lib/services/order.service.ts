@@ -22,9 +22,8 @@ export interface CreateOrderPayload {
 @Injectable({ providedIn: 'root' })
 export class OrderService {
   constructor(private api: ApiService) {}
-
   createOrder(payload: CreateOrderPayload): Observable<any> {
-    return this.api.post('order', payload);
+    return this.api.post('order/checkout', payload);
   }
 
   getOrders(): Observable<any> {

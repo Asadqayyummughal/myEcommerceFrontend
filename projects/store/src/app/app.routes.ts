@@ -53,6 +53,12 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/checkout/checkout').then((m) => m.Checkout),
       },
       {
+        path: 'stripe-payment',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./pages/stripe-payment/stripe-payment').then((m) => m.StripePayment),
+      },
+      {
         path: '',
         pathMatch: 'full',
         redirectTo: 'home',

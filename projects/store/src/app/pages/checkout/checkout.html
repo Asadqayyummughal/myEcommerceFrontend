@@ -2,7 +2,8 @@
 @if (orderPlaced) {
 <div class="max-w-lg mx-auto px-4 py-20 text-center">
   <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-    <mat-icon class="text-green-500" style="font-size:44px;width:44px;height:44px;line-height:44px">check_circle</mat-icon>
+    <mat-icon class="text-green-500"
+      style="font-size:44px;width:44px;height:44px;line-height:44px">check_circle</mat-icon>
   </div>
   <h1 class="text-2xl font-bold text-gray-900 mb-2">Order Placed!</h1>
   <p class="text-gray-500 mb-1">Thank you, {{ authService.currentUser?.name }}.</p>
@@ -171,7 +172,8 @@
       <div class="bg-white rounded-2xl border border-gray-100 p-6 sticky top-24">
         <h2 class="text-base font-semibold text-gray-900 mb-5">
           Order Summary
-          <span class="text-sm font-normal text-gray-400 ml-1">({{ items.length }} item{{ items.length !== 1 ? 's' : '' }})</span>
+          <span class="text-sm font-normal text-gray-400 ml-1">({{ items.length }} item{{ items.length !== 1 ? 's' : ''
+            }})</span>
         </h2>
 
         <!-- Items list -->
@@ -240,4 +242,8 @@
 
   </div>
 </div>
+}
+@if (showStripePayment) {
+<app-stripe-payment [clientSecret]="clientSecret">
+</app-stripe-payment>
 }

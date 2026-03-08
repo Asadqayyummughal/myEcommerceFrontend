@@ -6,10 +6,8 @@ import { ApiService } from './api.service';
 @Injectable({ providedIn: 'root' })
 export class CartService {
   private readonly GUEST_KEY = 'guest_cart';
-
   private itemsSubject = new BehaviorSubject<FrontendCartItem[]>(this.loadGuestCart());
   items$ = this.itemsSubject.asObservable();
-
   readonly drawerSubject = new BehaviorSubject<boolean>(false);
   /** Emit true to open the cart panel, false to close */
   drawerOpen$ = this.drawerSubject.asObservable();
@@ -89,9 +87,7 @@ export class CartService {
       variantSku: i.variantSku,
       quantity: i.quantity,
     }));
-    return this.api.post('cart/sync', { items }).pipe(
-      tap(() => this.clearGuestCart()),
-    );
+    return this.api.post('cart/sync', { items }).pipe(tap(() => this.clearGuestCart()));
   }
 
   /** Load backend cart items into the local subject (for auth users) */

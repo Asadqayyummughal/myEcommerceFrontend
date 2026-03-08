@@ -1,9 +1,10 @@
-<div class="h-full flex flex-col bg-white rounded-2xl border border-gray-100 hover:shadow-lg transition-all duration-300 overflow-hidden group">
+<div
+  class="h-full flex flex-col bg-white rounded-2xl border border-gray-100 hover:shadow-lg transition-all duration-300 overflow-hidden group">
 
   <!-- Image -->
   <div class="relative overflow-hidden bg-gray-50 shrink-0" style="height: 220px;">
-    <img [src]="product.images?.length > 0 ? apiUrl + product.images[0] : 'placeholderImage.jpg'"
-      [alt]="product.title" (error)="onImgError($event)"
+    <img [src]="product.images.length > 0 ? apiUrl + product.images[0] : 'placeholderImage.jpg'" [alt]="product.title"
+      (error)="onImgError($event)"
       class="w-full h-full object-contain p-4 group-hover:scale-105 transition-transform duration-300" />
 
     <!-- Discount Badge -->
@@ -14,8 +15,7 @@
     }
 
     <!-- Wishlist button — always visible, fills on active -->
-    <button (click)="toggleWishlist($event)"
-      [class]="'absolute top-3 right-3 w-8 h-8 rounded-full shadow-md flex items-center justify-center transition-all duration-200 ' +
+    <button (click)="toggleWishlist($event)" [class]="'absolute top-3 right-3 w-8 h-8 rounded-full shadow-md flex items-center justify-center transition-all duration-200 ' +
         (inWishlist ? 'bg-red-50 text-red-500' : 'bg-white text-gray-400 hover:text-red-400 hover:bg-red-50')">
       <mat-icon style="font-size:18px;width:18px;height:18px;line-height:18px">
         {{ inWishlist ? 'favorite' : 'favorite_border' }}
@@ -23,7 +23,8 @@
     </button>
 
     <!-- Quick-add overlay — slides up on hover -->
-    <div class="absolute bottom-0 left-0 right-0 translate-y-full group-hover:translate-y-0 transition-transform duration-200">
+    <div
+      class="absolute bottom-0 left-0 right-0 translate-y-full group-hover:translate-y-0 transition-transform duration-200">
       <button (click)="onQuickAdd($event)"
         class="w-full bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold py-2.5 flex items-center justify-center gap-1.5 transition-colors">
         <mat-icon style="font-size:16px;width:16px;height:16px;line-height:16px">shopping_cart</mat-icon>

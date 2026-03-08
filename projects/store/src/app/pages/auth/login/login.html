@@ -1,7 +1,8 @@
 <div class="min-h-screen flex">
 
   <!-- Left panel — brand -->
-  <div class="hidden lg:flex w-2/5 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-600 flex-col justify-between p-12 relative overflow-hidden">
+  <div
+    class="hidden lg:flex w-2/5 bg-gradient-to-br from-blue-900 via-blue-800 to-blue-600 flex-col justify-between p-12 relative overflow-hidden">
     <!-- Decorative circles -->
     <div class="absolute -top-16 -left-16 w-64 h-64 rounded-full bg-white/5"></div>
     <div class="absolute bottom-0 right-0 w-80 h-80 rounded-full bg-white/5"></div>
@@ -34,7 +35,6 @@
   <!-- Right panel — form -->
   <div class="flex-1 flex items-center justify-center p-6 bg-gray-50">
     <div class="w-full max-w-md">
-
       <!-- Mobile logo -->
       <div class="flex items-center gap-2 mb-8 lg:hidden">
         <div class="w-9 h-9 rounded-full bg-blue-600 flex items-center justify-center">
@@ -51,14 +51,14 @@
 
       <!-- Error -->
       @if (errorMessage) {
-      <div class="flex items-center gap-2 bg-red-50 border border-red-200 text-red-600 rounded-lg px-4 py-3 mb-6 text-sm">
+      <div
+        class="flex items-center gap-2 bg-red-50 border border-red-200 text-red-600 rounded-lg px-4 py-3 mb-6 text-sm">
         <mat-icon class="text-base shrink-0">error_outline</mat-icon>
         {{ errorMessage }}
       </div>
       }
 
       <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-5">
-
         <!-- Email -->
         <mat-form-field appearance="outline" class="w-full">
           <mat-label>Email address</mat-label>

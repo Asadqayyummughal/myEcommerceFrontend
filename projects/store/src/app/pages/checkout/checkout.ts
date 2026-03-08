@@ -11,7 +11,10 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { CartService } from '@core/services/cart.service';
 import { AuthService } from '@core/services/auth.service';
 import { OrderService } from '@core/services/order.service';
+import { environment } from 'projects/core/src/environments/environment';
 import { FrontendCartItem } from '@models/cart.model';
+import { StripeService } from '@core/services/stripe-service';
+import { StripePayment } from '../stripe-payment/stripe-payment';
 
 @Component({
   selector: 'app-checkout',
@@ -26,6 +29,7 @@ import { FrontendCartItem } from '@models/cart.model';
     MatButtonModule,
     MatIconModule,
     MatSnackBarModule,
+    StripePayment,
   ],
   templateUrl: './checkout.html',
 })
@@ -47,6 +51,7 @@ export class Checkout implements OnInit, OnDestroy {
     private orderService: OrderService,
     private router: Router,
     private snackBar: MatSnackBar,
+    private stripeService: StripeService,
   ) {}
 
   ngOnInit(): void {
@@ -54,7 +59,7 @@ export class Checkout implements OnInit, OnDestroy {
     this.sub = this.cartService.items$.subscribe((items) => {
       this.items = items;
       if (items.length === 0 && !this.orderPlaced) {
-        this.router.navigate(['/products']);
+        // this.router.navigate(['/products']);
       }
     });
 
@@ -94,21 +99,24 @@ export class Checkout implements OnInit, OnDestroy {
       return;
     }
     this.placing = true;
-    const { fullName, phone, addressLine1, addressLine2, city, state, postalCode, country } =
-      this.shippingForm.value;
-
+    this.shippingForm.value;
     this.orderService
       .createOrder({
-        shippingAddress: { fullName, phone, addressLine1, addressLine2, city, state, postalCode, country },
+        shippingAddress: this.shippingForm.value,
         paymentMethod: this.paymentMethod,
       })
       .subscribe({
         next: (res: any) => {
-          this.orderId = res?.data?._id ?? res?.data?.id ?? '';
           // Clear cart from memory for both guest and auth
           this.cartService.clearGuestCart();
-          this.orderPlaced = true;
-          this.placing = false;
+          if (this.paymentMethod === 'cod') {
+            //callFro CreatPaymnetIntent
+            this.orderId = res.orderId;
+            this.orderPlaced = true;
+            this.placing = false;
+          } else {
+            this.createStripePaymentIntend(res.data._id);
+          }
         },
         error: (err: any) => {
           this.snackBar.open(err?.error?.message ?? 'Could not place order. Try again.', 'Close', {
@@ -118,12 +126,40 @@ export class Checkout implements OnInit, OnDestroy {
         },
       });
   }
-
+  createStripePaymentIntend(orderId: 'string') {
+    this.orderService.createPaymentIntent(orderId).subscribe({
+      next: (resp) => {
+        if (resp.success) {
+          //on success get secret key and call the strip method
+          this.confirmStripePaymentIntent(resp.data.clientSecret);
+        }
+      },
+      error: (Error: any) => {},
+    });
+  }
+  showStripePayment: boolean = false;
+  clientSecret: string = '';
+  async confirmStripePaymentIntent(clientSecret: string) {
+    this.clientSecret = clientSecret;
+    this.showStripePayment = true;
+    // const result = await this.stripeService.confirmPayment(clientSecret);
+    // if (result.error) {
+    //   alert(result.error.message);
+    // } else if (result.paymentIntent.status === 'succeeded') {
+    //   this.orderPlaced = true;
+    // }
+  }
   onImgError(event: Event): void {
     (event.target as HTMLImageElement).src = 'placeholderImage.jpg';
   }
 
   continueShopping(): void {
-    this.router.navigate(['/products']);
+    // this.router.navigate(['/products']);
+  }
+
+  async ngAfterViewInit() {
+    await this.stripeService.initStripe();
+
+    this.stripeService.createCard('card-element');
   }
 }
