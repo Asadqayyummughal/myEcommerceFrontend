@@ -1,0 +1,246 @@
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-5xl mx-auto px-4 py-8">
+
+    <!-- Breadcrumb -->
+    <nav class="text-sm text-gray-400 mb-6 flex items-center gap-1">
+      <a routerLink="/home" class="hover:text-gray-700 transition-colors">Home</a>
+      <mat-icon class="text-sm text-gray-300 leading-none">chevron_right</mat-icon>
+      <span class="text-gray-700 font-medium">My Profile</span>
+    </nav>
+
+    <div class="grid lg:grid-cols-3 gap-6 items-start">
+
+      <!-- ── LEFT: Sidebar ─────────────────────────────── -->
+      <div class="space-y-5">
+
+        <!-- Avatar card -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+
+          <!-- Gradient banner -->
+          <div [class]="'h-24 bg-gradient-to-br ' + avatarColor"></div>
+
+          <div class="px-6 pb-6 -mt-10">
+            <!-- Avatar -->
+            <div [class]="'w-20 h-20 rounded-2xl bg-gradient-to-br ' + avatarColor +
+                          ' flex items-center justify-center shadow-lg border-4 border-white mb-4'">
+              <span class="text-white text-2xl font-black tracking-tight">{{ initials }}</span>
+            </div>
+
+            <h2 class="text-lg font-bold text-gray-900">{{ user?.name }}</h2>
+            <p class="text-sm text-gray-400">{{ user?.email }}</p>
+
+            <!-- Role badge -->
+            <span class="inline-flex items-center gap-1 mt-2 text-xs font-semibold
+                         bg-blue-50 text-blue-700 border border-blue-100 px-2.5 py-1 rounded-full capitalize">
+              <mat-icon style="font-size:12px;width:12px;height:12px;line-height:12px">verified</mat-icon>
+              {{ user?.role ?? 'Customer' }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Stats card -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+          <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-4">Account Stats</h3>
+
+          @if (loadingStats) {
+          <div class="space-y-3 animate-pulse">
+            @for (i of [1,2,3]; track i) {
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-xl bg-gray-100"></div>
+              <div class="flex-1">
+                <div class="h-3 w-16 bg-gray-100 rounded mb-1"></div>
+                <div class="h-4 w-10 bg-gray-100 rounded"></div>
+              </div>
+            </div>
+            }
+          </div>
+          } @else {
+          <div class="space-y-4">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
+                <mat-icon class="text-blue-600 text-base leading-none">receipt_long</mat-icon>
+              </div>
+              <div>
+                <p class="text-xs text-gray-400">Total Orders</p>
+                <p class="text-base font-bold text-gray-800">{{ orderCount }}</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
+                <mat-icon class="text-green-600 text-base leading-none">check_circle</mat-icon>
+              </div>
+              <div>
+                <p class="text-xs text-gray-400">Delivered</p>
+                <p class="text-base font-bold text-gray-800">{{ deliveredCount }}</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 rounded-xl bg-indigo-50 flex items-center justify-center shrink-0">
+                <mat-icon class="text-indigo-600 text-base leading-none">payments</mat-icon>
+              </div>
+              <div>
+                <p class="text-xs text-gray-400">Total Spent</p>
+                <p class="text-base font-bold text-gray-800">
+                  ${{ totalSpent.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) }}
+                </p>
+              </div>
+            </div>
+          </div>
+          }
+        </div>
+
+        <!-- Quick links card -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <div class="px-5 py-3.5 border-b border-gray-50">
+            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-wider">Quick Links</h3>
+          </div>
+
+          <div class="divide-y divide-gray-50">
+            <a routerLink="/orders"
+              class="flex items-center gap-3 px-5 py-3.5 text-sm font-medium text-gray-700
+                     hover:bg-blue-50 hover:text-blue-700 transition-colors group">
+              <mat-icon class="text-gray-400 group-hover:text-blue-500 text-base leading-none">receipt_long</mat-icon>
+              My Orders
+              <mat-icon class="text-gray-300 group-hover:text-blue-400 text-base leading-none ml-auto">chevron_right</mat-icon>
+            </a>
+            <a routerLink="/wishlist"
+              class="flex items-center gap-3 px-5 py-3.5 text-sm font-medium text-gray-700
+                     hover:bg-blue-50 hover:text-blue-700 transition-colors group">
+              <mat-icon class="text-gray-400 group-hover:text-blue-500 text-base leading-none">favorite_border</mat-icon>
+              Wishlist
+              <mat-icon class="text-gray-300 group-hover:text-blue-400 text-base leading-none ml-auto">chevron_right</mat-icon>
+            </a>
+            <a routerLink="/products"
+              class="flex items-center gap-3 px-5 py-3.5 text-sm font-medium text-gray-700
+                     hover:bg-blue-50 hover:text-blue-700 transition-colors group">
+              <mat-icon class="text-gray-400 group-hover:text-blue-500 text-base leading-none">shopping_bag</mat-icon>
+              Shop
+              <mat-icon class="text-gray-300 group-hover:text-blue-400 text-base leading-none ml-auto">chevron_right</mat-icon>
+            </a>
+            <button (click)="logout()"
+              class="w-full flex items-center gap-3 px-5 py-3.5 text-sm font-medium text-red-500
+                     hover:bg-red-50 transition-colors group">
+              <mat-icon class="text-red-400 text-base leading-none">logout</mat-icon>
+              Sign Out
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ── RIGHT: Main Content ────────────────────────── -->
+      <div class="lg:col-span-2 space-y-5">
+
+        <!-- Account Information -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <div class="px-6 py-4 border-b border-gray-50 flex items-center gap-3">
+            <div class="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center">
+              <mat-icon class="text-blue-600 text-base leading-none">person</mat-icon>
+            </div>
+            <div>
+              <h2 class="text-sm font-bold text-gray-900">Account Information</h2>
+              <p class="text-xs text-gray-400">Update your personal details</p>
+            </div>
+          </div>
+
+          <div class="p-6">
+            <form [formGroup]="profileForm" class="space-y-4">
+
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Full Name</mat-label>
+                <mat-icon matPrefix class="text-gray-400 mr-2 text-base leading-none">person_outline</mat-icon>
+                <input matInput formControlName="name" placeholder="Your full name" />
+                @if (profileForm.get('name')?.hasError('required') && profileForm.get('name')?.touched) {
+                <mat-error>Name is required</mat-error>
+                }
+                @if (profileForm.get('name')?.hasError('minlength') && profileForm.get('name')?.touched) {
+                <mat-error>Name must be at least 2 characters</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="w-full">
+                <mat-label>Email Address</mat-label>
+                <mat-icon matPrefix class="text-gray-400 mr-2 text-base leading-none">mail_outline</mat-icon>
+                <input matInput formControlName="email" />
+                <mat-hint>Email cannot be changed</mat-hint>
+              </mat-form-field>
+
+              <div class="pt-2">
+                <button
+                  (click)="saveProfile()"
+                  [disabled]="saving || profileForm.pristine"
+                  class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700
+                         disabled:bg-blue-300 disabled:cursor-not-allowed
+                         text-white font-semibold px-6 py-3 rounded-xl text-sm transition-all">
+                  @if (saving) {
+                  <mat-icon class="animate-spin text-base">refresh</mat-icon>
+                  Saving...
+                  } @else {
+                  <mat-icon class="text-base">save</mat-icon>
+                  Save Changes
+                  }
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+
+        <!-- Security -->
+        <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <div class="px-6 py-4 border-b border-gray-50 flex items-center gap-3">
+            <div class="w-8 h-8 rounded-xl bg-amber-50 flex items-center justify-center">
+              <mat-icon class="text-amber-600 text-base leading-none">lock</mat-icon>
+            </div>
+            <div>
+              <h2 class="text-sm font-bold text-gray-900">Security</h2>
+              <p class="text-xs text-gray-400">Manage your password and account access</p>
+            </div>
+          </div>
+
+          <div class="p-6">
+            <div class="flex items-center justify-between py-3 border border-gray-100 rounded-xl px-4">
+              <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-xl bg-gray-100 flex items-center justify-center">
+                  <mat-icon class="text-gray-500 text-base leading-none">key</mat-icon>
+                </div>
+                <div>
+                  <p class="text-sm font-semibold text-gray-800">Password</p>
+                  <p class="text-xs text-gray-400">••••••••••••</p>
+                </div>
+              </div>
+              <a routerLink="/auth/forgot-password"
+                class="text-sm font-semibold text-blue-600 hover:text-blue-700
+                       bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors">
+                Change
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="bg-white rounded-2xl border border-red-100 shadow-sm overflow-hidden">
+          <div class="px-6 py-4 border-b border-red-50 flex items-center gap-3">
+            <div class="w-8 h-8 rounded-xl bg-red-50 flex items-center justify-center">
+              <mat-icon class="text-red-500 text-base leading-none">warning</mat-icon>
+            </div>
+            <div>
+              <h2 class="text-sm font-bold text-gray-900">Session</h2>
+              <p class="text-xs text-gray-400">Sign out of your account</p>
+            </div>
+          </div>
+          <div class="p-6">
+            <button (click)="logout()"
+              class="flex items-center gap-2 border border-red-200 text-red-600 hover:bg-red-50
+                     font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors">
+              <mat-icon class="text-base">logout</mat-icon>
+              Sign Out
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>

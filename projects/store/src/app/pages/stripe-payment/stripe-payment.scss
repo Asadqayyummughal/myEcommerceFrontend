@@ -1,0 +1,21 @@
+// Slide-up animation for the modal on mobile
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// The Stripe Card Element iframe needs explicit height to render correctly
+#card-element {
+  min-height: 22px;
+
+  // Stripe mounts an iframe — additional styling done via the Appearance API in StripeService
+  iframe {
+    min-height: 22px;
+  }
+}

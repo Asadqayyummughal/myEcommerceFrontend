@@ -11,9 +11,8 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { CartService } from '@core/services/cart.service';
 import { AuthService } from '@core/services/auth.service';
 import { OrderService } from '@core/services/order.service';
-import { environment } from 'projects/core/src/environments/environment';
+import { PaymentService } from '@core/services/payment.service';
 import { FrontendCartItem } from '@models/cart.model';
-import { StripeService } from '@core/services/stripe-service';
 import { StripePayment } from '../stripe-payment/stripe-payment';
 
 @Component({
@@ -42,6 +41,10 @@ export class Checkout implements OnInit, OnDestroy {
   orderId = '';
   readonly apiUrl = 'http://localhost:3000';
 
+  showStripePayment = false;
+  clientSecret = '';
+  stripeAmount = 0;
+
   private sub!: Subscription;
 
   constructor(
@@ -49,18 +52,14 @@ export class Checkout implements OnInit, OnDestroy {
     private cartService: CartService,
     public authService: AuthService,
     private orderService: OrderService,
+    private paymentService: PaymentService,
     private router: Router,
     private snackBar: MatSnackBar,
-    private stripeService: StripeService,
   ) {}
 
   ngOnInit(): void {
-    // Subscribe so auth cart loaded async is reflected
     this.sub = this.cartService.items$.subscribe((items) => {
       this.items = items;
-      if (items.length === 0 && !this.orderPlaced) {
-        // this.router.navigate(['/products']);
-      }
     });
 
     this.shippingForm = this.fb.group({
@@ -79,7 +78,7 @@ export class Checkout implements OnInit, OnDestroy {
     this.sub?.unsubscribe();
   }
 
-  // ── Totals ────────────────────────────────────────
+  // ── Totals ─────────────────────────────────────────
   get subtotal(): number {
     return this.items.reduce((s, i) => s + i.price * i.quantity, 0);
   }
@@ -92,14 +91,15 @@ export class Checkout implements OnInit, OnDestroy {
     return this.subtotal + this.shippingCost;
   }
 
-  // ── Place order ───────────────────────────────────
+  // ── Place Order ────────────────────────────────────
   placeOrder(): void {
     if (this.shippingForm.invalid) {
       this.shippingForm.markAllAsTouched();
       return;
     }
+
     this.placing = true;
-    this.shippingForm.value;
+
     this.orderService
       .createOrder({
         shippingAddress: this.shippingForm.value,
@@ -107,15 +107,15 @@ export class Checkout implements OnInit, OnDestroy {
       })
       .subscribe({
         next: (res: any) => {
-          // Clear cart from memory for both guest and auth
-          this.cartService.clearGuestCart();
+          const orderId = res.data?._id ?? res.orderId;
+          this.orderId = orderId;
+
           if (this.paymentMethod === 'cod') {
-            //callFro CreatPaymnetIntent
-            this.orderId = res.orderId;
+            this.cartService.clearGuestCart();
             this.orderPlaced = true;
             this.placing = false;
           } else {
-            this.createStripePaymentIntend(res.data._id);
+            this.initiateStripePayment(orderId);
           }
         },
         error: (err: any) => {
@@ -126,40 +126,52 @@ export class Checkout implements OnInit, OnDestroy {
         },
       });
   }
-  createStripePaymentIntend(orderId: 'string') {
-    this.orderService.createPaymentIntent(orderId).subscribe({
-      next: (resp) => {
-        if (resp.success) {
-          //on success get secret key and call the strip method
-          this.confirmStripePaymentIntent(resp.data.clientSecret);
-        }
+
+  // ── Stripe Flow ────────────────────────────────────
+  private initiateStripePayment(orderId: string): void {
+    this.paymentService.createIntent('stripe', orderId).subscribe({
+      next: (clientSecret: string) => {
+        this.clientSecret = clientSecret;
+        this.stripeAmount = this.total;
+        this.placing = false;
+        this.showStripePayment = true;
       },
-      error: (Error: any) => {},
+      error: (err: any) => {
+        this.snackBar.open(
+          err?.error?.message ?? 'Could not initiate payment. Try again.',
+          'Close',
+          { duration: 4000 },
+        );
+        this.placing = false;
+      },
     });
   }
-  showStripePayment: boolean = false;
-  clientSecret: string = '';
-  async confirmStripePaymentIntent(clientSecret: string) {
-    this.clientSecret = clientSecret;
-    this.showStripePayment = true;
-    // const result = await this.stripeService.confirmPayment(clientSecret);
-    // if (result.error) {
-    //   alert(result.error.message);
-    // } else if (result.paymentIntent.status === 'succeeded') {
-    //   this.orderPlaced = true;
-    // }
+
+  onPaymentSuccess(): void {
+    this.showStripePayment = false;
+    this.cartService.clearGuestCart();
+    this.orderPlaced = true;
   }
+
+  onPaymentError(error: string): void {
+    this.snackBar.open(error, 'Close', { duration: 6000 });
+  }
+
+  onPaymentCancel(): void {
+    this.showStripePayment = false;
+    this.snackBar.open(
+      'Payment cancelled. Your order is saved — you can retry later.',
+      'Dismiss',
+      { duration: 5000 },
+    );
+  }
+
+  // ── Helpers ────────────────────────────────────────
   onImgError(event: Event): void {
     (event.target as HTMLImageElement).src = 'placeholderImage.jpg';
   }
 
   continueShopping(): void {
-    // this.router.navigate(['/products']);
-  }
-
-  async ngAfterViewInit() {
-    await this.stripeService.initStripe();
-
-    this.stripeService.createCard('card-element');
+    this.router.navigate(['/products']);
   }
 }

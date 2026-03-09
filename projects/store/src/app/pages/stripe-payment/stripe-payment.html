@@ -1,2 +1,117 @@
-<div id="card-element"></div>
-<button (click)="pay()">Pay Now</button>
+<!-- ══════════════════════════════════════════════════
+     STRIPE PAYMENT MODAL
+     Fixed overlay — backdrop closes on click
+══════════════════════════════════════════════════ -->
+<div
+  class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
+  (click)="!paying && cancel.emit()">
+
+  <!-- Modal card (stop click propagation so inner clicks don't close) -->
+  <div
+    class="bg-white w-full sm:max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden
+           animate-[slideUp_0.25s_ease-out]"
+    (click)="$event.stopPropagation()">
+
+    <!-- ── Header gradient ── -->
+    <div class="bg-gradient-to-br from-blue-600 to-indigo-700 px-6 pt-6 pb-8 relative">
+
+      <!-- Close button -->
+      <button
+        (click)="cancel.emit()"
+        [disabled]="paying"
+        class="absolute top-4 right-4 text-white/60 hover:text-white hover:bg-white/10
+               disabled:opacity-40 disabled:cursor-not-allowed
+               transition-all p-1.5 rounded-xl">
+        <mat-icon>close</mat-icon>
+      </button>
+
+      <!-- Lock icon -->
+      <div class="w-11 h-11 rounded-2xl bg-white/20 flex items-center justify-center mb-4">
+        <mat-icon class="text-white">lock</mat-icon>
+      </div>
+
+      <p class="text-white/70 text-xs font-medium uppercase tracking-widest mb-1">Secure Payment</p>
+      <p class="text-white text-3xl font-bold">{{ amount | currency }}</p>
+      <p class="text-white/60 text-sm mt-1">Charged to your card</p>
+
+      <!-- Accepted cards -->
+      <div class="flex items-center gap-2 mt-4">
+        <span class="text-[10px] font-black bg-white text-blue-700 px-2 py-1 rounded">VISA</span>
+        <span class="text-[10px] font-black bg-white text-gray-800 px-2 py-1 rounded">MC</span>
+        <span class="text-[10px] font-black bg-white text-blue-500 px-2 py-1 rounded">AMEX</span>
+        <span class="text-[10px] font-black bg-white text-indigo-600 px-2 py-1 rounded">DISCOVER</span>
+      </div>
+
+    </div>
+
+    <!-- ── Body ── -->
+    <div class="px-6 pt-6 pb-8">
+
+      <!-- Card label -->
+      <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+        Card Details
+      </label>
+
+      <!-- Stripe Card Element container -->
+      <div class="card-field-wrapper border border-gray-200 rounded-xl p-4 bg-gray-50/80 mb-5
+                  transition-all duration-150 focus-within:border-blue-400 focus-within:bg-white
+                  focus-within:shadow-sm focus-within:shadow-blue-50">
+        <div id="card-element" class="min-h-[22px]"></div>
+      </div>
+
+      <!-- Error Message -->
+      @if (errorMessage) {
+      <div class="flex items-start gap-2.5 text-red-600 text-sm mb-5
+                  bg-red-50 border border-red-100 px-4 py-3 rounded-xl">
+        <mat-icon class="text-base shrink-0 mt-0.5">error_outline</mat-icon>
+        <span>{{ errorMessage }}</span>
+      </div>
+      }
+
+      <!-- Pay Button -->
+      <button
+        (click)="pay()"
+        [disabled]="paying"
+        class="w-full bg-blue-600 hover:bg-blue-700 active:bg-blue-800
+               disabled:bg-blue-400 disabled:cursor-not-allowed
+               text-white font-bold py-4 rounded-xl transition-all
+               flex items-center justify-center gap-2 text-sm
+               shadow-lg shadow-blue-200 hover:shadow-blue-300">
+        @if (paying) {
+        <mat-icon class="animate-spin text-base">refresh</mat-icon>
+        Processing payment...
+        } @else {
+        <mat-icon class="text-base">lock</mat-icon>
+        Pay {{ amount | currency }}
+        }
+      </button>
+
+      <!-- Cancel link -->
+      <button
+        (click)="cancel.emit()"
+        [disabled]="paying"
+        class="w-full mt-3 py-2 text-sm text-gray-400 hover:text-gray-600
+               disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+        Cancel
+      </button>
+
+      <!-- Security badges -->
+      <div class="flex items-center justify-center gap-5 mt-5 pt-5 border-t border-gray-100">
+        <span class="flex items-center gap-1 text-xs text-gray-400">
+          <mat-icon style="font-size:14px;width:14px;height:14px;line-height:14px" class="text-green-500">
+            shield
+          </mat-icon>
+          256-bit SSL
+        </span>
+        <span class="flex items-center gap-1 text-xs text-gray-400">
+          <mat-icon style="font-size:14px;width:14px;height:14px;line-height:14px" class="text-blue-500">
+            verified
+          </mat-icon>
+          PCI Compliant
+        </span>
+        <span class="text-xs text-gray-400 font-medium">Stripe</span>
+      </div>
+
+    </div>
+  </div>
+</div>

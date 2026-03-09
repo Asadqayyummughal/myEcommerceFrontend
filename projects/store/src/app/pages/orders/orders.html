@@ -1,0 +1,310 @@
+<div class="min-h-screen bg-gray-50">
+  <div class="max-w-4xl mx-auto px-4 py-8">
+
+    <!-- Breadcrumb -->
+    <nav class="text-sm text-gray-400 mb-6 flex items-center gap-1">
+      <a routerLink="/home" class="hover:text-gray-700 transition-colors">Home</a>
+      <mat-icon class="text-sm text-gray-300 leading-none">chevron_right</mat-icon>
+      <span class="text-gray-700 font-medium">My Orders</span>
+    </nav>
+
+    <!-- Page header -->
+    <div class="flex items-center justify-between mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-gray-900">My Orders</h1>
+        <p class="text-sm text-gray-400 mt-0.5">Track and manage your purchases</p>
+      </div>
+      <a routerLink="/products"
+        class="flex items-center gap-1.5 text-sm font-semibold text-blue-600 hover:text-blue-700
+               bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-xl transition-colors">
+        <mat-icon class="text-base leading-none">add_shopping_cart</mat-icon>
+        Shop More
+      </a>
+    </div>
+
+    <!-- ── Stats Row ─────────────────────────────────────── -->
+    @if (!loading && orders.length > 0) {
+    <div class="grid grid-cols-3 gap-4 mb-6">
+
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center gap-4">
+        <div class="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
+          <mat-icon class="text-blue-600">receipt_long</mat-icon>
+        </div>
+        <div>
+          <p class="text-2xl font-bold text-gray-900">{{ orders.length }}</p>
+          <p class="text-xs text-gray-400 mt-0.5">Total Orders</p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center gap-4">
+        <div class="w-11 h-11 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
+          <mat-icon class="text-green-600">check_circle</mat-icon>
+        </div>
+        <div>
+          <p class="text-2xl font-bold text-gray-900">{{ deliveredCount }}</p>
+          <p class="text-xs text-gray-400 mt-0.5">Delivered</p>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center gap-4">
+        <div class="w-11 h-11 rounded-xl bg-indigo-50 flex items-center justify-center shrink-0">
+          <mat-icon class="text-indigo-600">payments</mat-icon>
+        </div>
+        <div>
+          <p class="text-2xl font-bold text-gray-900">{{ totalSpent | currency:'USD':'symbol':'1.0-0' }}</p>
+          <p class="text-xs text-gray-400 mt-0.5">Total Spent</p>
+        </div>
+      </div>
+
+    </div>
+    }
+
+    <!-- ── Filter Tabs ────────────────────────────────────── -->
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm mb-4 overflow-hidden">
+      <div class="flex overflow-x-auto scrollbar-none border-b border-gray-100">
+        @for (tab of tabs; track tab.key) {
+        <button
+          (click)="activeTab = tab.key"
+          [class]="'flex items-center gap-1.5 px-4 py-3.5 text-sm font-medium whitespace-nowrap transition-colors relative ' +
+            (activeTab === tab.key
+              ? 'text-blue-600 border-b-2 border-blue-600 -mb-px bg-blue-50/50'
+              : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50')">
+          {{ tab.label }}
+          @if (tabCount(tab.key) > 0) {
+          <span [class]="'text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center ' +
+            (activeTab === tab.key ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-500')">
+            {{ tabCount(tab.key) }}
+          </span>
+          }
+        </button>
+        }
+      </div>
+    </div>
+
+    <!-- ── Loading Skeleton ───────────────────────────────── -->
+    @if (loading) {
+    <div class="space-y-4">
+      @for (i of [1,2,3]; track i) {
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 animate-pulse">
+        <div class="flex items-center justify-between mb-4">
+          <div class="h-4 w-32 bg-gray-200 rounded"></div>
+          <div class="h-6 w-20 bg-gray-200 rounded-full"></div>
+        </div>
+        <div class="flex gap-3 mb-4">
+          @for (j of [1,2,3]; track j) {
+          <div class="w-14 h-14 bg-gray-200 rounded-xl"></div>
+          }
+        </div>
+        <div class="flex justify-between">
+          <div class="h-4 w-24 bg-gray-200 rounded"></div>
+          <div class="h-4 w-20 bg-gray-200 rounded"></div>
+        </div>
+      </div>
+      }
+    </div>
+    }
+
+    <!-- ── Empty State ────────────────────────────────────── -->
+    @if (!loading && filteredOrders.length === 0) {
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm py-16 text-center">
+      <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-5">
+        <mat-icon class="text-gray-300" style="font-size:40px;width:40px;height:40px;line-height:40px">
+          receipt_long
+        </mat-icon>
+      </div>
+      @if (activeTab === 'all') {
+      <h3 class="text-lg font-bold text-gray-700 mb-2">No orders yet</h3>
+      <p class="text-sm text-gray-400 mb-6">Start shopping and your orders will appear here.</p>
+      <a routerLink="/products"
+        class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white
+               font-semibold px-6 py-3 rounded-xl transition-colors text-sm">
+        <mat-icon class="text-base">shopping_bag</mat-icon>
+        Browse Products
+      </a>
+      } @else {
+      <h3 class="text-lg font-bold text-gray-700 mb-2">No {{ activeTab }} orders</h3>
+      <p class="text-sm text-gray-400">You don't have any {{ activeTab }} orders right now.</p>
+      }
+    </div>
+    }
+
+    <!-- ── Order Cards ─────────────────────────────────────── -->
+    @if (!loading) {
+    <div class="space-y-4">
+      @for (order of filteredOrders; track trackByOrder($index, order)) {
+
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden
+                  transition-shadow hover:shadow-md">
+
+        <!-- Card header -->
+        <div class="px-6 py-4 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-0 sm:justify-between
+                    border-b border-gray-50">
+          <div class="flex items-center gap-3">
+            <div>
+              <p class="text-xs text-gray-400 font-medium">Order ID</p>
+              <p class="font-mono text-sm font-bold text-gray-700">#{{ order._id.slice(-8).toUpperCase() }}</p>
+            </div>
+            <div class="w-px h-8 bg-gray-100"></div>
+            <div>
+              <p class="text-xs text-gray-400 font-medium">Placed on</p>
+              <p class="text-sm font-semibold text-gray-700">{{ order.createdAt | date:'MMM d, y' }}</p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <!-- Payment status dot -->
+            <span [class]="'text-xs font-semibold ' + paymentStatusConfig(order.paymentStatus).classes">
+              {{ paymentStatusConfig(order.paymentStatus).label }}
+            </span>
+            <!-- Order status badge -->
+            <span [class]="'flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-full border ' +
+              statusConfig(order.status).classes">
+              <mat-icon style="font-size:13px;width:13px;height:13px;line-height:13px">
+                {{ statusConfig(order.status).icon }}
+              </mat-icon>
+              {{ statusConfig(order.status).label }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Items preview + total -->
+        <div class="px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+
+          <!-- Thumbnails -->
+          <div class="flex items-center gap-2.5">
+            @for (item of order.items.slice(0, 3); track item.productId) {
+            <div class="w-14 h-14 rounded-xl border border-gray-100 bg-gray-50 overflow-hidden shrink-0
+                        relative group">
+              <img
+                [src]="item.image ? apiUrl + item.image : 'placeholderImage.jpg'"
+                [alt]="item.title"
+                (error)="onImgError($event)"
+                class="w-full h-full object-contain p-1.5" />
+            </div>
+            }
+            @if (order.items.length > 3) {
+            <div class="w-14 h-14 rounded-xl border border-gray-200 bg-gray-100 flex items-center
+                        justify-center text-xs font-bold text-gray-500 shrink-0">
+              +{{ order.items.length - 3 }}
+            </div>
+            }
+            <div class="ml-1">
+              <p class="text-sm font-semibold text-gray-800">
+                {{ order.items.length }} item{{ order.items.length !== 1 ? 's' : '' }}
+              </p>
+              <p class="text-xs text-gray-400 capitalize">via {{ order.paymentMethod }}</p>
+            </div>
+          </div>
+
+          <!-- Total + action -->
+          <div class="flex items-center justify-between sm:justify-end gap-4">
+            <div class="text-right">
+              <p class="text-xs text-gray-400">Order Total</p>
+              <p class="text-lg font-bold text-blue-600">{{ order.total | currency }}</p>
+            </div>
+            <button
+              (click)="toggleExpand(order._id)"
+              class="flex items-center gap-1 text-sm font-semibold text-gray-600 hover:text-blue-600
+                     bg-gray-50 hover:bg-blue-50 border border-gray-200 hover:border-blue-200
+                     px-3.5 py-2 rounded-xl transition-all">
+              {{ expandedOrderId === order._id ? 'Hide' : 'Details' }}
+              <mat-icon class="text-base transition-transform"
+                [style.transform]="expandedOrderId === order._id ? 'rotate(180deg)' : 'rotate(0deg)'">
+                expand_more
+              </mat-icon>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- ── Expanded detail panel ── -->
+        @if (expandedOrderId === order._id) {
+        <div class="border-t border-gray-100 bg-gray-50/50">
+
+          <!-- Items list -->
+          <div class="px-6 pt-5 pb-4">
+            <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Items Ordered</h4>
+            <div class="space-y-3">
+              @for (item of order.items; track item.productId) {
+              <div class="flex items-center gap-3 bg-white rounded-xl border border-gray-100 p-3">
+                <div class="w-12 h-12 rounded-lg border border-gray-100 bg-gray-50 shrink-0 overflow-hidden">
+                  <img
+                    [src]="item.image ? apiUrl + item.image : 'placeholderImage.jpg'"
+                    [alt]="item.title"
+                    (error)="onImgError($event)"
+                    class="w-full h-full object-contain p-1" />
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-semibold text-gray-800 truncate">{{ item.title }}</p>
+                  @if (item.variantLabel) {
+                  <p class="text-xs text-gray-400">{{ item.variantLabel }}</p>
+                  }
+                  <p class="text-xs text-gray-400">Qty: {{ item.quantity }}</p>
+                </div>
+                <p class="text-sm font-bold text-gray-900 shrink-0">
+                  {{ item.price * item.quantity | currency }}
+                </p>
+              </div>
+              }
+            </div>
+          </div>
+
+          <!-- Shipping address + total breakdown -->
+          <div class="grid sm:grid-cols-2 gap-4 px-6 pb-5">
+
+            <div class="bg-white rounded-xl border border-gray-100 p-4">
+              <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                <mat-icon class="text-sm leading-none text-gray-400">local_shipping</mat-icon>
+                Ship To
+              </h4>
+              <p class="text-sm font-semibold text-gray-800">{{ order.shippingAddress.fullName }}</p>
+              <p class="text-sm text-gray-500 mt-0.5">{{ order.shippingAddress.phone }}</p>
+              <p class="text-sm text-gray-500 mt-0.5">
+                {{ order.shippingAddress.addressLine1 }}
+                @if (order.shippingAddress.addressLine2) {
+                , {{ order.shippingAddress.addressLine2 }}
+                }
+              </p>
+              <p class="text-sm text-gray-500">
+                {{ order.shippingAddress.city }}, {{ order.shippingAddress.state }}
+                {{ order.shippingAddress.postalCode }}
+              </p>
+              <p class="text-sm text-gray-500">{{ order.shippingAddress.country }}</p>
+            </div>
+
+            <div class="bg-white rounded-xl border border-gray-100 p-4">
+              <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+                <mat-icon class="text-sm leading-none text-gray-400">receipt</mat-icon>
+                Order Summary
+              </h4>
+              <div class="space-y-2">
+                <div class="flex justify-between text-sm text-gray-500">
+                  <span>Subtotal</span>
+                  <span>{{ order.total | currency }}</span>
+                </div>
+                <div class="flex justify-between text-sm text-gray-500">
+                  <span>Shipping</span>
+                  <span class="text-green-600 font-medium">Free</span>
+                </div>
+                <div class="flex justify-between text-sm font-bold text-gray-900 pt-2 border-t border-gray-100">
+                  <span>Total</span>
+                  <span class="text-blue-600">{{ order.total | currency }}</span>
+                </div>
+                <div class="flex justify-between text-xs text-gray-400 pt-1">
+                  <span>Payment</span>
+                  <span class="capitalize font-medium">{{ order.paymentMethod }}</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        }
+
+      </div>
+      }
+    </div>
+    }
+
+  </div>
+</div>
