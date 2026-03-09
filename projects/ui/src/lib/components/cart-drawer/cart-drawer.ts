@@ -59,6 +59,8 @@ export class CartDrawer {
   }
 
   removeItem(item: FrontendCartItem): void {
+    console.log('check item ==>', item);
+
     if (this.authService.isLoggedIn) {
       this.cartService
         .removeCartItem(item.productId, item.variantSku)

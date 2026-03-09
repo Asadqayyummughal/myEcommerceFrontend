@@ -48,11 +48,11 @@
       <!-- ── Left: Image Gallery ── -->
       <div class="space-y-3">
         <!-- Main image with 3D hover -->
-        <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden h-96 flex items-center justify-center"
+        <div
+          class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden h-96 flex items-center justify-center"
           style="perspective: 800px;">
           <div class="w-full h-full transition-transform duration-200 ease-out will-change-transform"
-            [style.transform]="imageTransform"
-            (mousemove)="onImageMouseMove($event)"
+            [style.transform]="imageTransform" (mousemove)="onImageMouseMove($event)"
             (mouseleave)="onImageMouseLeave()">
             <img [src]="activeImage" [alt]="product.title" (error)="onImgError($event)"
               class="h-full w-full object-contain p-6" />
@@ -63,8 +63,7 @@
         @if (allImages.length > 1) {
         <div class="flex gap-2 overflow-x-auto pb-1">
           @for (img of allImages; track img; let i = $index) {
-          <button (click)="setImage(i)"
-            [class]="'shrink-0 w-16 h-16 rounded-xl border-2 overflow-hidden transition-all bg-white ' +
+          <button (click)="setImage(i)" [class]="'shrink-0 w-16 h-16 rounded-xl border-2 overflow-hidden transition-all bg-white ' +
               (i === activeImageIndex ? 'border-blue-500 shadow-md' : 'border-gray-200 hover:border-gray-400')">
             <img [src]="apiUrl + img" [alt]="'Image ' + (i + 1)" (error)="onImgError($event)"
               class="w-full h-full object-contain p-1" />
@@ -101,7 +100,8 @@
             </mat-icon>
             }
           </div>
-          <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">{{ product.averageRating || '0.0' }}</span>
+          <span class="text-sm font-semibold text-gray-700 dark:text-gray-300">{{ product.averageRating || '0.0'
+            }}</span>
           <span class="text-sm text-gray-400">({{ product.reviewCount }} reviews)</span>
         </div>
 
@@ -110,7 +110,8 @@
           <span class="text-3xl font-black text-gray-900 dark:text-white">{{ displayPrice | currency }}</span>
           @if (originalPrice) {
           <span class="text-lg text-gray-400 line-through">{{ originalPrice | currency }}</span>
-          <span class="text-sm font-bold text-green-600 bg-green-50 dark:bg-green-900/30 dark:text-green-400 px-2 py-0.5 rounded-full">
+          <span
+            class="text-sm font-bold text-green-600 bg-green-50 dark:bg-green-900/30 dark:text-green-400 px-2 py-0.5 rounded-full">
             -{{ discountPercent }}%
           </span>
           }
@@ -142,8 +143,7 @@
           <p class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2 capitalize">{{ key }}</p>
           <div class="flex flex-wrap gap-2">
             @for (val of getAttributeValues(key); track val) {
-            <button (click)="selectAttribute(key, val)"
-              [class]="'px-3 py-1.5 rounded-lg border text-sm font-medium transition-all ' +
+            <button (click)="selectAttribute(key, val)" [class]="'px-3 py-1.5 rounded-lg border text-sm font-medium transition-all ' +
                 (isAttributeSelected(key, val)
                   ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
                   : 'border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-gray-500')">
@@ -309,12 +309,13 @@
                 <!-- Avatar -->
                 <div class="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
                   <span class="text-blue-600 text-sm font-bold">
-                    {{ review.user?.name?.[0]?.toUpperCase() ?? 'U' }}
+                    {{ review.user.name[0]?.toUpperCase() ?? 'U' }}
                   </span>
                 </div>
                 <div class="flex-1">
                   <div class="flex items-center justify-between mb-1">
-                    <span class="text-sm font-semibold text-gray-800">{{ review.user?.name ?? 'User' }}</span>
+                    <span class="text-sm font-semibold text-gray-800">{{ review.user.name? review.user.name: 'User'
+                      }}</span>
                     <span class="text-xs text-gray-400">{{ review.createdAt | date:'mediumDate' }}</span>
                   </div>
                   <!-- Stars -->
