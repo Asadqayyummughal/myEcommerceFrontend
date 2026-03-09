@@ -251,6 +251,20 @@ export class ProductDetail implements OnInit {
     });
   }
 
+  // ── 3D Image hover ─────────────────────────────
+  imageTransform = '';
+
+  onImageMouseMove(event: MouseEvent): void {
+    const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+    const rotateY = ((event.clientX - rect.left - rect.width / 2) / (rect.width / 2)) * 12;
+    const rotateX = -((event.clientY - rect.top - rect.height / 2) / (rect.height / 2)) * 12;
+    this.imageTransform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.03,1.03,1.03)`;
+  }
+
+  onImageMouseLeave(): void {
+    this.imageTransform = '';
+  }
+
   // ── Reviews ────────────────────────────────────
   get ratingStars(): number[] {
     return [1, 2, 3, 4, 5];

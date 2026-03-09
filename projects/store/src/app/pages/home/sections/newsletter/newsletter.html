@@ -1,67 +1,115 @@
-<footer class="bg-gray-50 border-t border-gray-200 py-10 mt-8">
-  <div class="max-w-5xl mx-auto px-4">
-    <div class="grid grid-cols-3 gap-8 text-sm">
+<!-- ── Newsletter + Footer ─────────────────────── -->
+<footer class="bg-gray-900 dark:bg-gray-950">
 
-      <!-- Links -->
+  <!-- Newsletter Strip -->
+  <div class="border-b border-white/10">
+    <div class="max-w-7xl mx-auto px-4 py-14">
+      <div class="flex flex-col lg:flex-row items-center justify-between gap-8">
+
+        <!-- Left copy -->
+        <div class="text-center lg:text-left">
+          <div class="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20
+                      text-blue-400 text-xs font-bold px-3 py-1.5 rounded-full mb-4 uppercase tracking-widest">
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
+            Newsletter
+          </div>
+          <h2 class="text-2xl lg:text-3xl font-black text-white leading-tight mb-2">
+            Get Exclusive Deals &<br class="hidden lg:block"> Early Access
+          </h2>
+          <p class="text-gray-400 text-sm">Join 50,000+ shoppers. Unsubscribe anytime.</p>
+        </div>
+
+        <!-- Right form -->
+        <div class="w-full max-w-md">
+          <div class="flex gap-2">
+            <input
+              type="email"
+              [(ngModel)]="email"
+              placeholder="Enter your email address"
+              class="flex-1 min-w-0 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm
+                     text-white placeholder-gray-500 focus:outline-none focus:border-blue-500
+                     focus:bg-white/10 transition-all" />
+            <button
+              (click)="subscribe()"
+              class="bg-blue-600 hover:bg-blue-500 text-white font-bold px-5 py-3 rounded-xl text-sm
+                     transition-colors whitespace-nowrap flex items-center gap-2 shrink-0">
+              Subscribe
+            </button>
+          </div>
+          <p class="text-gray-600 text-xs mt-2 pl-1">
+            By subscribing you agree to our Privacy Policy.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Links -->
+  <div class="max-w-7xl mx-auto px-4 py-10">
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-8 text-sm mb-10">
+
+      <!-- Brand -->
+      <div class="col-span-2 sm:col-span-1">
+        <div class="text-xl font-black text-white mb-3">ShopZone</div>
+        <p class="text-gray-500 text-xs leading-relaxed mb-4">
+          Your one-stop destination for everything you need. Fast shipping, easy returns.
+        </p>
+        <!-- Socials -->
+        <div class="flex gap-3">
+          @for (s of [{label:'f',hover:'hover:bg-blue-600'},{label:'ig',hover:'hover:bg-pink-600'},{label:'tw',hover:'hover:bg-sky-500'}]; track s.label) {
+          <a href="#"
+            class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center
+                   text-gray-400 text-xs font-bold transition-all hover:text-white hover:border-transparent {{s.hover}}">
+            {{s.label}}
+          </a>
+          }
+        </div>
+      </div>
+
+      <!-- Shop -->
       <div>
-        <h4 class="font-bold text-gray-700 mb-4 tracking-[0.15em] text-xs uppercase">Links</h4>
-        <ul class="space-y-2 text-gray-500">
-          <li><a href="#" class="hover:text-gray-800 transition-colors">FAQ</a></li>
-          <li><a href="#" class="hover:text-gray-800 transition-colors">Shipping</a></li>
-          <li><a href="#" class="hover:text-gray-800 transition-colors">Stripping</a></li>
-          <li><a href="#" class="hover:text-gray-800 transition-colors">Returns</a></li>
+        <h4 class="text-xs font-bold text-gray-300 mb-4 uppercase tracking-widest">Shop</h4>
+        <ul class="space-y-2.5">
+          @for (link of ['New Arrivals','Best Sellers','Sale','All Products']; track link) {
+          <li><a href="#" class="text-gray-500 hover:text-white transition-colors text-xs">{{link}}</a></li>
+          }
         </ul>
       </div>
 
-      <!-- Stay Updated (center) -->
-      <div class="text-center">
-        <h4 class="font-bold text-gray-700 mb-4 tracking-[0.15em] text-xs uppercase">Stay Updated</h4>
-        <div class="flex gap-2">
-          <input
-            type="email"
-            [(ngModel)]="email"
-            placeholder="ENTER YOUR EMAIL"
-            class="flex-1 min-w-0 border border-gray-300 rounded px-3 py-2 text-xs text-gray-600
-                   placeholder-gray-400 focus:outline-none focus:border-blue-400 bg-white" />
-          <button
-            (click)="subscribe()"
-            class="bg-blue-500 hover:bg-blue-600 text-white font-bold px-4 py-2 rounded text-xs
-                   tracking-wide transition-colors whitespace-nowrap">
-            SUBSCRIBE
-          </button>
-        </div>
-
-        <!-- Social Icons -->
-        <div class="flex justify-center gap-4 mt-5">
-          <a href="#"
-            class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center
-                   hover:border-blue-500 hover:text-blue-500 text-gray-500 transition-colors text-xs font-bold">
-            f
-          </a>
-          <a href="#"
-            class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center
-                   hover:border-pink-500 hover:text-pink-500 text-gray-500 transition-colors text-xs font-bold">
-            ig
-          </a>
-          <a href="#"
-            class="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center
-                   hover:border-sky-400 hover:text-sky-400 text-gray-500 transition-colors text-xs font-bold">
-            tw
-          </a>
-        </div>
+      <!-- Help -->
+      <div>
+        <h4 class="text-xs font-bold text-gray-300 mb-4 uppercase tracking-widest">Help</h4>
+        <ul class="space-y-2.5">
+          @for (link of ['FAQ','Shipping','Returns','Track Order']; track link) {
+          <li><a href="#" class="text-gray-500 hover:text-white transition-colors text-xs">{{link}}</a></li>
+          }
+        </ul>
       </div>
 
-      <!-- Contact (right) -->
-      <div class="text-right">
-        <h4 class="font-bold text-gray-700 mb-4 tracking-[0.15em] text-xs uppercase">Contact</h4>
-        <ul class="space-y-2 text-gray-500">
-          <li><a href="#" class="hover:text-gray-800 transition-colors">Email</a></li>
-          <li><a href="#" class="hover:text-gray-800 transition-colors">Terms</a></li>
-          <li><a href="#" class="hover:text-gray-800 transition-colors">Phone</a></li>
-          <li><a href="#" class="hover:text-gray-800 transition-colors">Address</a></li>
+      <!-- Contact -->
+      <div>
+        <h4 class="text-xs font-bold text-gray-300 mb-4 uppercase tracking-widest">Contact</h4>
+        <ul class="space-y-2.5">
+          @for (link of ['Email Us','Terms','Privacy','Address']; track link) {
+          <li><a href="#" class="text-gray-500 hover:text-white transition-colors text-xs">{{link}}</a></li>
+          }
         </ul>
       </div>
 
     </div>
+
+    <!-- Bottom bar -->
+    <div class="border-t border-white/5 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
+      <p class="text-gray-600 text-xs">© 2025 ShopZone. All rights reserved.</p>
+      <div class="flex items-center gap-3 text-gray-600 text-xs">
+        <span>🔒 Secure Payments</span>
+        <span>·</span>
+        <span>🚚 Fast Delivery</span>
+        <span>·</span>
+        <span>⭐ Trusted Store</span>
+      </div>
+    </div>
   </div>
+
 </footer>

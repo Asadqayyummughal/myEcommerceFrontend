@@ -30,6 +30,17 @@ const ICON_MAP: Record<string, string> = {
   templateUrl: './category-grid.html',
   styleUrl: './category-grid.scss',
 })
+const CARD_PALETTES = [
+  { bg: 'bg-blue-100 dark:bg-blue-900/40',   icon: 'text-blue-600 dark:text-blue-400'   },
+  { bg: 'bg-violet-100 dark:bg-violet-900/40', icon: 'text-violet-600 dark:text-violet-400' },
+  { bg: 'bg-emerald-100 dark:bg-emerald-900/40', icon: 'text-emerald-600 dark:text-emerald-400' },
+  { bg: 'bg-amber-100 dark:bg-amber-900/40',  icon: 'text-amber-600 dark:text-amber-400'  },
+  { bg: 'bg-rose-100 dark:bg-rose-900/40',   icon: 'text-rose-600 dark:text-rose-400'   },
+  { bg: 'bg-cyan-100 dark:bg-cyan-900/40',   icon: 'text-cyan-600 dark:text-cyan-400'   },
+  { bg: 'bg-orange-100 dark:bg-orange-900/40', icon: 'text-orange-600 dark:text-orange-400' },
+  { bg: 'bg-pink-100 dark:bg-pink-900/40',   icon: 'text-pink-600 dark:text-pink-400'   },
+];
+
 export class CategoryGrid {
   @Input() categories: Category[] = [];
 
@@ -41,6 +52,14 @@ export class CategoryGrid {
       if (key.includes(k)) return v;
     }
     return ICON_MAP['default'];
+  }
+
+  getCardBg(index: number): string {
+    return CARD_PALETTES[index % CARD_PALETTES.length].bg;
+  }
+
+  getIconColor(index: number): string {
+    return CARD_PALETTES[index % CARD_PALETTES.length].icon;
   }
 
   navigateToCategory(category: Category): void {

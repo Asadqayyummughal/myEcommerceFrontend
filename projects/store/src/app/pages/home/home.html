@@ -1,32 +1,62 @@
+<!-- ── Hero Slider ────────────────────────────────── -->
 <app-hero></app-hero>
 
-<div class="max-w-7xl mx-auto px-4 py-8">
-    <!-- 2. Top Categories Grid -->
-    <app-category-grid [categories]="categories"></app-category-grid>
-    <!-- 3. Featured Products + Best Sellers (top) — side by side -->
-    <div class="grid grid-cols-2 gap-8 mb-6">
-        <app-product-section title="Featured Products" [products]="featured" variant="grid">
-        </app-product-section>
-        <app-product-section title="Best Sellers" [products]="bestSellers" variant="grid">
-        </app-product-section>
+<!-- ── Trust Bar ─────────────────────────────────── -->
+<div class="bg-blue-600 dark:bg-blue-900">
+  <div class="max-w-7xl mx-auto px-4 py-3">
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-1 text-center">
+      <div class="flex items-center justify-center gap-2 text-white text-xs font-medium py-1">
+        <span class="text-base">🚚</span> Free Shipping Over $50
+      </div>
+      <div class="flex items-center justify-center gap-2 text-white text-xs font-medium py-1">
+        <span class="text-base">↩️</span> 30-Day Easy Returns
+      </div>
+      <div class="flex items-center justify-center gap-2 text-white text-xs font-medium py-1">
+        <span class="text-base">🔒</span> Secure Checkout
+      </div>
+      <div class="flex items-center justify-center gap-2 text-white text-xs font-medium py-1">
+        <span class="text-base">⭐</span> 4.8/5 Customer Rating
+      </div>
     </div>
-    <!-- 5 & 6 & 4. Left: countdown Best Sellers + New Arrivals  |  Right: Promotions -->
-    <div class="grid grid-cols-2 gap-8">
-        <!-- Left column -->
-        <div>
-            <!-- 5. Best Sellers countdown -->
-            <app-product-section title="Best Sellers" [products]="countdownProducts" variant="countdown">
-            </app-product-section>
-
-            <!-- 6. New Arrivals banner -->
-            <app-product-section title="New Arrivals" [products]="newArrivals" variant="banner">
-            </app-product-section>
-        </div>
-        <!-- Right column: 4. Promotional Banner / Promotions grid -->
-        <app-product-section title="Promotions" [products]="promotions" variant="promotions">
-        </app-product-section>
-    </div>
+  </div>
 </div>
 
-<!-- 7. Newsletter Section -->
+<!-- ── Categories ─────────────────────────────────── -->
+<div class="max-w-7xl mx-auto px-4 pt-10 pb-2">
+  <app-category-grid [categories]="categories"></app-category-grid>
+</div>
+
+<!-- ── Featured Products ─────────────────────────── -->
+<div class="max-w-7xl mx-auto px-4 pb-10">
+  <app-product-section title="Featured Products" [products]="featured" variant="grid">
+  </app-product-section>
+</div>
+
+<!-- ── Best Sellers (alternate background) ─────────── -->
+<div class="bg-white dark:bg-gray-800/60 py-10">
+  <div class="max-w-7xl mx-auto px-4">
+    <app-product-section title="Best Sellers" [products]="bestSellers" variant="grid">
+    </app-product-section>
+  </div>
+</div>
+
+<!-- ── Countdown + New Arrivals ────────────────────── -->
+<div class="max-w-7xl mx-auto px-4 py-10">
+  <div class="grid lg:grid-cols-2 gap-6">
+    <app-product-section title="Limited Time Offers" [products]="countdownProducts" variant="countdown">
+    </app-product-section>
+    <app-product-section title="New Arrivals" [products]="newArrivals" variant="banner">
+    </app-product-section>
+  </div>
+</div>
+
+<!-- ── Promotions (dark section) ──────────────────── -->
+<div class="bg-gray-50 dark:bg-gray-900 py-10">
+  <div class="max-w-7xl mx-auto px-4">
+    <app-product-section title="Hot Deals" [products]="promotions" variant="promotions">
+    </app-product-section>
+  </div>
+</div>
+
+<!-- ── Newsletter ─────────────────────────────────── -->
 <app-newsletter></app-newsletter>

@@ -57,6 +57,11 @@ export class ProductSection implements OnInit, OnDestroy {
     return Math.round(price * 1.6 * 100) / 100;
   }
 
+  discountPct(product: Product): number {
+    if (!product.discountPrice) return 0;
+    return Math.round(((product.price - product.discountPrice) / product.price) * 100);
+  }
+
   onImgError(event: Event): void {
     (event.target as HTMLImageElement).src = 'placeholderImage.jpg';
   }

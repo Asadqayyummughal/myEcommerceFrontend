@@ -1,21 +1,36 @@
-<div class="mb-8">
-  <div class="flex items-center justify-between mb-6">
-    <h2 class="text-xl font-semibold text-gray-800">Categories</h2>
-    <a routerLink="/products" class="text-sm text-blue-500 hover:text-blue-600 transition-colors">View All</a>
+<div class="mb-10">
+  <div class="flex items-center justify-between mb-5">
+    <div>
+      <h2 class="text-xl font-bold text-gray-900 dark:text-white">Shop by Category</h2>
+      <p class="text-sm text-gray-400 mt-0.5">Find what you're looking for</p>
+    </div>
+    <a routerLink="/products"
+      class="text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 transition-colors flex items-center gap-1">
+      View All <mat-icon class="text-base leading-none">chevron_right</mat-icon>
+    </a>
   </div>
-  <div class="flex gap-5 overflow-x-auto pb-2">
-    @for (cat of categories; track cat._id) {
-    <div (click)="navigateToCategory(cat)"
-      class="flex flex-col items-center gap-4 cursor-pointer group flex-shrink-0">
-      <div class="hexagon w-32 h-[150px] bg-white shadow-sm flex flex-col items-center justify-center
-                    group-hover:bg-indigo-50 transition-colors duration-200">
-        <mat-icon class="text-gray-500 group-hover:text-indigo-500 transition-colors duration-200"
-          style="font-size: 22px; width: 22px; height: 22px; line-height: 22px;">
+
+  <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
+    @for (cat of categories; track cat._id; let i = $index) {
+
+    <!-- Each card gets a different gradient from a palette -->
+    <button (click)="navigateToCategory(cat)"
+      class="flex flex-col items-center gap-2.5 flex-shrink-0 group">
+
+      <!-- Icon circle -->
+      <div [class]="'w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-sm group-hover:shadow-md group-hover:scale-110 ' + getCardBg(i)">
+        <mat-icon [class]="'transition-all ' + getIconColor(i)"
+          style="font-size: 26px; width: 26px; height: 26px; line-height: 26px;">
           {{ getIcon(cat.name) }}
         </mat-icon>
-        <div class="text-[10px] text-gray-500 tracking-widest font-medium">{{ cat.name | uppercase }}</div>
       </div>
-    </div>
+
+      <!-- Label -->
+      <span class="text-[11px] font-semibold text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors text-center max-w-[72px] leading-tight">
+        {{ cat.name }}
+      </span>
+
+    </button>
     }
   </div>
 </div>
