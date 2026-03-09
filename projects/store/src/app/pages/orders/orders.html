@@ -1,78 +1,75 @@
-<div class="min-h-screen bg-gray-50">
+<div class="min-h-screen bg-gray-50 dark:bg-gray-900">
   <div class="max-w-4xl mx-auto px-4 py-8">
 
     <!-- Breadcrumb -->
     <nav class="text-sm text-gray-400 mb-6 flex items-center gap-1">
-      <a routerLink="/home" class="hover:text-gray-700 transition-colors">Home</a>
+      <a routerLink="/home" class="hover:text-gray-700 dark:hover:text-gray-200 transition-colors">Home</a>
       <mat-icon class="text-sm text-gray-300 leading-none">chevron_right</mat-icon>
-      <span class="text-gray-700 font-medium">My Orders</span>
+      <span class="text-gray-700 dark:text-gray-200 font-medium">My Orders</span>
     </nav>
 
-    <!-- Page header -->
+    <!-- Header -->
     <div class="flex items-center justify-between mb-6">
       <div>
-        <h1 class="text-2xl font-bold text-gray-900">My Orders</h1>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">My Orders</h1>
         <p class="text-sm text-gray-400 mt-0.5">Track and manage your purchases</p>
       </div>
       <a routerLink="/products"
         class="flex items-center gap-1.5 text-sm font-semibold text-blue-600 hover:text-blue-700
-               bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-xl transition-colors">
+               bg-blue-50 hover:bg-blue-100 dark:bg-blue-950 dark:hover:bg-blue-900
+               dark:text-blue-400 px-4 py-2 rounded-xl transition-colors">
         <mat-icon class="text-base leading-none">add_shopping_cart</mat-icon>
         Shop More
       </a>
     </div>
 
-    <!-- ── Stats Row ─────────────────────────────────────── -->
+    <!-- Stats Row -->
     @if (!loading && orders.length > 0) {
     <div class="grid grid-cols-3 gap-4 mb-6">
-
-      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center gap-4">
-        <div class="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center shrink-0">
+      <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm p-5 flex items-center gap-4">
+        <div class="w-11 h-11 rounded-xl bg-blue-50 dark:bg-blue-950 flex items-center justify-center shrink-0">
           <mat-icon class="text-blue-600">receipt_long</mat-icon>
         </div>
         <div>
-          <p class="text-2xl font-bold text-gray-900">{{ orders.length }}</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ orders.length }}</p>
           <p class="text-xs text-gray-400 mt-0.5">Total Orders</p>
         </div>
       </div>
-
-      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center gap-4">
-        <div class="w-11 h-11 rounded-xl bg-green-50 flex items-center justify-center shrink-0">
+      <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm p-5 flex items-center gap-4">
+        <div class="w-11 h-11 rounded-xl bg-green-50 dark:bg-green-950 flex items-center justify-center shrink-0">
           <mat-icon class="text-green-600">check_circle</mat-icon>
         </div>
         <div>
-          <p class="text-2xl font-bold text-gray-900">{{ deliveredCount }}</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ deliveredCount }}</p>
           <p class="text-xs text-gray-400 mt-0.5">Delivered</p>
         </div>
       </div>
-
-      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 flex items-center gap-4">
-        <div class="w-11 h-11 rounded-xl bg-indigo-50 flex items-center justify-center shrink-0">
+      <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm p-5 flex items-center gap-4">
+        <div class="w-11 h-11 rounded-xl bg-indigo-50 dark:bg-indigo-950 flex items-center justify-center shrink-0">
           <mat-icon class="text-indigo-600">payments</mat-icon>
         </div>
         <div>
-          <p class="text-2xl font-bold text-gray-900">{{ totalSpent | currency:'USD':'symbol':'1.0-0' }}</p>
+          <p class="text-2xl font-bold text-gray-900 dark:text-white">{{ totalSpent | currency:'USD':'symbol':'1.0-0' }}</p>
           <p class="text-xs text-gray-400 mt-0.5">Total Spent</p>
         </div>
       </div>
-
     </div>
     }
 
-    <!-- ── Filter Tabs ────────────────────────────────────── -->
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm mb-4 overflow-hidden">
-      <div class="flex overflow-x-auto scrollbar-none border-b border-gray-100">
+    <!-- Filter Tabs -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm mb-4 overflow-hidden">
+      <div class="flex overflow-x-auto border-b border-gray-100 dark:border-gray-700">
         @for (tab of tabs; track tab.key) {
         <button
-          (click)="activeTab = tab.key"
+          (click)="setTab(tab.key)"
           [class]="'flex items-center gap-1.5 px-4 py-3.5 text-sm font-medium whitespace-nowrap transition-colors relative ' +
             (activeTab === tab.key
-              ? 'text-blue-600 border-b-2 border-blue-600 -mb-px bg-blue-50/50'
-              : 'text-gray-500 hover:text-gray-700 hover:bg-gray-50')">
+              ? 'text-blue-600 border-b-2 border-blue-600 -mb-px bg-blue-50/50 dark:bg-blue-950/50'
+              : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700/50')">
           {{ tab.label }}
           @if (tabCount(tab.key) > 0) {
           <span [class]="'text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[20px] text-center ' +
-            (activeTab === tab.key ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-500')">
+            (activeTab === tab.key ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400')">
             {{ tabCount(tab.key) }}
           </span>
           }
@@ -81,87 +78,75 @@
       </div>
     </div>
 
-    <!-- ── Loading Skeleton ───────────────────────────────── -->
+    <!-- Loading Skeleton -->
     @if (loading) {
     <div class="space-y-4">
       @for (i of [1,2,3]; track i) {
-      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 animate-pulse">
+      <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm p-6 animate-pulse">
         <div class="flex items-center justify-between mb-4">
-          <div class="h-4 w-32 bg-gray-200 rounded"></div>
-          <div class="h-6 w-20 bg-gray-200 rounded-full"></div>
+          <div class="h-4 w-32 bg-gray-200 dark:bg-gray-700 rounded"></div>
+          <div class="h-6 w-20 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
         </div>
         <div class="flex gap-3 mb-4">
           @for (j of [1,2,3]; track j) {
-          <div class="w-14 h-14 bg-gray-200 rounded-xl"></div>
+          <div class="w-14 h-14 bg-gray-200 dark:bg-gray-700 rounded-xl"></div>
           }
         </div>
         <div class="flex justify-between">
-          <div class="h-4 w-24 bg-gray-200 rounded"></div>
-          <div class="h-4 w-20 bg-gray-200 rounded"></div>
+          <div class="h-4 w-24 bg-gray-200 dark:bg-gray-700 rounded"></div>
+          <div class="h-4 w-20 bg-gray-200 dark:bg-gray-700 rounded"></div>
         </div>
       </div>
       }
     </div>
     }
 
-    <!-- ── Empty State ────────────────────────────────────── -->
+    <!-- Empty State -->
     @if (!loading && filteredOrders.length === 0) {
-    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm py-16 text-center">
-      <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-5">
-        <mat-icon class="text-gray-300" style="font-size:40px;width:40px;height:40px;line-height:40px">
-          receipt_long
-        </mat-icon>
+    <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm py-16 text-center">
+      <div class="w-20 h-20 bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center mx-auto mb-5">
+        <mat-icon class="text-gray-300 dark:text-gray-500" style="font-size:40px;width:40px;height:40px;line-height:40px">receipt_long</mat-icon>
       </div>
       @if (activeTab === 'all') {
-      <h3 class="text-lg font-bold text-gray-700 mb-2">No orders yet</h3>
+      <h3 class="text-lg font-bold text-gray-700 dark:text-gray-200 mb-2">No orders yet</h3>
       <p class="text-sm text-gray-400 mb-6">Start shopping and your orders will appear here.</p>
       <a routerLink="/products"
-        class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white
-               font-semibold px-6 py-3 rounded-xl transition-colors text-sm">
+        class="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-xl transition-colors text-sm">
         <mat-icon class="text-base">shopping_bag</mat-icon>
         Browse Products
       </a>
       } @else {
-      <h3 class="text-lg font-bold text-gray-700 mb-2">No {{ activeTab }} orders</h3>
+      <h3 class="text-lg font-bold text-gray-700 dark:text-gray-200 mb-2">No {{ activeTab }} orders</h3>
       <p class="text-sm text-gray-400">You don't have any {{ activeTab }} orders right now.</p>
       }
     </div>
     }
 
-    <!-- ── Order Cards ─────────────────────────────────────── -->
-    @if (!loading) {
+    <!-- Order Cards -->
+    @if (!loading && filteredOrders.length > 0) {
     <div class="space-y-4">
-      @for (order of filteredOrders; track trackByOrder($index, order)) {
-
-      <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden
-                  transition-shadow hover:shadow-md">
+      @for (order of pagedOrders; track trackByOrder($index, order)) {
+      <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden transition-shadow hover:shadow-md">
 
         <!-- Card header -->
-        <div class="px-6 py-4 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-0 sm:justify-between
-                    border-b border-gray-50">
+        <div class="px-6 py-4 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-0 sm:justify-between border-b border-gray-50 dark:border-gray-700">
           <div class="flex items-center gap-3">
             <div>
               <p class="text-xs text-gray-400 font-medium">Order ID</p>
-              <p class="font-mono text-sm font-bold text-gray-700">#{{ order._id.slice(-8).toUpperCase() }}</p>
+              <p class="font-mono text-sm font-bold text-gray-700 dark:text-gray-200">#{{ order._id.slice(-8).toUpperCase() }}</p>
             </div>
-            <div class="w-px h-8 bg-gray-100"></div>
+            <div class="w-px h-8 bg-gray-100 dark:bg-gray-700"></div>
             <div>
               <p class="text-xs text-gray-400 font-medium">Placed on</p>
-              <p class="text-sm font-semibold text-gray-700">{{ order.createdAt | date:'MMM d, y' }}</p>
+              <p class="text-sm font-semibold text-gray-700 dark:text-gray-200">{{ order.createdAt | date:'MMM d, y' }}</p>
             </div>
           </div>
-
           <div class="flex items-center gap-2">
-            <!-- Payment status dot -->
             <span [class]="'text-xs font-semibold ' + paymentStatusConfig(order.paymentStatus).classes">
               {{ paymentStatusConfig(order.paymentStatus).label }}
             </span>
-            <!-- Order status badge -->
-            <span [class]="'flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-full border ' +
-              statusConfig(order.status).classes">
-              <mat-icon style="font-size:13px;width:13px;height:13px;line-height:13px">
-                {{ statusConfig(order.status).icon }}
-              </mat-icon>
+            <span [class]="'flex items-center gap-1 text-xs font-semibold px-3 py-1.5 rounded-full border ' + statusConfig(order.status).classes">
+              <mat-icon style="font-size:13px;width:13px;height:13px;line-height:13px">{{ statusConfig(order.status).icon }}</mat-icon>
               {{ statusConfig(order.status).label }}
             </span>
           </div>
@@ -169,44 +154,48 @@
 
         <!-- Items preview + total -->
         <div class="px-6 py-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-
-          <!-- Thumbnails -->
           <div class="flex items-center gap-2.5">
             @for (item of order.items.slice(0, 3); track item.productId) {
-            <div class="w-14 h-14 rounded-xl border border-gray-100 bg-gray-50 overflow-hidden shrink-0
-                        relative group">
-              <img
-                [src]="item.image ? apiUrl + item.image : 'placeholderImage.jpg'"
-                [alt]="item.title"
-                (error)="onImgError($event)"
-                class="w-full h-full object-contain p-1.5" />
+            <div class="w-14 h-14 rounded-xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 overflow-hidden shrink-0">
+              <img [src]="item.image ? apiUrl + item.image : 'placeholderImage.jpg'" [alt]="item.title"
+                (error)="onImgError($event)" class="w-full h-full object-contain p-1.5" />
             </div>
             }
             @if (order.items.length > 3) {
-            <div class="w-14 h-14 rounded-xl border border-gray-200 bg-gray-100 flex items-center
-                        justify-center text-xs font-bold text-gray-500 shrink-0">
+            <div class="w-14 h-14 rounded-xl border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-xs font-bold text-gray-500 dark:text-gray-400 shrink-0">
               +{{ order.items.length - 3 }}
             </div>
             }
             <div class="ml-1">
-              <p class="text-sm font-semibold text-gray-800">
-                {{ order.items.length }} item{{ order.items.length !== 1 ? 's' : '' }}
-              </p>
+              <p class="text-sm font-semibold text-gray-800 dark:text-gray-200">{{ order.items.length }} item{{ order.items.length !== 1 ? 's' : '' }}</p>
               <p class="text-xs text-gray-400 capitalize">via {{ order.paymentMethod }}</p>
             </div>
           </div>
 
-          <!-- Total + action -->
-          <div class="flex items-center justify-between sm:justify-end gap-4">
+          <div class="flex items-center justify-between sm:justify-end gap-3">
             <div class="text-right">
-              <p class="text-xs text-gray-400">Order Total</p>
+              <p class="text-xs text-gray-400">Total</p>
               <p class="text-lg font-bold text-blue-600">{{ order.total | currency }}</p>
             </div>
-            <button
-              (click)="toggleExpand(order._id)"
-              class="flex items-center gap-1 text-sm font-semibold text-gray-600 hover:text-blue-600
-                     bg-gray-50 hover:bg-blue-50 border border-gray-200 hover:border-blue-200
-                     px-3.5 py-2 rounded-xl transition-all">
+
+            <!-- Track button -->
+            @if (order.status !== 'cancelled') {
+            <button (click)="openTracking(order)"
+              class="flex items-center gap-1 text-sm font-semibold text-indigo-600 dark:text-indigo-400
+                     bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950 dark:hover:bg-indigo-900
+                     border border-indigo-100 dark:border-indigo-800
+                     px-3 py-2 rounded-xl transition-all">
+              <mat-icon class="text-base leading-none">location_on</mat-icon>
+              Track
+            </button>
+            }
+
+            <!-- Details toggle -->
+            <button (click)="toggleExpand(order._id)"
+              class="flex items-center gap-1 text-sm font-semibold text-gray-600 dark:text-gray-300
+                     bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:hover:bg-gray-600
+                     border border-gray-200 dark:border-gray-600
+                     px-3 py-2 rounded-xl transition-all">
               {{ expandedOrderId === order._id ? 'Hide' : 'Details' }}
               <mat-icon class="text-base transition-transform"
                 [style.transform]="expandedOrderId === order._id ? 'rotate(180deg)' : 'rotate(0deg)'">
@@ -214,97 +203,226 @@
               </mat-icon>
             </button>
           </div>
-
         </div>
 
-        <!-- ── Expanded detail panel ── -->
+        <!-- Expanded detail panel -->
         @if (expandedOrderId === order._id) {
-        <div class="border-t border-gray-100 bg-gray-50/50">
-
-          <!-- Items list -->
+        <div class="border-t border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/50">
           <div class="px-6 pt-5 pb-4">
             <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">Items Ordered</h4>
             <div class="space-y-3">
               @for (item of order.items; track item.productId) {
-              <div class="flex items-center gap-3 bg-white rounded-xl border border-gray-100 p-3">
-                <div class="w-12 h-12 rounded-lg border border-gray-100 bg-gray-50 shrink-0 overflow-hidden">
-                  <img
-                    [src]="item.image ? apiUrl + item.image : 'placeholderImage.jpg'"
-                    [alt]="item.title"
-                    (error)="onImgError($event)"
-                    class="w-full h-full object-contain p-1" />
+              <div class="flex items-center gap-3 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-3">
+                <div class="w-12 h-12 rounded-lg border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-700 shrink-0 overflow-hidden">
+                  <img [src]="item.image ? apiUrl + item.image : 'placeholderImage.jpg'" [alt]="item.title"
+                    (error)="onImgError($event)" class="w-full h-full object-contain p-1" />
                 </div>
                 <div class="flex-1 min-w-0">
-                  <p class="text-sm font-semibold text-gray-800 truncate">{{ item.title }}</p>
+                  <p class="text-sm font-semibold text-gray-800 dark:text-gray-200 truncate">{{ item.title }}</p>
                   @if (item.variantLabel) {
                   <p class="text-xs text-gray-400">{{ item.variantLabel }}</p>
                   }
                   <p class="text-xs text-gray-400">Qty: {{ item.quantity }}</p>
                 </div>
-                <p class="text-sm font-bold text-gray-900 shrink-0">
-                  {{ item.price * item.quantity | currency }}
-                </p>
+                <p class="text-sm font-bold text-gray-900 dark:text-white shrink-0">{{ item.price * item.quantity | currency }}</p>
               </div>
               }
             </div>
           </div>
 
-          <!-- Shipping address + total breakdown -->
           <div class="grid sm:grid-cols-2 gap-4 px-6 pb-5">
-
-            <div class="bg-white rounded-xl border border-gray-100 p-4">
+            <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-4">
               <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
                 <mat-icon class="text-sm leading-none text-gray-400">local_shipping</mat-icon>
                 Ship To
               </h4>
-              <p class="text-sm font-semibold text-gray-800">{{ order.shippingAddress.fullName }}</p>
-              <p class="text-sm text-gray-500 mt-0.5">{{ order.shippingAddress.phone }}</p>
-              <p class="text-sm text-gray-500 mt-0.5">
-                {{ order.shippingAddress.addressLine1 }}
-                @if (order.shippingAddress.addressLine2) {
-                , {{ order.shippingAddress.addressLine2 }}
-                }
-              </p>
-              <p class="text-sm text-gray-500">
-                {{ order.shippingAddress.city }}, {{ order.shippingAddress.state }}
-                {{ order.shippingAddress.postalCode }}
-              </p>
-              <p class="text-sm text-gray-500">{{ order.shippingAddress.country }}</p>
+              <p class="text-sm font-semibold text-gray-800 dark:text-gray-200">{{ order.shippingAddress.fullName }}</p>
+              <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{{ order.shippingAddress.phone }}</p>
+              <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{{ order.shippingAddress.addressLine1 }}{{ order.shippingAddress.addressLine2 ? ', ' + order.shippingAddress.addressLine2 : '' }}</p>
+              <p class="text-sm text-gray-500 dark:text-gray-400">{{ order.shippingAddress.city }}, {{ order.shippingAddress.state }} {{ order.shippingAddress.postalCode }}</p>
+              <p class="text-sm text-gray-500 dark:text-gray-400">{{ order.shippingAddress.country }}</p>
             </div>
 
-            <div class="bg-white rounded-xl border border-gray-100 p-4">
+            <div class="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 p-4">
               <h4 class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-1.5">
                 <mat-icon class="text-sm leading-none text-gray-400">receipt</mat-icon>
-                Order Summary
+                Summary
               </h4>
               <div class="space-y-2">
-                <div class="flex justify-between text-sm text-gray-500">
-                  <span>Subtotal</span>
-                  <span>{{ order.total | currency }}</span>
+                <div class="flex justify-between text-sm text-gray-500 dark:text-gray-400">
+                  <span>Subtotal</span><span>{{ order.total | currency }}</span>
                 </div>
-                <div class="flex justify-between text-sm text-gray-500">
-                  <span>Shipping</span>
-                  <span class="text-green-600 font-medium">Free</span>
+                <div class="flex justify-between text-sm text-gray-500 dark:text-gray-400">
+                  <span>Shipping</span><span class="text-green-600 font-medium">Free</span>
                 </div>
-                <div class="flex justify-between text-sm font-bold text-gray-900 pt-2 border-t border-gray-100">
-                  <span>Total</span>
-                  <span class="text-blue-600">{{ order.total | currency }}</span>
+                <div class="flex justify-between text-sm font-bold text-gray-900 dark:text-white pt-2 border-t border-gray-100 dark:border-gray-700">
+                  <span>Total</span><span class="text-blue-600">{{ order.total | currency }}</span>
                 </div>
                 <div class="flex justify-between text-xs text-gray-400 pt-1">
-                  <span>Payment</span>
-                  <span class="capitalize font-medium">{{ order.paymentMethod }}</span>
+                  <span>Payment</span><span class="capitalize font-medium">{{ order.paymentMethod }}</span>
                 </div>
               </div>
             </div>
-
           </div>
         </div>
         }
-
       </div>
       }
+
+      <!-- ── Pagination ─────────────────────────────── -->
+      @if (totalPages > 1) {
+      <div class="flex items-center justify-between mt-6 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm px-5 py-3">
+
+        <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1"
+          class="flex items-center gap-1 text-sm font-medium text-gray-600 dark:text-gray-300
+                 hover:text-blue-600 dark:hover:text-blue-400 disabled:opacity-30 disabled:cursor-not-allowed
+                 hover:bg-blue-50 dark:hover:bg-blue-950 px-3 py-2 rounded-lg transition-all">
+          <mat-icon class="text-base leading-none">chevron_left</mat-icon>
+          Prev
+        </button>
+
+        <div class="flex items-center gap-1">
+          @for (page of pageNumbers; track page; let i = $index) {
+          <!-- Ellipsis gap -->
+          @if (i > 0 && page - pageNumbers[i - 1] > 1) {
+          <span class="text-gray-300 dark:text-gray-600 px-1">···</span>
+          }
+          <button (click)="goToPage(page)"
+            [class]="'w-9 h-9 rounded-lg text-sm font-semibold transition-all ' +
+              (page === currentPage
+                ? 'bg-blue-600 text-white shadow-sm'
+                : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700')">
+            {{ page }}
+          </button>
+          }
+        </div>
+
+        <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages"
+          class="flex items-center gap-1 text-sm font-medium text-gray-600 dark:text-gray-300
+                 hover:text-blue-600 dark:hover:text-blue-400 disabled:opacity-30 disabled:cursor-not-allowed
+                 hover:bg-blue-50 dark:hover:bg-blue-950 px-3 py-2 rounded-lg transition-all">
+          Next
+          <mat-icon class="text-base leading-none">chevron_right</mat-icon>
+        </button>
+      </div>
+      }
+
+      <!-- Page info -->
+      @if (filteredOrders.length > pageSize) {
+      <p class="text-center text-xs text-gray-400 mt-2">
+        Showing {{ (currentPage - 1) * pageSize + 1 }}–{{ currentPage * pageSize > filteredOrders.length ? filteredOrders.length : currentPage * pageSize }} of {{ filteredOrders.length }} orders
+      </p>
+      }
+
     </div>
     }
 
   </div>
 </div>
+
+<!-- ══════════════════════════════════════════════════
+     TRACK ORDER MODAL
+══════════════════════════════════════════════════ -->
+@if (trackingOrder) {
+<div class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-end sm:items-center justify-center p-0 sm:p-4"
+  (click)="closeTracking()">
+
+  <div class="bg-white dark:bg-gray-800 w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden"
+    (click)="$event.stopPropagation()">
+
+    <!-- Modal header -->
+    <div class="bg-gradient-to-r from-indigo-600 to-blue-600 px-6 py-5">
+      <div class="flex items-center justify-between mb-1">
+        <div class="flex items-center gap-2">
+          <mat-icon class="text-white/80 text-base leading-none">local_shipping</mat-icon>
+          <span class="text-white/80 text-xs font-medium uppercase tracking-wider">Track Order</span>
+        </div>
+        <button (click)="closeTracking()"
+          class="text-white/60 hover:text-white hover:bg-white/10 p-1.5 rounded-xl transition-all">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+      <p class="text-white font-mono font-bold text-lg">#{{ trackingOrder._id.slice(-8).toUpperCase() }}</p>
+      <p class="text-white/60 text-sm">{{ trackingOrder.createdAt | date:'MMMM d, yyyy' }}</p>
+    </div>
+
+    <!-- Loading -->
+    @if (trackingLoading) {
+    <div class="px-6 py-10 flex items-center justify-center">
+      <mat-icon class="animate-spin text-blue-600 text-3xl">refresh</mat-icon>
+    </div>
+    } @else {
+
+    <!-- Status timeline -->
+    <div class="px-6 py-6">
+      <div class="relative">
+        <!-- Vertical line -->
+        <div class="absolute left-5 top-5 bottom-5 w-0.5 bg-gray-100 dark:bg-gray-700"></div>
+
+        <div class="space-y-6">
+          @for (step of trackingSteps; track step.status) {
+          @let completed = isStepCompleted(step.status, trackingOrder!.status);
+          @let current = isStepCurrent(step.status, trackingOrder!.status) && trackingOrder!.status !== 'cancelled';
+
+          <div class="relative flex items-start gap-4">
+            <!-- Step indicator -->
+            <div [class]="'relative z-10 w-10 h-10 rounded-full flex items-center justify-center shrink-0 transition-all ' +
+              (completed ? 'bg-blue-600 shadow-md shadow-blue-200' :
+               current ? 'bg-blue-100 dark:bg-blue-950 border-2 border-blue-400' :
+               'bg-gray-100 dark:bg-gray-700 border-2 border-gray-200 dark:border-gray-600')">
+              <mat-icon [class]="'text-base leading-none ' + (completed ? 'text-white' : current ? 'text-blue-600' : 'text-gray-300 dark:text-gray-500')">
+                {{ completed ? 'check' : step.icon }}
+              </mat-icon>
+            </div>
+
+            <!-- Step text -->
+            <div class="pt-1.5 min-w-0 flex-1">
+              <p [class]="'text-sm font-bold ' + (completed || current ? 'text-gray-900 dark:text-white' : 'text-gray-400 dark:text-gray-500')">
+                {{ step.label }}
+                @if (current) {
+                <span class="ml-2 text-xs font-semibold text-blue-600 bg-blue-50 dark:bg-blue-950 px-2 py-0.5 rounded-full">Current</span>
+                }
+              </p>
+              <p [class]="'text-xs mt-0.5 ' + (completed || current ? 'text-gray-500 dark:text-gray-400' : 'text-gray-300 dark:text-gray-600')">
+                {{ step.description }}
+              </p>
+            </div>
+          </div>
+          }
+
+          <!-- Cancelled state -->
+          @if (trackingOrder!.status === 'cancelled') {
+          <div class="relative flex items-start gap-4">
+            <div class="relative z-10 w-10 h-10 rounded-full bg-red-100 dark:bg-red-950 border-2 border-red-300 flex items-center justify-center shrink-0">
+              <mat-icon class="text-base leading-none text-red-500">cancel</mat-icon>
+            </div>
+            <div class="pt-1.5">
+              <p class="text-sm font-bold text-red-600">Order Cancelled</p>
+              <p class="text-xs text-gray-400 mt-0.5">This order has been cancelled</p>
+            </div>
+          </div>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- Shipping address -->
+    <div class="px-6 pb-6">
+      <div class="bg-gray-50 dark:bg-gray-700/50 rounded-xl p-4">
+        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+          <mat-icon class="text-sm leading-none">home</mat-icon>
+          Delivering to
+        </p>
+        <p class="text-sm font-semibold text-gray-800 dark:text-gray-200">{{ trackingOrder.shippingAddress.fullName }}</p>
+        <p class="text-sm text-gray-500 dark:text-gray-400">
+          {{ trackingOrder.shippingAddress.addressLine1 }},
+          {{ trackingOrder.shippingAddress.city }},
+          {{ trackingOrder.shippingAddress.state }}
+        </p>
+      </div>
+    </div>
+
+    }
+  </div>
+</div>
+}

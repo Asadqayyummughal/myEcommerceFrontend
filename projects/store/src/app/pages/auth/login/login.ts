@@ -29,6 +29,7 @@ export class Login {
   loading = false;
   errorMessage = '';
   hidePassword = true;
+  sessionExpiredBanner = false;
 
   constructor(
     private fb: FormBuilder,
@@ -40,6 +41,8 @@ export class Login {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
     });
+    this.sessionExpiredBanner =
+      this.route.snapshot.queryParamMap.get('reason') === 'session_expired';
   }
 
   get email() { return this.form.get('email')!; }

@@ -8,6 +8,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { AuthService } from '@core/services/auth.service';
 import { CartService } from '@core/services/cart.service';
 import { WishlistService } from '@core/services/wishlist.service';
+import { ThemeService } from '@core/services/theme.service';
 
 @Component({
   selector: 'app-header',
@@ -21,6 +22,7 @@ export class Header {
     public authService: AuthService,
     public cartService: CartService,
     public wishlistService: WishlistService,
+    public themeService: ThemeService,
     private router: Router,
   ) {}
 

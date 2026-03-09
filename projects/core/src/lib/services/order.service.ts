@@ -37,4 +37,9 @@ export class OrderService {
   createPaymentIntent(orderId: string): Observable<any> {
     return this.api.post('payment/stripe/create-intent', { orderId });
   }
+
+  /** Fetches full order details for the tracking modal */
+  trackOrder(orderId: string): Observable<any> {
+    return this.api.get(`order/${orderId}`);
+  }
 }

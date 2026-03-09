@@ -49,6 +49,15 @@
         <a routerLink="/auth/signup" class="text-blue-600 font-medium hover:underline">Create one</a>
       </p>
 
+      <!-- Session expired banner -->
+      @if (sessionExpiredBanner) {
+      <div
+        class="flex items-center gap-2 bg-amber-50 border border-amber-200 text-amber-700 rounded-lg px-4 py-3 mb-4 text-sm">
+        <mat-icon class="text-base shrink-0">schedule</mat-icon>
+        Your session expired. Please sign in again.
+      </div>
+      }
+
       <!-- Error -->
       @if (errorMessage) {
       <div

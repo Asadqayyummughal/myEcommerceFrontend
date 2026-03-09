@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, tap } from 'rxjs';
 import { ApiService } from './api.service';
 import { CartService } from './cart.service';
 import { WishlistService } from './wishlist.service';
@@ -25,6 +25,11 @@ export class AuthService {
   private currentUserSubject = new BehaviorSubject<AuthUser | null>(this.loadUser());
   currentUser$ = this.currentUserSubject.asObservable();
 
+  /** Fires when the session expires automatically — subscribe in App to redirect */
+  readonly sessionExpired$ = new Subject<void>();
+
+  private logoutTimer: ReturnType<typeof setTimeout> | null = null;
+
   constructor(
     private api: ApiService,
     private cartService: CartService,
@@ -43,6 +48,51 @@ export class AuthService {
     return localStorage.getItem(this.ACCESS_KEY);
   }
 
+  // ── Auto-logout ─────────────────────────────────────
+  /**
+   * Decodes the JWT exp claim and schedules automatic logout.
+   * Call this on login and on app startup when a session already exists.
+   */
+  scheduleAutoLogout(): void {
+    const token = this.getAccessToken();
+    if (!token) return;
+
+    const expiry = this.getTokenExpiry(token);
+    if (!expiry) return;
+
+    const msUntilExpiry = expiry - Date.now();
+
+    if (msUntilExpiry <= 0) {
+      // Token already expired — clear immediately
+      this.clearSession();
+      this.sessionExpired$.next();
+      return;
+    }
+
+    this.clearLogoutTimer();
+    this.logoutTimer = setTimeout(() => {
+      this.clearSession();
+      this.sessionExpired$.next();
+    }, msUntilExpiry);
+  }
+
+  private getTokenExpiry(token: string): number | null {
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload.exp ? payload.exp * 1000 : null;
+    } catch {
+      return null;
+    }
+  }
+
+  private clearLogoutTimer(): void {
+    if (this.logoutTimer !== null) {
+      clearTimeout(this.logoutTimer);
+      this.logoutTimer = null;
+    }
+  }
+
+  // ── Auth API ────────────────────────────────────────
   signup(name: string, email: string, password: string): Observable<any> {
     return this.api.post('auth/signup', { name, email, password });
   }
@@ -52,6 +102,7 @@ export class AuthService {
       tap((res) => {
         if (res.success) {
           this.storeSession(res.data.user, res.data.accessToken, res.data.refreshToken);
+          this.scheduleAutoLogout();
           this.onLoginSuccess();
         }
       }),
@@ -74,6 +125,7 @@ export class AuthService {
   }
 
   clearSession(): void {
+    this.clearLogoutTimer();
     localStorage.removeItem(this.USER_KEY);
     localStorage.removeItem(this.ACCESS_KEY);
     localStorage.removeItem(this.REFRESH_KEY);
@@ -82,8 +134,8 @@ export class AuthService {
     this.wishlistService.clearGuestWishlist();
   }
 
+  // ── Private helpers ─────────────────────────────────
   private onLoginSuccess(): void {
-    // Sync guest cart to backend, then reload auth cart
     const guestCart = this.cartService.items;
     if (guestCart.length > 0) {
       this.cartService.syncGuestCart().subscribe({
@@ -93,7 +145,6 @@ export class AuthService {
     } else {
       this.cartService.loadAuthCart();
     }
-    // Sync guest wishlist, then load auth wishlist ids
     if (this.wishlistService.hasGuestItems) {
       this.wishlistService.syncGuestWishlist().subscribe({
         next: () => this.wishlistService.loadAuthWishlist(),

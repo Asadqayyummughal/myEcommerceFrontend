@@ -24,6 +24,7 @@ export interface Order {
   paymentStatus: PaymentStatus;
   total: number;
   createdAt: string;
+  updatedAt?: string;
   items: OrderItem[];
   shippingAddress: {
     fullName: string;
@@ -39,6 +40,13 @@ export interface Order {
 
 type FilterTab = 'all' | OrderStatus;
 
+interface TrackingStep {
+  status: OrderStatus;
+  label: string;
+  description: string;
+  icon: string;
+}
+
 @Component({
   selector: 'app-orders',
   standalone: true,
@@ -52,14 +60,31 @@ export class Orders implements OnInit {
   expandedOrderId: string | null = null;
   readonly apiUrl = 'http://localhost:3000';
 
+  // ── Pagination ─────────────────────────────────────
+  currentPage = 1;
+  readonly pageSize = 5;
+
+  // ── Track Order ────────────────────────────────────
+  trackingOrder: Order | null = null;
+  trackingLoading = false;
+
   readonly tabs: { key: FilterTab; label: string }[] = [
-    { key: 'all', label: 'All Orders' },
+    { key: 'all', label: 'All' },
     { key: 'pending', label: 'Pending' },
     { key: 'processing', label: 'Processing' },
     { key: 'shipped', label: 'Shipped' },
     { key: 'delivered', label: 'Delivered' },
     { key: 'cancelled', label: 'Cancelled' },
   ];
+
+  readonly trackingSteps: TrackingStep[] = [
+    { status: 'pending', label: 'Order Placed', description: 'Your order has been received', icon: 'receipt_long' },
+    { status: 'processing', label: 'Processing', description: 'Vendor is preparing your items', icon: 'inventory_2' },
+    { status: 'shipped', label: 'Shipped', description: 'Your order is on its way', icon: 'local_shipping' },
+    { status: 'delivered', label: 'Delivered', description: 'Package delivered successfully', icon: 'check_circle' },
+  ];
+
+  private readonly statusOrder: OrderStatus[] = ['pending', 'processing', 'shipped', 'delivered'];
 
   constructor(
     private orderService: OrderService,
@@ -79,11 +104,79 @@ export class Orders implements OnInit {
     });
   }
 
+  // ── Filters ────────────────────────────────────────
   get filteredOrders(): Order[] {
     if (this.activeTab === 'all') return this.orders;
     return this.orders.filter((o) => o.status === this.activeTab);
   }
 
+  setTab(tab: FilterTab): void {
+    this.activeTab = tab;
+    this.currentPage = 1;
+    this.expandedOrderId = null;
+  }
+
+  // ── Pagination ─────────────────────────────────────
+  get pagedOrders(): Order[] {
+    const start = (this.currentPage - 1) * this.pageSize;
+    return this.filteredOrders.slice(start, start + this.pageSize);
+  }
+
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.filteredOrders.length / this.pageSize));
+  }
+
+  get pageNumbers(): number[] {
+    const total = this.totalPages;
+    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+    // Show first, last, current ±1, with ellipsis gaps
+    const pages = new Set([1, total, this.currentPage, this.currentPage - 1, this.currentPage + 1]);
+    return [...pages].filter((p) => p >= 1 && p <= total).sort((a, b) => a - b);
+  }
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.expandedOrderId = null;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  // ── Order Detail Expand ────────────────────────────
+  toggleExpand(id: string): void {
+    this.expandedOrderId = this.expandedOrderId === id ? null : id;
+  }
+
+  // ── Track Order ────────────────────────────────────
+  openTracking(order: Order): void {
+    this.trackingOrder = order;
+    this.trackingLoading = true;
+    this.orderService.trackOrder(order._id).subscribe({
+      next: (res: any) => {
+        this.trackingOrder = res.data ?? order;
+        this.trackingLoading = false;
+      },
+      error: () => {
+        // Fall back to local data if API fails
+        this.trackingLoading = false;
+      },
+    });
+  }
+
+  closeTracking(): void {
+    this.trackingOrder = null;
+  }
+
+  isStepCompleted(stepStatus: OrderStatus, orderStatus: OrderStatus): boolean {
+    if (orderStatus === 'cancelled') return false;
+    return this.statusOrder.indexOf(orderStatus) >= this.statusOrder.indexOf(stepStatus);
+  }
+
+  isStepCurrent(stepStatus: OrderStatus, orderStatus: OrderStatus): boolean {
+    return stepStatus === orderStatus;
+  }
+
+  // ── Stats ──────────────────────────────────────────
   get totalSpent(): number {
     return this.orders
       .filter((o) => o.status !== 'cancelled')
@@ -94,50 +187,19 @@ export class Orders implements OnInit {
     return this.orders.filter((o) => o.status === 'delivered').length;
   }
 
-  get pendingCount(): number {
-    return this.orders.filter((o) => o.status === 'pending' || o.status === 'processing').length;
-  }
-
   tabCount(tab: FilterTab): number {
     if (tab === 'all') return this.orders.length;
     return this.orders.filter((o) => o.status === tab).length;
   }
 
-  toggleExpand(id: string): void {
-    this.expandedOrderId = this.expandedOrderId === id ? null : id;
-  }
-
-  onImgError(event: Event): void {
-    (event.target as HTMLImageElement).src = 'placeholderImage.jpg';
-  }
-
+  // ── Status helpers ─────────────────────────────────
   statusConfig(status: OrderStatus): { label: string; classes: string; icon: string } {
     const map: Record<OrderStatus, { label: string; classes: string; icon: string }> = {
-      pending: {
-        label: 'Pending',
-        classes: 'bg-amber-50 text-amber-700 border-amber-200',
-        icon: 'schedule',
-      },
-      processing: {
-        label: 'Processing',
-        classes: 'bg-blue-50 text-blue-700 border-blue-200',
-        icon: 'autorenew',
-      },
-      shipped: {
-        label: 'Shipped',
-        classes: 'bg-indigo-50 text-indigo-700 border-indigo-200',
-        icon: 'local_shipping',
-      },
-      delivered: {
-        label: 'Delivered',
-        classes: 'bg-green-50 text-green-700 border-green-200',
-        icon: 'check_circle',
-      },
-      cancelled: {
-        label: 'Cancelled',
-        classes: 'bg-red-50 text-red-700 border-red-200',
-        icon: 'cancel',
-      },
+      pending: { label: 'Pending', classes: 'bg-amber-50 text-amber-700 border-amber-200', icon: 'schedule' },
+      processing: { label: 'Processing', classes: 'bg-blue-50 text-blue-700 border-blue-200', icon: 'autorenew' },
+      shipped: { label: 'Shipped', classes: 'bg-indigo-50 text-indigo-700 border-indigo-200', icon: 'local_shipping' },
+      delivered: { label: 'Delivered', classes: 'bg-green-50 text-green-700 border-green-200', icon: 'check_circle' },
+      cancelled: { label: 'Cancelled', classes: 'bg-red-50 text-red-700 border-red-200', icon: 'cancel' },
     };
     return map[status] ?? map['pending'];
   }
@@ -149,6 +211,10 @@ export class Orders implements OnInit {
       failed: { label: 'Payment Failed', classes: 'text-red-600' },
     };
     return map[status] ?? map['pending'];
+  }
+
+  onImgError(event: Event): void {
+    (event.target as HTMLImageElement).src = 'placeholderImage.jpg';
   }
 
   trackByOrder(_: number, o: Order): string {

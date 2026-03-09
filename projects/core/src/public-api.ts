@@ -12,3 +12,4 @@ export * from './lib/interceptors/auth.interceptor';
 export * from './lib/services/order.service';
 export * from './lib/services/payment.service';
 export * from './lib/services/user.service';
+export * from './lib/services/theme.service';

@@ -1,4 +1,4 @@
-<header class="bg-white border-b border-gray-200 sticky top-0 z-50">
+<header class="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
   <div class="container mx-auto px-4 py-1">
     <div class="flex justify-between items-center h-16">
 
@@ -26,7 +26,19 @@
       <!-- Right actions -->
       <div class="flex items-center gap-4">
 
-        <a routerLink="/products" class="text-sm text-gray-600 hover:text-gray-900 hidden md:block">All Products</a>
+        <a routerLink="/products" class="text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hidden md:block">All Products</a>
+
+        <!-- Theme Toggle -->
+        <button (click)="themeService.toggle()"
+          class="flex items-center justify-center w-10 h-10 rounded-full text-gray-600 dark:text-gray-300
+                 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-colors"
+          [title]="themeService.isDark() ? 'Switch to light mode' : 'Switch to dark mode'">
+          @if (themeService.isDark()) {
+          <mat-icon>light_mode</mat-icon>
+          } @else {
+          <mat-icon>dark_mode</mat-icon>
+          }
+        </button>
 
         <!-- Wishlist -->
         <a routerLink="/wishlist" class="relative flex items-center justify-center w-10 h-10 rounded-full text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors">
