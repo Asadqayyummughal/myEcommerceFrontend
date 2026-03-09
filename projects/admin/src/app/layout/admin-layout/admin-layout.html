@@ -1,0 +1,15 @@
+<div class="flex h-screen bg-gray-100 dark:bg-gray-900 overflow-hidden">
+  <!-- Sidebar -->
+  <app-admin-sidebar [collapsed]="sidebarCollapsed()"></app-admin-sidebar>
+
+  <!-- Main content area -->
+  <div class="flex flex-col flex-1 overflow-hidden">
+    <!-- Top header -->
+    <app-admin-header (toggleSidebar)="toggleSidebar()"></app-admin-header>
+
+    <!-- Page content -->
+    <main class="flex-1 overflow-y-auto p-6 bg-gray-50 dark:bg-gray-900">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

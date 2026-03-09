@@ -1,0 +1,143 @@
+<!-- Page header -->
+<div class="mb-6">
+  <h1 class="text-2xl font-black text-gray-900 dark:text-white">Dashboard</h1>
+  <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Welcome back! Here's what's happening.</p>
+</div>
+
+<!-- Stat cards -->
+@if (loading) {
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+  @for (s of [1,2,3,4]; track s) {
+  <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 animate-pulse">
+    <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mb-3"></div>
+    <div class="h-7 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
+    <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded w-1/3"></div>
+  </div>
+  }
+</div>
+} @else {
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+  @for (card of stats; track card.label) {
+  <div class="bg-white dark:bg-gray-800 rounded-2xl p-5 border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow">
+    <div class="flex items-center justify-between mb-3">
+      <div [class]="'w-10 h-10 rounded-xl flex items-center justify-center ' + card.bg + ' dark:bg-opacity-20'">
+        <mat-icon [class]="card.color" style="font-size:20px;width:20px;height:20px;line-height:20px">{{ card.icon }}</mat-icon>
+      </div>
+      <span [class]="'text-xs font-bold px-2 py-0.5 rounded-full ' + (card.changePositive ? 'text-emerald-600 bg-emerald-50' : 'text-red-500 bg-red-50')">
+        {{ card.change }}
+      </span>
+    </div>
+    <div class="text-2xl font-black text-gray-900 dark:text-white">{{ card.value }}</div>
+    <div class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{{ card.label }}</div>
+  </div>
+  }
+</div>
+}
+
+<!-- Main content grid -->
+<div class="grid lg:grid-cols-3 gap-6">
+
+  <!-- Recent Orders table -->
+  <div class="lg:col-span-2 bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-gray-700">
+      <h2 class="text-sm font-bold text-gray-900 dark:text-white">Recent Orders</h2>
+      <a routerLink="/orders" class="text-xs text-blue-600 dark:text-blue-400 font-semibold hover:underline">View All →</a>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-gray-50 dark:border-gray-700">
+            <th class="text-left text-xs text-gray-400 font-medium px-5 py-3">Order ID</th>
+            <th class="text-left text-xs text-gray-400 font-medium px-3 py-3">Customer</th>
+            <th class="text-left text-xs text-gray-400 font-medium px-3 py-3">Total</th>
+            <th class="text-left text-xs text-gray-400 font-medium px-3 py-3">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (recentOrders.length === 0) {
+          <tr>
+            <td colspan="4" class="text-center text-gray-400 py-10 text-xs">No orders found</td>
+          </tr>
+          }
+          @for (order of recentOrders; track order._id) {
+          <tr class="border-b border-gray-50 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
+            <td class="px-5 py-3">
+              <span class="font-mono text-xs text-gray-600 dark:text-gray-400">#{{ order._id?.slice(-8)?.toUpperCase() }}</span>
+            </td>
+            <td class="px-3 py-3">
+              <span class="text-xs font-medium text-gray-800 dark:text-gray-200">
+                {{ order.shippingAddress?.fullName ?? order.user?.name ?? '—' }}
+              </span>
+            </td>
+            <td class="px-3 py-3">
+              <span class="text-xs font-bold text-gray-900 dark:text-white">
+                ${{ (order.totalAmount ?? order.total ?? 0).toFixed(2) }}
+              </span>
+            </td>
+            <td class="px-3 py-3">
+              <span [class]="'text-[10px] font-bold px-2.5 py-1 rounded-full capitalize ' + statusClass(order.status)">
+                {{ order.status }}
+              </span>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Quick links / Summary -->
+  <div class="space-y-4">
+
+    <!-- Quick actions -->
+    <div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-5">
+      <h2 class="text-sm font-bold text-gray-900 dark:text-white mb-4">Quick Actions</h2>
+      <div class="space-y-2">
+        @for (action of [
+          {label: 'Manage Products', icon: 'inventory_2', route: '/products', color: 'text-violet-600 bg-violet-50 dark:bg-violet-900/20'},
+          {label: 'View Orders', icon: 'receipt_long', route: '/orders', color: 'text-blue-600 bg-blue-50 dark:bg-blue-900/20'},
+          {label: 'Manage Users', icon: 'people', route: '/users', color: 'text-amber-600 bg-amber-50 dark:bg-amber-900/20'},
+          {label: 'Categories', icon: 'category', route: '/categories', color: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20'},
+        ]; track action.route) {
+        <a [routerLink]="action.route"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors group">
+          <div [class]="'w-8 h-8 rounded-lg flex items-center justify-center ' + action.color">
+            <mat-icon [class]="action.color.split(' ')[0]" style="font-size:16px;width:16px;height:16px;line-height:16px">{{ action.icon }}</mat-icon>
+          </div>
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors">
+            {{ action.label }}
+          </span>
+          <mat-icon class="ml-auto text-gray-300 dark:text-gray-600 group-hover:text-gray-500" style="font-size:16px;width:16px;height:16px;line-height:16px">chevron_right</mat-icon>
+        </a>
+        }
+      </div>
+    </div>
+
+    <!-- System info -->
+    <div class="bg-gradient-to-br from-blue-600 to-violet-600 rounded-2xl p-5 text-white">
+      <div class="flex items-center gap-2 mb-3">
+        <mat-icon style="font-size:18px;width:18px;height:18px;line-height:18px">verified_user</mat-icon>
+        <span class="text-xs font-bold uppercase tracking-widest opacity-80">System Status</span>
+      </div>
+      <div class="text-2xl font-black mb-1">All Systems</div>
+      <div class="text-blue-200 text-sm font-semibold mb-4">Operational ✓</div>
+      <div class="space-y-2">
+        @for (sys of [
+          {label: 'API Server', pct: 99},
+          {label: 'Database', pct: 98},
+          {label: 'Payments', pct: 100},
+        ]; track sys.label) {
+        <div>
+          <div class="flex justify-between text-xs mb-1 opacity-80">
+            <span>{{ sys.label }}</span><span>{{ sys.pct }}%</span>
+          </div>
+          <div class="h-1 bg-white/20 rounded-full overflow-hidden">
+            <div class="h-full bg-white rounded-full" [style.width.%]="sys.pct"></div>
+          </div>
+        </div>
+        }
+      </div>
+    </div>
+
+  </div>
+</div>
