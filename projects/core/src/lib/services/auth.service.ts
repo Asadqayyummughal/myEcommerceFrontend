@@ -168,7 +168,24 @@ export class AuthService {
       return null;
     }
   }
-  getUserProfile() {
+  getUserProfile(): Observable<any> {
     return this.api.get('users/profile');
+  }
+
+  /** Fetch profile from API and overwrite the stored user object. */
+  refreshUserFromProfile(): Observable<any> {
+    return this.getUserProfile().pipe(
+      tap((res: any) => {
+        const p = res.data ?? res;
+        const updated: AuthUser = {
+          id:    p._id ?? p.id ?? this.currentUser?.id ?? '',
+          name:  p.name  ?? this.currentUser?.name  ?? '',
+          email: p.email ?? this.currentUser?.email ?? '',
+          role:  typeof p.role === 'object' ? p.role?.name : (p.role ?? this.currentUser?.role ?? ''),
+        };
+        localStorage.setItem(this.USER_KEY, JSON.stringify(updated));
+        this.currentUserSubject.next(updated);
+      }),
+    );
   }
 }

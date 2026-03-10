@@ -20,7 +20,7 @@ export class Coupons implements OnInit {
 
   form = {
     code: '',
-    type: 'percent',
+    type: 'percentage',
     value: 0,
     minOrderAmount: 0,
     maxUses: 0,
@@ -37,7 +37,8 @@ export class Coupons implements OnInit {
     this.loading = true;
     this.adminService.getCoupons().subscribe({
       next: (res: any) => {
-        this.coupons = res.data ?? res.coupons ?? res ?? [];
+        const d = res.data ?? res;
+        this.coupons = Array.isArray(d) ? d : (d.coupons ?? d.items ?? []);
         this.loading = false;
       },
       error: () => {
@@ -58,7 +59,7 @@ export class Coupons implements OnInit {
     this.editingCoupon = coupon;
     this.form = {
       code: coupon.code ?? '',
-      type: coupon.type ?? 'percent',
+      type: coupon.type ?? 'percentage',
       value: coupon.value ?? 0,
       minOrderAmount: coupon.minOrderAmount ?? 0,
       maxUses: coupon.maxUses ?? 0,
@@ -118,7 +119,7 @@ export class Coupons implements OnInit {
   }
 
   typeLabel(type: string): string {
-    return type === 'percent' ? 'Percent Off' : 'Flat Discount';
+    return type === 'percentage' ? 'Percent Off' : 'Fixed Discount';
   }
 
   isExpired(date: string): boolean {

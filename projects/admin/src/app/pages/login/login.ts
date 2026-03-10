@@ -4,7 +4,6 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '@core/services/auth.service';
-import { AuthUser } from '@core/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -37,10 +36,10 @@ export class Login {
           this.loading = false;
           return;
         }
-        this.authService.getUserProfile().subscribe({
-          next: (profileRes: any) => {
-            const roleRaw = profileRes.data?.role;
-            const role = typeof roleRaw === 'object' ? roleRaw?.name : roleRaw;
+        this.authService.refreshUserFromProfile().subscribe({
+          next: () => {
+            const roleRaw = this.authService.currentUser?.role;
+            const role = typeof roleRaw === 'object' ? (roleRaw as any)?.name : roleRaw;
             if (role !== 'admin' && role !== 'support') {
               this.authService.logout().subscribe();
               this.error = 'Access denied. Admin credentials required.';

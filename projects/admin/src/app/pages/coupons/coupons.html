@@ -53,7 +53,7 @@
           <!-- Type badge -->
           <td class="px-3 py-3">
             <span [class]="'text-[10px] font-bold px-2.5 py-1 rounded-full uppercase ' +
-              (coupon.type === 'percent'
+              (coupon.type === 'percentage'
                 ? 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400'
                 : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400')">
               {{ typeLabel(coupon.type) }}
@@ -62,7 +62,7 @@
           <!-- Value -->
           <td class="px-3 py-3">
             <span class="text-xs font-semibold text-gray-800 dark:text-gray-200">
-              @if (coupon.type === 'percent') {
+              @if (coupon.type === 'percentage') {
                 {{ coupon.value }}%
               } @else {
                 ${{ coupon.value }}
@@ -156,15 +156,15 @@
         <select name="type" [(ngModel)]="form.type"
           class="w-full px-3 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700
                  text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 cursor-pointer">
-          <option value="percent">Percent Off</option>
-          <option value="flat">Flat Discount</option>
+          <option value="percentage">Percent Off</option>
+          <option value="fixed">Fixed Discount</option>
         </select>
       </div>
 
       <!-- Value -->
       <div>
         <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
-          Value {{ form.type === 'percent' ? '(%)' : '($)' }}
+          Value {{ form.type === 'percentage' ? '(%)' : '($)' }}
         </label>
         <input type="number" name="value" [(ngModel)]="form.value" required min="0"
           class="w-full px-3 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700

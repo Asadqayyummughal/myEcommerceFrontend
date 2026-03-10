@@ -4,6 +4,11 @@
     <h1 class="text-2xl font-black text-gray-900 dark:text-white">Products</h1>
     <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">{{ total }} products total</p>
   </div>
+  <button (click)="openCreate()"
+    class="flex items-center gap-2 px-4 py-2.5 text-sm font-semibold bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors">
+    <mat-icon style="font-size:18px;width:18px;height:18px;line-height:18px">add</mat-icon>
+    Add Product
+  </button>
 </div>
 
 <!-- Toolbar -->
@@ -61,7 +66,6 @@
         }
         @for (product of products; track product._id) {
         <tr class="border-b border-gray-50 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
-          <!-- Product info -->
           <td class="px-5 py-3">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-700 shrink-0">
@@ -102,6 +106,10 @@
           </td>
           <td class="px-3 py-3">
             <div class="flex items-center gap-1">
+              <button (click)="openEdit(product)"
+                class="p-1.5 rounded-lg text-gray-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors">
+                <mat-icon style="font-size:16px;width:16px;height:16px;line-height:16px">edit</mat-icon>
+              </button>
               <button (click)="deleteProduct(product)"
                 class="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors">
                 <mat-icon style="font-size:16px;width:16px;height:16px;line-height:16px">delete</mat-icon>
@@ -117,35 +125,169 @@
   <!-- Pagination -->
   @if (totalPages > 1) {
   <div class="flex items-center justify-between px-5 py-3 border-t border-gray-100 dark:border-gray-700">
-    <span class="text-xs text-gray-500 dark:text-gray-400">
-      Page {{ currentPage }} of {{ totalPages }} · {{ total }} total
-    </span>
+    <span class="text-xs text-gray-500 dark:text-gray-400">Page {{ currentPage }} of {{ totalPages }} · {{ total }} total</span>
     <div class="flex items-center gap-1">
       <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1"
         class="px-3 py-1.5 text-xs rounded-lg border border-gray-200 dark:border-gray-600 disabled:opacity-40
-               hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 transition-colors">
-        ‹
-      </button>
+               hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 transition-colors">‹</button>
       @for (page of pageNumbers; track $index) {
-      @if (page === '...') {
-      <span class="px-2 text-gray-400">…</span>
-      } @else {
-      <button (click)="goToPage(+page)"
-        [class]="'px-3 py-1.5 text-xs rounded-lg border transition-colors ' +
-          (page === currentPage
-            ? 'bg-blue-600 border-blue-600 text-white'
-            : 'border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400')">
-        {{ page }}
-      </button>
-      }
+        @if (page === '...') {
+        <span class="px-2 text-gray-400">…</span>
+        } @else {
+        <button (click)="goToPage(+page)"
+          [class]="'px-3 py-1.5 text-xs rounded-lg border transition-colors ' +
+            (page === currentPage ? 'bg-blue-600 border-blue-600 text-white' : 'border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400')">
+          {{ page }}
+        </button>
+        }
       }
       <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages"
         class="px-3 py-1.5 text-xs rounded-lg border border-gray-200 dark:border-gray-600 disabled:opacity-40
-               hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 transition-colors">
-        ›
-      </button>
+               hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 transition-colors">›</button>
     </div>
   </div>
   }
   }
 </div>
+
+<!-- Add / Edit Modal -->
+@if (showModal) {
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" (click)="closeModal()">
+  <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
+       (click)="$event.stopPropagation()">
+
+    <!-- Modal header -->
+    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-700">
+      <h2 class="text-base font-black text-gray-900 dark:text-white">
+        {{ editingProduct ? 'Edit Product' : 'Add Product' }}
+      </h2>
+      <button (click)="closeModal()" class="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 transition-colors">
+        <mat-icon style="font-size:18px;width:18px;height:18px;line-height:18px">close</mat-icon>
+      </button>
+    </div>
+
+    <!-- Form -->
+    <div class="p-6 space-y-4">
+
+      <!-- Title -->
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Title <span class="text-red-500">*</span></label>
+        <input [(ngModel)]="form.title" placeholder="Product title"
+          class="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700
+                 text-gray-800 dark:text-gray-200 focus:outline-none focus:border-blue-500 transition-colors" />
+      </div>
+
+      <!-- Description -->
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Description</label>
+        <textarea [(ngModel)]="form.description" rows="3" placeholder="Product description"
+          class="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700
+                 text-gray-800 dark:text-gray-200 focus:outline-none focus:border-blue-500 transition-colors resize-none"></textarea>
+      </div>
+
+      <!-- Price + Sale Price -->
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Price ($) <span class="text-red-500">*</span></label>
+          <input [(ngModel)]="form.price" type="number" min="0" step="0.01" placeholder="0.00"
+            class="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700
+                   text-gray-800 dark:text-gray-200 focus:outline-none focus:border-blue-500 transition-colors" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Sale Price ($)</label>
+          <input [(ngModel)]="form.salePrice" type="number" min="0" step="0.01" placeholder="Optional"
+            class="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700
+                   text-gray-800 dark:text-gray-200 focus:outline-none focus:border-blue-500 transition-colors" />
+        </div>
+      </div>
+
+      <!-- Stock + SKU -->
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Stock <span class="text-red-500">*</span></label>
+          <input [(ngModel)]="form.stock" type="number" min="0" placeholder="0"
+            class="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700
+                   text-gray-800 dark:text-gray-200 focus:outline-none focus:border-blue-500 transition-colors" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">SKU</label>
+          <input [(ngModel)]="form.sku" placeholder="Optional"
+            class="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700
+                   text-gray-800 dark:text-gray-200 focus:outline-none focus:border-blue-500 transition-colors" />
+        </div>
+      </div>
+
+      <!-- Brand + Tags -->
+      <div class="grid grid-cols-2 gap-3">
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Brand</label>
+          <input [(ngModel)]="form.brand" placeholder="Brand name"
+            class="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700
+                   text-gray-800 dark:text-gray-200 focus:outline-none focus:border-blue-500 transition-colors" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Tags (comma-separated)</label>
+          <input [(ngModel)]="form.tags" placeholder="tag1, tag2"
+            class="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700
+                   text-gray-800 dark:text-gray-200 focus:outline-none focus:border-blue-500 transition-colors" />
+        </div>
+      </div>
+
+      <!-- Images -->
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-2">Product Images</label>
+
+        <!-- Previews grid -->
+        @if (imagePreviews.length > 0) {
+        <div class="flex flex-wrap gap-2 mb-3">
+          @for (img of imagePreviews; track $index) {
+          <div class="relative w-20 h-20 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-600 group">
+            <img [src]="img.previewUrl" alt="preview" class="w-full h-full object-cover" />
+            <button type="button" (click)="removeImage($index)"
+              class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+              <mat-icon class="text-white" style="font-size:18px;width:18px;height:18px;line-height:18px">close</mat-icon>
+            </button>
+            @if (!img.isExisting) {
+            <span class="absolute bottom-0 left-0 right-0 text-[8px] font-bold text-center bg-blue-600 text-white py-0.5">NEW</span>
+            }
+          </div>
+          }
+        </div>
+        }
+
+        <!-- Drop zone / file picker -->
+        <label
+          class="flex flex-col items-center justify-center gap-2 w-full h-24 border-2 border-dashed border-gray-200 dark:border-gray-600
+                 rounded-xl cursor-pointer hover:border-blue-400 hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition-colors">
+          <mat-icon class="text-gray-400" style="font-size:28px;width:28px;height:28px;line-height:28px">add_photo_alternate</mat-icon>
+          <span class="text-xs text-gray-500 dark:text-gray-400">Click to add images</span>
+          <input type="file" accept="image/*" multiple class="hidden" (change)="onFilesSelected($event)" />
+        </label>
+      </div>
+
+      <!-- Active toggle -->
+      <label class="flex items-center gap-3 cursor-pointer select-none">
+        <input type="checkbox" [(ngModel)]="form.isActive" class="w-4 h-4 rounded accent-blue-600" />
+        <span class="text-sm text-gray-700 dark:text-gray-300 font-medium">Active (visible in store)</span>
+      </label>
+    </div>
+
+    <!-- Footer -->
+    <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100 dark:border-gray-700">
+      <button (click)="closeModal()"
+        class="px-4 py-2 text-sm font-semibold text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-600
+               rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+        Cancel
+      </button>
+      <button (click)="save()" [disabled]="saving"
+        class="flex items-center gap-2 px-5 py-2 text-sm font-semibold bg-blue-600 text-white rounded-xl
+               hover:bg-blue-700 disabled:opacity-60 transition-colors">
+        @if (saving) {
+        <mat-icon class="animate-spin" style="font-size:16px;width:16px;height:16px;line-height:16px">refresh</mat-icon>
+        }
+        {{ uploadingImages ? 'Uploading…' : saving ? 'Saving…' : (editingProduct ? 'Update' : 'Create') }}
+      </button>
+    </div>
+  </div>
+</div>
+}
