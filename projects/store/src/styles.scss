@@ -74,19 +74,6 @@ body {
   font-family: Roboto, 'Helvetica Neue', sans-serif;
 }
 
-/* Fix unwanted internal vertical line in outline form-field (often from Tailwind) */
-.mat-mdc-form-field.mat-mdc-form-field-appearance-outline .mdc-text-field__input,
-.mat-mdc-form-field.mat-mdc-form-field-appearance-outline .mat-mdc-form-field-infix {
-  border-left: none !important;
-  border-inline-start: none !important;
-}
-
-/* More aggressive version if above doesn't work */
-.mat-mdc-form-field-appearance-outline .mdc-text-field--outlined .mdc-text-field__input {
-  border-left: 0 !important;
-}
-
-/* Sometimes helps to reset on the prefix wrapper too */
-.mat-mdc-form-field-appearance-outline .mat-mdc-text-field-wrapper {
-  border-left: none !important;
+.mdc-notched-outline__notch {
+  border-right: none !important;
 }

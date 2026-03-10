@@ -14,6 +14,7 @@ export const routes: Routes = [
       { path: 'orders', loadComponent: () => import('./pages/orders/orders').then(m => m.Orders) },
       { path: 'users', loadComponent: () => import('./pages/users/users').then(m => m.Users) },
       { path: 'categories', loadComponent: () => import('./pages/categories/categories').then(m => m.Categories) },
+      { path: 'coupons', loadComponent: () => import('./pages/coupons/coupons').then(m => m.Coupons) },
     ]
   },
   { path: '**', redirectTo: '' }

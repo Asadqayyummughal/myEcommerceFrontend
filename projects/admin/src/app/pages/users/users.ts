@@ -13,17 +13,20 @@ import { AdminService } from '../../services/admin.service';
 })
 export class Users implements OnInit {
   users: any[] = [];
+  roles: any[] = [];
   loading = true;
   searchQuery = '';
   currentPage = 1;
   pageSize = 15;
   total = 0;
   totalPages = 1;
+  assigningId: string | null = null;
 
   constructor(private adminService: AdminService, private snackBar: MatSnackBar) {}
 
   ngOnInit(): void {
     this.loadUsers();
+    this.loadRoles();
   }
 
   loadUsers(): void {
@@ -40,6 +43,16 @@ export class Users implements OnInit {
     });
   }
 
+  loadRoles(): void {
+    this.adminService.getRoles().subscribe({
+      next: (res: any) => {
+        const d = res.data ?? res;
+        this.roles = Array.isArray(d) ? d : [];
+      },
+      error: () => { this.roles = []; },
+    });
+  }
+
   onSearch(): void {
     this.currentPage = 1;
     this.loadUsers();
@@ -49,6 +62,39 @@ export class Users implements OnInit {
     if (page < 1 || page > this.totalPages) return;
     this.currentPage = page;
     this.loadUsers();
+  }
+
+  assignRole(user: any, roleId: string): void {
+    if (!roleId) return;
+    this.assigningId = user._id;
+    this.adminService.assignRole(user._id, roleId).subscribe({
+      next: () => {
+        user.role = this.roles.find(r => r._id === roleId)?.name ?? user.role;
+        this.snackBar.open('Role assigned successfully', 'Close', { duration: 3000 });
+        this.assigningId = null;
+      },
+      error: () => {
+        this.snackBar.open('Failed to assign role', 'Close', { duration: 3000, panelClass: ['snack-error'] });
+        this.assigningId = null;
+      },
+    });
+  }
+
+  toggleBan(user: any): void {
+    const action$ = user.isActive !== false
+      ? this.adminService.banUser(user._id)
+      : this.adminService.activateUser(user._id);
+
+    action$.subscribe({
+      next: () => {
+        user.isActive = user.isActive === false;
+        const msg = user.isActive ? 'User activated' : 'User banned';
+        this.snackBar.open(msg, 'Close', { duration: 3000 });
+      },
+      error: () => {
+        this.snackBar.open('Action failed', 'Close', { duration: 3000, panelClass: ['snack-error'] });
+      },
+    });
   }
 
   initials(name: string): string {

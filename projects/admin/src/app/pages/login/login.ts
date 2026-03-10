@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { AuthService } from '@core/services/auth.service';
+import { AuthUser } from '@core/services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -18,7 +19,10 @@ export class Login {
   error = '';
   showPassword = false;
 
-  constructor(private authService: AuthService, private router: Router) {
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+  ) {
     if (this.authService.isLoggedIn) this.router.navigate(['/dashboard']);
   }
 
@@ -28,15 +32,29 @@ export class Login {
     this.error = '';
     this.authService.login(this.email, this.password).subscribe({
       next: (res: any) => {
-        const role = res.data?.user?.role ?? res.user?.role;
-        if (role !== 'admin' && role !== 'support') {
-          this.authService.logout().subscribe();
-          this.error = 'Access denied. Admin credentials required.';
+        if (!res.success) {
+          this.error = 'Login failed.';
           this.loading = false;
           return;
         }
-        this.authService.scheduleAutoLogout();
-        this.router.navigate(['/dashboard']);
+        this.authService.getUserProfile().subscribe({
+          next: (profileRes: any) => {
+            const roleRaw = profileRes.data?.role;
+            const role = typeof roleRaw === 'object' ? roleRaw?.name : roleRaw;
+            if (role !== 'admin' && role !== 'support') {
+              this.authService.logout().subscribe();
+              this.error = 'Access denied. Admin credentials required.';
+              this.loading = false;
+              return;
+            }
+            this.authService.scheduleAutoLogout();
+            this.router.navigate(['/dashboard']);
+          },
+          error: () => {
+            this.error = 'Could not verify permissions. Please try again.';
+            this.loading = false;
+          },
+        });
       },
       error: (err: any) => {
         this.error = err?.error?.message ?? 'Invalid credentials.';

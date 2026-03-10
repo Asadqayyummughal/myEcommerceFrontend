@@ -119,9 +119,7 @@ export class AuthService {
 
   logout(): Observable<any> {
     const refreshToken = localStorage.getItem(this.REFRESH_KEY);
-    return this.api.post('auth/logout', { refreshToken }).pipe(
-      tap(() => this.clearSession()),
-    );
+    return this.api.post('auth/logout', { refreshToken }).pipe(tap(() => this.clearSession()));
   }
 
   clearSession(): void {
@@ -169,5 +167,8 @@ export class AuthService {
     } catch {
       return null;
     }
+  }
+  getUserProfile() {
+    return this.api.get('users/profile');
   }
 }

@@ -38,7 +38,29 @@ export class AdminService {
     return this.api.put(`products/${id}`, { isActive });
   }
 
-  getCategories(): Observable<any> {
-    return this.api.get('product/categories');
-  }
+  getCategories(): Observable<any> { return this.api.get('product/categories'); }
+  createCategory(payload: { name: string; description?: string }): Observable<any> { return this.api.post('product/categories', payload); }
+  updateCategory(id: string, payload: any): Observable<any> { return this.api.put(`product/categories/categories/${id}`, payload); }
+  deleteCategory(id: string): Observable<any> { return this.api.delete(`product/categories/categories/${id}`); }
+  getSubcategories(): Observable<any> { return this.api.get('product/subcategories'); }
+  createSubcategory(payload: { name: string; category: string }): Observable<any> { return this.api.post('product/subcategories', payload); }
+  deleteSubcategory(id: string): Observable<any> { return this.api.delete(`product/subcategories/${id}`); }
+
+  getCoupons(): Observable<any> { return this.api.get('admin/coupons'); }
+  createCoupon(payload: any): Observable<any> { return this.api.post('admin/coupons', payload); }
+  updateCoupon(id: string, payload: any): Observable<any> { return this.api.put(`admin/coupons/${id}`, payload); }
+  deleteCoupon(id: string): Observable<any> { return this.api.delete(`admin/coupons/${id}`); }
+
+  getRoles(): Observable<any> { return this.api.get('admin/roles'); }
+  assignRole(userId: string, roleId: string): Observable<any> { return this.api.put('admin/roles/assignRole', { userId, roleId }); }
+  banUser(id: string): Observable<any> { return this.api.put(`admin/users/${id}`, { isActive: false }); }
+  activateUser(id: string): Observable<any> { return this.api.put(`admin/users/${id}`, { isActive: true }); }
+
+  getVendors(status?: string): Observable<any> { return this.api.get('vendor/getVendorsByStatus', status ? { status } : {}); }
+  approveVendor(vendorId: string): Observable<any> { return this.api.put(`vendor/${vendorId}/approve`, {}); }
+
+  createShipment(payload: any): Observable<any> { return this.api.post('admin/shipments', payload); }
+  markShipped(id: string): Observable<any> { return this.api.put(`admin/shipments/${id}/ship`, {}); }
+  markDelivered(id: string): Observable<any> { return this.api.put(`admin/shipments/${id}/deliver`, {}); }
+  sendGlobalNotification(payload: { title: string; message: string }): Observable<any> { return this.api.post('admin/notifications/sendGlobalNotifications', payload); }
 }

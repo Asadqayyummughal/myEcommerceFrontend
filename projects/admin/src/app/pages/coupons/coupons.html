@@ -1,0 +1,214 @@
+<!-- Header -->
+<div class="mb-6 flex items-center justify-between">
+  <div>
+    <h1 class="text-2xl font-black text-gray-900 dark:text-white">Coupons</h1>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Manage discount codes and promotions</p>
+  </div>
+  <button (click)="openCreate()"
+    class="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm">
+    <mat-icon style="font-size:18px;width:18px;height:18px;line-height:18px">add</mat-icon>
+    Create Coupon
+  </button>
+</div>
+
+<!-- Table card -->
+<div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+  @if (loading) {
+  <div class="p-8 space-y-3">
+    @for (s of [1,2,3,4]; track s) {
+    <div class="h-10 bg-gray-100 dark:bg-gray-700 rounded-xl animate-pulse"></div>
+    }
+  </div>
+  } @else {
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b border-gray-100 dark:border-gray-700">
+          <th class="text-left text-xs text-gray-400 font-medium px-5 py-3">Code</th>
+          <th class="text-left text-xs text-gray-400 font-medium px-3 py-3">Type</th>
+          <th class="text-left text-xs text-gray-400 font-medium px-3 py-3">Value</th>
+          <th class="text-left text-xs text-gray-400 font-medium px-3 py-3">Min Order</th>
+          <th class="text-left text-xs text-gray-400 font-medium px-3 py-3">Max Uses</th>
+          <th class="text-left text-xs text-gray-400 font-medium px-3 py-3">Expires</th>
+          <th class="text-left text-xs text-gray-400 font-medium px-3 py-3">Status</th>
+          <th class="text-left text-xs text-gray-400 font-medium px-3 py-3">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @if (coupons.length === 0) {
+        <tr>
+          <td colspan="8" class="text-center py-14">
+            <mat-icon class="text-gray-300 dark:text-gray-600" style="font-size:40px;width:40px;height:40px;line-height:40px">local_offer</mat-icon>
+            <p class="text-gray-400 text-sm mt-2">No coupons found</p>
+            <button (click)="openCreate()" class="mt-3 text-xs text-blue-600 hover:underline font-medium">Create your first coupon</button>
+          </td>
+        </tr>
+        }
+        @for (coupon of coupons; track coupon._id) {
+        <tr class="border-b border-gray-50 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
+          <!-- Code -->
+          <td class="px-5 py-3">
+            <span class="font-mono font-bold text-gray-900 dark:text-white tracking-wider">{{ coupon.code }}</span>
+          </td>
+          <!-- Type badge -->
+          <td class="px-3 py-3">
+            <span [class]="'text-[10px] font-bold px-2.5 py-1 rounded-full uppercase ' +
+              (coupon.type === 'percent'
+                ? 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400'
+                : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400')">
+              {{ typeLabel(coupon.type) }}
+            </span>
+          </td>
+          <!-- Value -->
+          <td class="px-3 py-3">
+            <span class="text-xs font-semibold text-gray-800 dark:text-gray-200">
+              @if (coupon.type === 'percent') {
+                {{ coupon.value }}%
+              } @else {
+                ${{ coupon.value }}
+              }
+            </span>
+          </td>
+          <!-- Min Order -->
+          <td class="px-3 py-3">
+            <span class="text-xs text-gray-500 dark:text-gray-400">
+              @if (coupon.minOrderAmount) { ${{ coupon.minOrderAmount }} } @else { — }
+            </span>
+          </td>
+          <!-- Max Uses -->
+          <td class="px-3 py-3">
+            <span class="text-xs text-gray-500 dark:text-gray-400">
+              @if (coupon.maxUses) { {{ coupon.maxUses }} } @else { Unlimited }
+            </span>
+          </td>
+          <!-- Expires -->
+          <td class="px-3 py-3">
+            @if (coupon.expiresAt) {
+            <span [class]="'text-xs font-medium ' + (isExpired(coupon.expiresAt) ? 'text-red-500' : 'text-gray-500 dark:text-gray-400')">
+              {{ coupon.expiresAt | date:'MMM d, y' }}
+            </span>
+            } @else {
+            <span class="text-xs text-gray-400">No expiry</span>
+            }
+          </td>
+          <!-- Status -->
+          <td class="px-3 py-3">
+            @if (!coupon.expiresAt || !isExpired(coupon.expiresAt)) {
+            <span class="text-[10px] font-bold px-2.5 py-1 rounded-full uppercase bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+              Active
+            </span>
+            } @else {
+            <span class="text-[10px] font-bold px-2.5 py-1 rounded-full uppercase bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400">
+              Expired
+            </span>
+            }
+          </td>
+          <!-- Actions -->
+          <td class="px-3 py-3">
+            <div class="flex items-center gap-1">
+              <button (click)="openEdit(coupon)" title="Edit"
+                class="p-1.5 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 text-gray-400 hover:text-blue-600 transition-colors">
+                <mat-icon style="font-size:16px;width:16px;height:16px;line-height:16px">edit</mat-icon>
+              </button>
+              <button (click)="deleteCoupon(coupon)" title="Delete"
+                class="p-1.5 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/20 text-gray-400 hover:text-red-600 transition-colors">
+                <mat-icon style="font-size:16px;width:16px;height:16px;line-height:16px">delete</mat-icon>
+              </button>
+            </div>
+          </td>
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  }
+</div>
+
+<!-- Modal -->
+@if (showModal) {
+<div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center" (click)="closeModal()">
+  <div class="max-w-md w-full mx-4 bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-2xl" (click)="$event.stopPropagation()">
+    <!-- Modal header -->
+    <div class="flex items-center justify-between mb-5">
+      <h2 class="text-lg font-bold text-gray-900 dark:text-white">
+        {{ editingCoupon ? 'Edit Coupon' : 'Create Coupon' }}
+      </h2>
+      <button (click)="closeModal()" class="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-400 hover:text-gray-600 transition-colors">
+        <mat-icon style="font-size:20px;width:20px;height:20px;line-height:20px">close</mat-icon>
+      </button>
+    </div>
+
+    <!-- Form -->
+    <form (ngSubmit)="save()" #couponForm="ngForm" class="space-y-4">
+      <!-- Code -->
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Code</label>
+        <input type="text" name="code" [(ngModel)]="form.code" required
+          (input)="form.code = form.code.toUpperCase()"
+          placeholder="e.g. SAVE20"
+          class="w-full px-3 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700
+                 text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-blue-500 font-mono tracking-widest uppercase" />
+      </div>
+
+      <!-- Type -->
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Type</label>
+        <select name="type" [(ngModel)]="form.type"
+          class="w-full px-3 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700
+                 text-gray-900 dark:text-white focus:outline-none focus:border-blue-500 cursor-pointer">
+          <option value="percent">Percent Off</option>
+          <option value="flat">Flat Discount</option>
+        </select>
+      </div>
+
+      <!-- Value -->
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">
+          Value {{ form.type === 'percent' ? '(%)' : '($)' }}
+        </label>
+        <input type="number" name="value" [(ngModel)]="form.value" required min="0"
+          class="w-full px-3 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700
+                 text-gray-900 dark:text-white focus:outline-none focus:border-blue-500" />
+      </div>
+
+      <!-- Min Order Amount -->
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Min Order Amount ($)</label>
+        <input type="number" name="minOrderAmount" [(ngModel)]="form.minOrderAmount" min="0"
+          class="w-full px-3 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700
+                 text-gray-900 dark:text-white focus:outline-none focus:border-blue-500" />
+      </div>
+
+      <!-- Max Uses -->
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Max Uses <span class="text-gray-400 font-normal">(0 = unlimited)</span></label>
+        <input type="number" name="maxUses" [(ngModel)]="form.maxUses" min="0"
+          class="w-full px-3 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700
+                 text-gray-900 dark:text-white focus:outline-none focus:border-blue-500" />
+      </div>
+
+      <!-- Expires At -->
+      <div>
+        <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Expires At <span class="text-gray-400 font-normal">(optional)</span></label>
+        <input type="date" name="expiresAt" [(ngModel)]="form.expiresAt"
+          class="w-full px-3 py-2 text-sm rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700
+                 text-gray-900 dark:text-white focus:outline-none focus:border-blue-500" />
+      </div>
+
+      <!-- Actions -->
+      <div class="flex gap-3 pt-2">
+        <button type="button" (click)="closeModal()"
+          class="flex-1 px-4 py-2 text-sm font-semibold rounded-xl border border-gray-200 dark:border-gray-600
+                 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+          Cancel
+        </button>
+        <button type="submit" [disabled]="saving || !couponForm.valid"
+          class="flex-1 px-4 py-2 text-sm font-semibold rounded-xl bg-blue-600 hover:bg-blue-700 text-white
+                 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+          @if (saving) { Saving… } @else { {{ editingCoupon ? 'Save Changes' : 'Create Coupon' }} }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+}
