@@ -25,10 +25,10 @@ export class Login {
     this.loading = true;
     this.error = '';
 
+    // login() internally calls getUserProfile() — role is a populated object
     this.auth.login(this.email, this.password).subscribe({
-      next: (res: any) => {
-        const roleRaw = this.auth.currentUser?.role;
-        const role = typeof roleRaw === 'object' ? (roleRaw as any)?.name : roleRaw;
+      next: () => {
+        const role = this.auth.currentUser?.role?.name;
         if (role === 'vendor') {
           this.router.navigate(['/dashboard']);
         } else {

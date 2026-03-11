@@ -38,14 +38,14 @@ export class Login {
     private route: ActivatedRoute,
   ) {
     this.form = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      email:    ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]],
     });
     this.sessionExpiredBanner =
       this.route.snapshot.queryParamMap.get('reason') === 'session_expired';
   }
 
-  get email() { return this.form.get('email')!; }
+  get email()    { return this.form.get('email')!; }
   get password() { return this.form.get('password')!; }
 
   onSubmit(): void {

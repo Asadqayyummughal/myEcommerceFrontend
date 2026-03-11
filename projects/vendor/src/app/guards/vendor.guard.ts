@@ -10,11 +10,9 @@ export const vendorGuard: CanActivateFn = () => {
     return router.createUrlTree(['/login']);
   }
 
-  const roleRaw = auth.currentUser?.role;
-  const role = typeof roleRaw === 'object' ? (roleRaw as any)?.name : roleRaw;
-
-  if (role !== 'vendor') {
+  if (auth.currentUser?.role?.name !== 'vendor') {
     return router.createUrlTree(['/apply']);
   }
+
   return true;
 };

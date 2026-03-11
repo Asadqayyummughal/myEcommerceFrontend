@@ -19,8 +19,8 @@ export class Categories implements OnInit {
   showSubModal = false;
   editingCategory: any = null;
   saving = false;
-  form = { name: '', description: '' };
-  subForm = { name: '', category: '' };
+  form = { name: '', description: '', slug: '' };
+  subForm = { name: '', category: '', slug: '' };
 
   readonly iconColors = [
     'bg-blue-100 text-blue-600',
@@ -71,13 +71,13 @@ export class Categories implements OnInit {
   }
 
   openCreate(): void {
-    this.form = { name: '', description: '' };
+    this.form = { name: '', description: '', slug: '' };
     this.editingCategory = null;
     this.showModal = true;
   }
 
   openEdit(cat: any): void {
-    this.form = { name: cat.name ?? '', description: cat.description ?? '' };
+    this.form = { name: cat.name ?? '', description: cat.description ?? '', slug: cat.slug ?? '' };
     this.editingCategory = cat;
     this.showModal = true;
   }
@@ -92,7 +92,8 @@ export class Categories implements OnInit {
       return;
     }
     this.saving = true;
-    const payload = { name: this.form.name.trim(), description: this.form.description.trim() };
+    const payload: any = { name: this.form.name.trim(), description: this.form.description.trim() };
+    if (this.form.slug.trim()) payload.slug = this.form.slug.trim();
 
     if (this.editingCategory) {
       this.adminService.updateCategory(this.editingCategory._id, payload).subscribe({
@@ -136,8 +137,26 @@ export class Categories implements OnInit {
     });
   }
 
+  autoSlug(): void {
+    if (!this.editingCategory || !this.form.slug) {
+      this.form.slug = this.form.name
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-');
+    }
+  }
+
+  autoSubSlug(): void {
+    this.subForm.slug = this.subForm.name
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-');
+  }
+
   openSubCreate(cat: any): void {
-    this.subForm = { name: '', category: cat._id };
+    this.subForm = { name: '', category: cat._id, slug: '' };
     this.showSubModal = true;
   }
 
@@ -151,7 +170,9 @@ export class Categories implements OnInit {
       return;
     }
     this.saving = true;
-    this.adminService.createSubcategory({ name: this.subForm.name.trim(), category: this.subForm.category }).subscribe({
+    const subPayload: any = { name: this.subForm.name.trim(), category: this.subForm.category };
+    if (this.subForm.slug.trim()) subPayload.slug = this.subForm.slug.trim();
+    this.adminService.createSubcategory(subPayload).subscribe({
       next: () => {
         this.snackBar.open('Subcategory created', 'Close', { duration: 3000 });
         this.showSubModal = false;

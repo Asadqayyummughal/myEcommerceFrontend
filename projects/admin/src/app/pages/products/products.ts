@@ -6,21 +6,37 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { AdminService } from '../../services/admin.service';
 import { Product } from '@models/product.model';
 
+interface AttributeRow { key: string; value: string; }
+
+interface VariantForm {
+  sku: string;
+  price: number | null;
+  stock: number | null;
+  reservedStock: number;
+  attributes: AttributeRow[];
+}
+
 interface ProductForm {
   title: string;
+  slug: string;
   description: string;
+  shortDescription: string;
   price: number | null;
   salePrice: number | null;
-  stock: number | null;
+  currency: string;
   sku: string;
   brand: string;
   tags: string;
+  stock: number | null;
+  categories: string[];
+  subcategories: string[];
+  variants: VariantForm[];
   isActive: boolean;
 }
 
 interface ImagePreview {
-  file: File | null;   // null = existing remote image
-  previewUrl: string;  // blob URL or server path
+  file: File | null;
+  previewUrl: string;
   isExisting: boolean;
 }
 
@@ -32,6 +48,8 @@ interface ImagePreview {
 })
 export class Products implements OnInit {
   products: Product[] = [];
+  categories: any[] = [];
+  subcategories: any[] = [];
   loading = true;
   searchQuery = '';
   currentPage = 1;
@@ -50,12 +68,24 @@ export class Products implements OnInit {
   // image state
   imagePreviews: ImagePreview[] = [];
 
+  readonly currencies = ['USD', 'EUR', 'GBP', 'CAD', 'AUD', 'INR', 'PKR'];
+
   constructor(private adminService: AdminService, private snackBar: MatSnackBar) {}
 
-  ngOnInit(): void { this.loadProducts(); }
+  ngOnInit(): void {
+    this.loadProducts();
+    this.loadCategories();
+    this.loadSubcategories();
+  }
 
   private emptyForm(): ProductForm {
-    return { title: '', description: '', price: null, salePrice: null, stock: null, sku: '', brand: '', tags: '', isActive: true };
+    return {
+      title: '', slug: '', description: '', shortDescription: '',
+      price: null, salePrice: null, currency: 'USD',
+      sku: '', brand: '', tags: '', stock: null,
+      categories: [], subcategories: [],
+      variants: [], isActive: true,
+    };
   }
 
   loadProducts(): void {
@@ -72,12 +102,113 @@ export class Products implements OnInit {
     });
   }
 
+  loadCategories(): void {
+    this.adminService.getCategories().subscribe({
+      next: (res: any) => { this.categories = res.data ?? res.categories ?? res ?? []; },
+      error: () => { this.categories = []; },
+    });
+  }
+
+  loadSubcategories(): void {
+    this.adminService.getSubcategories().subscribe({
+      next: (res: any) => { this.subcategories = res.data ?? res.subcategories ?? res ?? []; },
+      error: () => { this.subcategories = []; },
+    });
+  }
+
   onSearch(): void { this.currentPage = 1; this.loadProducts(); }
 
   goToPage(page: number): void {
     if (page < 1 || page > this.totalPages) return;
     this.currentPage = page;
     this.loadProducts();
+  }
+
+  // ── Slug auto-generate ────────────────────────────────
+  autoSlug(): void {
+    if (!this.editingProduct || !this.form.slug) {
+      this.form.slug = this.form.title
+        .toLowerCase().trim()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-');
+    }
+  }
+
+  // ── Categories ────────────────────────────────────────
+  toggleCategory(id: string): void {
+    const idx = this.form.categories.indexOf(id);
+    if (idx === -1) {
+      this.form.categories.push(id);
+    } else {
+      this.form.categories.splice(idx, 1);
+      // deselect subcategories that belonged to this category
+      const orphaned = this.subcategories
+        .filter(s => (s.category?._id ?? s.category) === id)
+        .map(s => s._id);
+      this.form.subcategories = this.form.subcategories.filter(sid => !orphaned.includes(sid));
+    }
+  }
+
+  isCategorySelected(id: string): boolean {
+    return this.form.categories.includes(id);
+  }
+
+  // ── Subcategories ─────────────────────────────────────
+  /** Returns subcategories whose parent category is currently selected */
+  visibleSubcategories(): any[] {
+    return this.subcategories.filter(s =>
+      this.form.categories.includes(s.category?._id ?? s.category)
+    );
+  }
+
+  toggleSubcategory(id: string): void {
+    const idx = this.form.subcategories.indexOf(id);
+    if (idx === -1) this.form.subcategories.push(id);
+    else this.form.subcategories.splice(idx, 1);
+  }
+
+  isSubcategorySelected(id: string): boolean {
+    return this.form.subcategories.includes(id);
+  }
+
+  subcategoriesForCategory(catId: string): any[] {
+    return this.subcategories.filter(s => (s.category?._id ?? s.category) === catId);
+  }
+
+  parentCategoryName(sub: any): string {
+    if (sub.category?.name) return sub.category.name;
+    return this.categories.find(c => c._id === sub.category)?.name ?? '';
+  }
+
+  // ── Variants ──────────────────────────────────────────
+  addVariant(): void {
+    this.form.variants.push({ sku: '', price: null, stock: null, reservedStock: 0, attributes: [] });
+  }
+
+  removeVariant(i: number): void {
+    this.form.variants.splice(i, 1);
+  }
+
+  addAttribute(variantIndex: number): void {
+    this.form.variants[variantIndex].attributes.push({ key: '', value: '' });
+  }
+
+  removeAttribute(variantIndex: number, attrIndex: number): void {
+    this.form.variants[variantIndex].attributes.splice(attrIndex, 1);
+  }
+
+  private buildVariantsPayload(): any[] {
+    return this.form.variants.map(v => {
+      const attrs: Record<string, string> = {};
+      v.attributes.forEach(a => { if (a.key.trim()) attrs[a.key.trim()] = a.value.trim(); });
+      return {
+        sku: v.sku.trim(),
+        price: v.price !== null ? Number(v.price) : undefined,
+        stock: Number(v.stock ?? 0),
+        reservedStock: Number(v.reservedStock),
+        attributes: Object.keys(attrs).length > 0 ? attrs : undefined,
+      };
+    }).filter(v => v.sku);
   }
 
   // ── Modal ────────────────────────────────────────────
@@ -91,17 +222,28 @@ export class Products implements OnInit {
   openEdit(product: Product): void {
     this.editingProduct = product;
     this.form = {
-      title:       product.title ?? '',
-      description: product.description ?? '',
-      price:       product.price ?? null,
-      salePrice:   product.salePrice ?? null,
-      stock:       product.stock ?? null,
-      sku:         product.sku ?? '',
-      brand:       product.brand ?? '',
-      tags:        (product.tags ?? []).join(', '),
-      isActive:    product.isActive ?? true,
+      title:            product.title ?? '',
+      slug:             (product as any).slug ?? '',
+      description:      product.description ?? '',
+      shortDescription: product.shortDescription ?? '',
+      price:            product.price ?? null,
+      salePrice:        product.salePrice ?? null,
+      currency:         product.currency ?? 'USD',
+      sku:              product.sku ?? '',
+      brand:            product.brand ?? '',
+      tags:             (product.tags ?? []).join(', '),
+      stock:            product.stock ?? null,
+      categories:       (product.categories ?? []).map((c: any) => c?._id ?? c).filter(Boolean),
+      subcategories:    ((product as any).subcategories ?? []).map((s: any) => s?._id ?? s).filter(Boolean),
+      variants:         (product.variants ?? []).map(v => ({
+        sku:          v.sku ?? '',
+        price:        v.price ?? null,
+        stock:        v.stock ?? null,
+        reservedStock: v.reservedStock ?? 0,
+        attributes:   Object.entries(v.attributes ?? {}).map(([key, value]) => ({ key, value })),
+      })),
+      isActive: product.isActive ?? true,
     };
-    // Load existing images as previews
     this.imagePreviews = (product.images ?? []).map(path => ({
       file: null,
       previewUrl: path.startsWith('http') ? path : this.apiUrl + path,
@@ -111,7 +253,6 @@ export class Products implements OnInit {
   }
 
   closeModal(): void {
-    // revoke blob URLs to prevent memory leaks
     this.imagePreviews.filter(p => !p.isExisting).forEach(p => URL.revokeObjectURL(p.previewUrl));
     this.showModal = false;
   }
@@ -122,13 +263,9 @@ export class Products implements OnInit {
     if (!input.files?.length) return;
     Array.from(input.files).forEach(file => {
       if (!file.type.startsWith('image/')) return;
-      this.imagePreviews.push({
-        file,
-        previewUrl: URL.createObjectURL(file),
-        isExisting: false,
-      });
+      this.imagePreviews.push({ file, previewUrl: URL.createObjectURL(file), isExisting: false });
     });
-    input.value = ''; // reset so same file can be re-selected
+    input.value = '';
   }
 
   removeImage(index: number): void {
@@ -148,21 +285,29 @@ export class Products implements OnInit {
     const newFiles = this.imagePreviews.filter(p => !p.isExisting).map(p => p.file!);
     const existingPaths = this.imagePreviews
       .filter(p => p.isExisting)
-      .map(p => {
-        // strip apiUrl prefix to store relative path
-        return p.previewUrl.startsWith(this.apiUrl) ? p.previewUrl.slice(this.apiUrl.length) : p.previewUrl;
-      });
+      .map(p => p.previewUrl.startsWith(this.apiUrl) ? p.previewUrl.slice(this.apiUrl.length) : p.previewUrl);
 
-    const uploadAndSave = (uploadedUrls: string[]) => {
-      const payload = {
-        ...this.form,
-        price:     Number(this.form.price),
-        salePrice: this.form.salePrice ? Number(this.form.salePrice) : undefined,
-        stock:     Number(this.form.stock),
-        tags:      this.form.tags ? this.form.tags.split(',').map(t => t.trim()).filter(Boolean) : [],
-        images:    [...existingPaths, ...uploadedUrls],
-      };
+    const buildPayload = (uploadedUrls: string[]) => ({
+      title:            this.form.title.trim(),
+      slug:             this.form.slug.trim() || undefined,
+      description:      this.form.description.trim() || undefined,
+      shortDescription: this.form.shortDescription.trim() || undefined,
+      price:            Number(this.form.price),
+      salePrice:        this.form.salePrice ? Number(this.form.salePrice) : null,
+      currency:         this.form.currency,
+      sku:              this.form.sku.trim() || undefined,
+      brand:            this.form.brand.trim() || undefined,
+      tags:             this.form.tags ? this.form.tags.split(',').map(t => t.trim()).filter(Boolean) : [],
+      categories:       this.form.categories,
+      subcategories:    this.form.subcategories,
+      stock:            Number(this.form.stock),
+      images:           [...existingPaths, ...uploadedUrls],
+      variants:         this.buildVariantsPayload(),
+      isActive:         this.form.isActive,
+    });
 
+    const doSave = (uploadedUrls: string[]) => {
+      const payload = buildPayload(uploadedUrls);
       const call = this.editingProduct
         ? this.adminService.updateProduct(this.editingProduct._id, payload)
         : this.adminService.createProduct(payload);
@@ -187,7 +332,7 @@ export class Products implements OnInit {
         next: (res: any) => {
           this.uploadingImages = false;
           const uploaded: string[] = res.data?.urls ?? res.urls ?? res.data ?? [];
-          uploadAndSave(Array.isArray(uploaded) ? uploaded : [uploaded]);
+          doSave(Array.isArray(uploaded) ? uploaded : [uploaded]);
         },
         error: (err: any) => {
           this.uploadingImages = false;
@@ -196,7 +341,7 @@ export class Products implements OnInit {
         },
       });
     } else {
-      uploadAndSave([]);
+      doSave([]);
     }
   }
 

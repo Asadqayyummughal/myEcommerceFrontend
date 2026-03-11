@@ -29,6 +29,9 @@ export class Login {
     if (!this.email || !this.password) return;
     this.loading = true;
     this.error = '';
+
+    // login() now internally calls getUserProfile() — currentUser is fully
+    // populated (with role object) by the time the observable completes.
     this.authService.login(this.email, this.password).subscribe({
       next: (res: any) => {
         if (!res.success) {
@@ -36,24 +39,14 @@ export class Login {
           this.loading = false;
           return;
         }
-        this.authService.refreshUserFromProfile().subscribe({
-          next: () => {
-            const roleRaw = this.authService.currentUser?.role;
-            const role = typeof roleRaw === 'object' ? (roleRaw as any)?.name : roleRaw;
-            if (role !== 'admin' && role !== 'support') {
-              this.authService.logout().subscribe();
-              this.error = 'Access denied. Admin credentials required.';
-              this.loading = false;
-              return;
-            }
-            this.authService.scheduleAutoLogout();
-            this.router.navigate(['/dashboard']);
-          },
-          error: () => {
-            this.error = 'Could not verify permissions. Please try again.';
-            this.loading = false;
-          },
-        });
+        const role = this.authService.currentUser?.role?.name;
+        if (role !== 'admin' && role !== 'support') {
+          this.authService.logout().subscribe();
+          this.error = 'Access denied. Admin credentials required.';
+          this.loading = false;
+          return;
+        }
+        this.router.navigate(['/dashboard']);
       },
       error: (err: any) => {
         this.error = err?.error?.message ?? 'Invalid credentials.';

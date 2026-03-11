@@ -1,14 +1,21 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, tap } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, map, of, switchMap, tap } from 'rxjs';
 import { ApiService } from './api.service';
 import { CartService } from './cart.service';
 import { WishlistService } from './wishlist.service';
+
+export interface AuthRole {
+  _id: string;
+  name: string;
+}
 
 export interface AuthUser {
   id: string;
   name: string;
   email: string;
-  role: string;
+  phone?: string;
+  image?: string;
+  role: AuthRole;
 }
 
 export interface AuthTokens {
@@ -25,7 +32,7 @@ export class AuthService {
   private currentUserSubject = new BehaviorSubject<AuthUser | null>(this.loadUser());
   currentUser$ = this.currentUserSubject.asObservable();
 
-  /** Fires when the session expires automatically — subscribe in App to redirect */
+  /** Fires when the session expires — subscribe in App to redirect */
   readonly sessionExpired$ = new Subject<void>();
 
   private logoutTimer: ReturnType<typeof setTimeout> | null = null;
@@ -48,11 +55,7 @@ export class AuthService {
     return localStorage.getItem(this.ACCESS_KEY);
   }
 
-  // ── Auto-logout ─────────────────────────────────────
-  /**
-   * Decodes the JWT exp claim and schedules automatic logout.
-   * Call this on login and on app startup when a session already exists.
-   */
+  // ── Auto-logout ────────────────────────────────────────────────────
   scheduleAutoLogout(): void {
     const token = this.getAccessToken();
     if (!token) return;
@@ -63,7 +66,6 @@ export class AuthService {
     const msUntilExpiry = expiry - Date.now();
 
     if (msUntilExpiry <= 0) {
-      // Token already expired — clear immediately
       this.clearSession();
       this.sessionExpired$.next();
       return;
@@ -92,19 +94,52 @@ export class AuthService {
     }
   }
 
-  // ── Auth API ────────────────────────────────────────
+  // ── Auth API ───────────────────────────────────────────────────────
   signup(name: string, email: string, password: string): Observable<any> {
     return this.api.post('auth/signup', { name, email, password });
   }
 
+  /**
+   * Login → store tokens → fetch full profile via getUserProfile()
+   * → store complete AuthUser (with populated role object).
+   * Callers receive the original login response; currentUser is already
+   * set by the time the observable completes.
+   */
   login(email: string, password: string): Observable<any> {
     return this.api.post<any>('auth/login', { email, password }).pipe(
-      tap((res) => {
-        if (res.success) {
-          this.storeSession(res.data.user, res.data.accessToken, res.data.refreshToken);
-          this.scheduleAutoLogout();
-          this.onLoginSuccess();
-        }
+      switchMap((res) => {
+        if (!res.success) return of(res);
+
+        // Store tokens first so the auth interceptor can attach them
+        localStorage.setItem(this.ACCESS_KEY, res.data.accessToken);
+        localStorage.setItem(this.REFRESH_KEY, res.data.refreshToken);
+        this.scheduleAutoLogout();
+
+        // Fetch the full profile to get the populated role object
+        return this.getUserProfile().pipe(
+          tap((profileRes: any) => {
+            const user = this.mapProfileToUser(profileRes.data ?? profileRes);
+            localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+            this.currentUserSubject.next(user);
+            this.onLoginSuccess();
+          }),
+          map(() => res),
+        );
+      }),
+    );
+  }
+
+  getUserProfile(): Observable<any> {
+    return this.api.get('users/profile');
+  }
+
+  /** Re-fetch profile and overwrite the stored user (useful on app startup). */
+  refreshUserFromProfile(): Observable<any> {
+    return this.getUserProfile().pipe(
+      tap((res: any) => {
+        const user = this.mapProfileToUser(res.data ?? res);
+        localStorage.setItem(this.USER_KEY, JSON.stringify(user));
+        this.currentUserSubject.next(user);
       }),
     );
   }
@@ -132,7 +167,24 @@ export class AuthService {
     this.wishlistService.clearGuestWishlist();
   }
 
-  // ── Private helpers ─────────────────────────────────
+  // ── Private helpers ────────────────────────────────────────────────
+  private mapProfileToUser(p: any): AuthUser {
+    const roleRaw = p.role;
+    const role: AuthRole =
+      typeof roleRaw === 'object' && roleRaw !== null
+        ? { _id: String(roleRaw._id ?? ''), name: roleRaw.name ?? '' }
+        : { _id: '', name: String(roleRaw ?? '') };
+
+    return {
+      id:    p._id ?? p.id ?? '',
+      name:  p.name ?? '',
+      email: p.email ?? '',
+      phone: p.phone ?? '',
+      image: p.image ?? '',
+      role,
+    };
+  }
+
   private onLoginSuccess(): void {
     const guestCart = this.cartService.items;
     if (guestCart.length > 0) {
@@ -153,13 +205,6 @@ export class AuthService {
     }
   }
 
-  private storeSession(user: AuthUser, accessToken: string, refreshToken: string): void {
-    localStorage.setItem(this.USER_KEY, JSON.stringify(user));
-    localStorage.setItem(this.ACCESS_KEY, accessToken);
-    localStorage.setItem(this.REFRESH_KEY, refreshToken);
-    this.currentUserSubject.next(user);
-  }
-
   private loadUser(): AuthUser | null {
     try {
       const raw = localStorage.getItem(this.USER_KEY);
@@ -167,25 +212,5 @@ export class AuthService {
     } catch {
       return null;
     }
-  }
-  getUserProfile(): Observable<any> {
-    return this.api.get('users/profile');
-  }
-
-  /** Fetch profile from API and overwrite the stored user object. */
-  refreshUserFromProfile(): Observable<any> {
-    return this.getUserProfile().pipe(
-      tap((res: any) => {
-        const p = res.data ?? res;
-        const updated: AuthUser = {
-          id:    p._id ?? p.id ?? this.currentUser?.id ?? '',
-          name:  p.name  ?? this.currentUser?.name  ?? '',
-          email: p.email ?? this.currentUser?.email ?? '',
-          role:  typeof p.role === 'object' ? p.role?.name : (p.role ?? this.currentUser?.role ?? ''),
-        };
-        localStorage.setItem(this.USER_KEY, JSON.stringify(updated));
-        this.currentUserSubject.next(updated);
-      }),
-    );
   }
 }

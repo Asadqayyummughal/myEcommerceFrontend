@@ -5,11 +5,9 @@ import { AuthService } from '@core/services/auth.service';
 export const adminGuard: CanActivateFn = () => {
   const auth = inject(AuthService);
   const router = inject(Router);
-  const roleRaw = auth.currentUser?.role;
-  const role = typeof roleRaw === 'object' ? (roleRaw as any)?.name : roleRaw;
-  //&& (role === 'admin' || role === 'support')
-  if (auth.isLoggedIn) {
-    return true;
+
+  if (!auth.isLoggedIn) {
+    return router.createUrlTree(['/login']);
   }
-  return router.createUrlTree(['/login']);
+  return true;
 };

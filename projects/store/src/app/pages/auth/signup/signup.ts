@@ -11,7 +11,7 @@ import { AuthService } from '@core/services/auth.service';
 
 function passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
   const password = control.get('password')?.value;
-  const confirm = control.get('confirmPassword')?.value;
+  const confirm  = control.get('confirmPassword')?.value;
   return password && confirm && password !== confirm ? { passwordMismatch: true } : null;
 }
 
@@ -34,9 +34,11 @@ export class Signup {
   form: FormGroup;
   loading = false;
   errorMessage = '';
-  successMessage = '';
   hidePassword = true;
-  hideConfirm = true;
+  hideConfirm  = true;
+
+  imagePreview: string | null = null;
+  selectedImageFile: File | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -45,19 +47,37 @@ export class Signup {
   ) {
     this.form = this.fb.group(
       {
-        name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
-        email: ['', [Validators.required, Validators.email]],
-        password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(100)]],
+        name:            ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
+        email:           ['', [Validators.required, Validators.email]],
+        password:        ['', [Validators.required, Validators.minLength(6), Validators.maxLength(100)]],
         confirmPassword: ['', Validators.required],
+        phone:           [''],
+        image:           [''],
       },
       { validators: passwordMatchValidator },
     );
   }
 
-  get name() { return this.form.get('name')!; }
-  get email() { return this.form.get('email')!; }
-  get password() { return this.form.get('password')!; }
+  get name()            { return this.form.get('name')!; }
+  get email()           { return this.form.get('email')!; }
+  get password()        { return this.form.get('password')!; }
   get confirmPassword() { return this.form.get('confirmPassword')!; }
+  get phone()           { return this.form.get('phone')!; }
+
+  onImageSelected(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    this.selectedImageFile = file;
+    const reader = new FileReader();
+    reader.onload = e => this.imagePreview = e.target?.result as string;
+    reader.readAsDataURL(file);
+  }
+
+  removeImage(): void {
+    this.imagePreview = null;
+    this.selectedImageFile = null;
+    this.form.patchValue({ image: '' });
+  }
 
   onSubmit(): void {
     if (this.form.invalid) { this.form.markAllAsTouched(); return; }
