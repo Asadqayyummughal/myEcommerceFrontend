@@ -1,0 +1,85 @@
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-indigo-950 to-violet-900 relative overflow-hidden">
+
+  <!-- Background orbs -->
+  <div class="absolute top-10 left-10 w-80 h-80 rounded-full bg-indigo-600/10 blur-3xl pointer-events-none"></div>
+  <div class="absolute bottom-10 right-20 w-96 h-96 rounded-full bg-violet-600/15 blur-3xl pointer-events-none"></div>
+
+  <div class="relative w-full max-w-lg mx-4">
+
+    @if (!submitted) {
+    <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-10 shadow-2xl text-center">
+
+      <!-- Icon -->
+      <div class="w-20 h-20 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center mx-auto mb-6 shadow-xl shadow-indigo-600/30">
+        <mat-icon class="text-white" style="font-size:36px;width:36px;height:36px;line-height:36px">rocket_launch</mat-icon>
+      </div>
+
+      <h1 class="text-3xl font-black text-white mb-3">Become a Vendor</h1>
+      <p class="text-slate-400 mb-8 leading-relaxed">
+        Join ShopZone's marketplace and start selling to thousands of customers.
+        Your application will be reviewed within 24–48 hours.
+      </p>
+
+      <!-- Perks -->
+      <div class="grid grid-cols-3 gap-4 mb-8">
+        @for (perk of [
+          {icon: 'storefront', label: 'Your Store'},
+          {icon: 'payments', label: 'Fast Payouts'},
+          {icon: 'analytics', label: 'Analytics'},
+        ]; track perk.label) {
+        <div class="bg-white/5 rounded-2xl p-4 border border-white/10">
+          <mat-icon class="text-indigo-400 mb-2" style="font-size:24px;width:24px;height:24px;line-height:24px">{{ perk.icon }}</mat-icon>
+          <div class="text-xs text-slate-300 font-semibold">{{ perk.label }}</div>
+        </div>
+        }
+      </div>
+
+      <!-- Error -->
+      @if (error) {
+      <div class="mb-5 flex items-center gap-2 bg-red-500/10 border border-red-500/20 text-red-400 text-sm px-4 py-3 rounded-xl text-left">
+        <mat-icon style="font-size:16px;width:16px;height:16px;line-height:16px">error</mat-icon>
+        {{ error }}
+      </div>
+      }
+
+      @if (!authService.isLoggedIn) {
+      <p class="text-amber-400 text-sm mb-4 bg-amber-400/10 border border-amber-400/20 rounded-xl px-4 py-3">
+        You must be logged in to apply.
+      </p>
+      <a routerLink="/login"
+        class="inline-flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-violet-600 text-white font-bold px-8 py-3 rounded-xl text-sm shadow-lg shadow-indigo-600/30 hover:from-indigo-500 hover:to-violet-500 transition-all">
+        Sign In First
+        <mat-icon style="font-size:18px;width:18px;height:18px;line-height:18px">login</mat-icon>
+      </a>
+      } @else {
+      <button (click)="apply()" [disabled]="loading"
+        class="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500
+               disabled:opacity-50 text-white font-bold py-3.5 rounded-xl text-sm transition-all
+               flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/30">
+        @if (loading) {
+        <mat-icon class="animate-spin" style="font-size:18px;width:18px;height:18px;line-height:18px">refresh</mat-icon>
+        Submitting Application...
+        } @else {
+        Submit Application
+        <mat-icon style="font-size:18px;width:18px;height:18px;line-height:18px">send</mat-icon>
+        }
+      </button>
+      }
+
+      <p class="text-xs text-slate-600 mt-4">
+        Already applied?
+        <a routerLink="/login" class="text-indigo-400 hover:text-indigo-300 ml-1">Sign in →</a>
+      </p>
+    </div>
+    } @else {
+    <!-- Success state -->
+    <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-10 shadow-2xl text-center">
+      <div class="w-20 h-20 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-6 border border-emerald-500/30">
+        <mat-icon class="text-emerald-400" style="font-size:40px;width:40px;height:40px;line-height:40px">check_circle</mat-icon>
+      </div>
+      <h2 class="text-2xl font-black text-white mb-2">Application Submitted!</h2>
+      <p class="text-slate-400 text-sm">Redirecting you to the status page...</p>
+    </div>
+    }
+  </div>
+</div>

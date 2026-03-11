@@ -1,0 +1,53 @@
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-indigo-950 to-violet-900 relative overflow-hidden">
+  <div class="absolute top-10 left-10 w-80 h-80 rounded-full bg-indigo-600/10 blur-3xl pointer-events-none"></div>
+  <div class="absolute bottom-10 right-20 w-96 h-96 rounded-full bg-violet-600/15 blur-3xl pointer-events-none"></div>
+
+  <div class="relative w-full max-w-md mx-4">
+    <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-3xl p-10 shadow-2xl text-center">
+
+      <!-- Animated pending icon -->
+      <div class="relative mx-auto mb-6 w-24 h-24">
+        <div class="absolute inset-0 rounded-full border-2 border-amber-500/30 animate-ping"></div>
+        <div class="w-24 h-24 rounded-full bg-amber-500/10 flex items-center justify-center border border-amber-500/30">
+          <mat-icon class="text-amber-400" style="font-size:40px;width:40px;height:40px;line-height:40px">hourglass_top</mat-icon>
+        </div>
+      </div>
+
+      <h1 class="text-2xl font-black text-white mb-3">Application Under Review</h1>
+      <p class="text-slate-400 mb-6 leading-relaxed text-sm">
+        Your vendor application has been received. Our team will review it within
+        <span class="text-amber-400 font-semibold">24–48 hours</span>.
+        You'll receive an email once approved.
+      </p>
+
+      <!-- Status steps -->
+      <div class="text-left space-y-3 mb-8">
+        @for (step of [
+          {label: 'Application submitted', done: true},
+          {label: 'Under admin review', done: false, active: true},
+          {label: 'Account activated', done: false},
+        ]; track step.label) {
+        <div class="flex items-center gap-3">
+          <div [class]="'w-6 h-6 rounded-full flex items-center justify-center shrink-0 ' +
+            (step.done ? 'bg-emerald-500' : step.active ? 'bg-amber-500/20 border border-amber-500/50' : 'bg-white/5 border border-white/10')">
+            @if (step.done) {
+            <mat-icon class="text-white" style="font-size:14px;width:14px;height:14px;line-height:14px">check</mat-icon>
+            } @else if (step.active) {
+            <div class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></div>
+            }
+          </div>
+          <span [class]="'text-sm ' + (step.done ? 'text-emerald-400 font-medium' : step.active ? 'text-amber-400 font-medium' : 'text-slate-500')">
+            {{ step.label }}
+          </span>
+        </div>
+        }
+      </div>
+
+      <a routerLink="/login"
+        class="inline-flex items-center gap-2 text-indigo-400 hover:text-indigo-300 text-sm font-semibold transition-colors">
+        <mat-icon style="font-size:16px;width:16px;height:16px;line-height:16px">arrow_back</mat-icon>
+        Back to Login
+      </a>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,44 @@
+<aside [class]="'flex flex-col h-full bg-slate-900 text-white transition-all duration-300 shrink-0 '
+  + (collapsed() ? 'w-16' : 'w-60')">
+
+  <!-- Logo -->
+  <div class="flex items-center gap-3 px-4 py-5 border-b border-white/10">
+    <div class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center shrink-0 shadow-lg shadow-indigo-600/30">
+      <mat-icon style="font-size:18px;width:18px;height:18px;line-height:18px" class="text-white">storefront</mat-icon>
+    </div>
+    @if (!collapsed()) {
+    <div class="flex-1 min-w-0">
+      <div class="text-sm font-black text-white leading-tight">ShopZone</div>
+      <div class="text-[10px] text-indigo-400 uppercase tracking-widest">Vendor Portal</div>
+    </div>
+    <!-- Mobile close button -->
+    <button (click)="closeMobile.emit()"
+      class="lg:hidden w-7 h-7 rounded-lg hover:bg-white/10 flex items-center justify-center text-slate-400 hover:text-white transition-colors shrink-0">
+      <mat-icon style="font-size:18px;width:18px;height:18px;line-height:18px">close</mat-icon>
+    </button>
+    }
+  </div>
+
+  <!-- Nav -->
+  <nav class="flex-1 py-4 space-y-0.5 px-2 overflow-y-auto">
+    @for (item of navItems; track item.route) {
+    <a [routerLink]="item.route"
+      routerLinkActive="bg-indigo-600 text-white shadow-md shadow-indigo-600/20"
+      [routerLinkActiveOptions]="{exact: item.route === '/dashboard'}"
+      (click)="closeMobile.emit()"
+      class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:bg-white/10 hover:text-white transition-all group">
+      <mat-icon style="font-size:20px;width:20px;height:20px;line-height:20px" class="shrink-0">{{ item.icon }}</mat-icon>
+      @if (!collapsed()) {
+      <span class="text-sm font-medium truncate">{{ item.label }}</span>
+      }
+    </a>
+    }
+  </nav>
+
+  <!-- Bottom -->
+  @if (!collapsed()) {
+  <div class="p-4 border-t border-white/10">
+    <div class="text-[10px] text-slate-600 text-center">v1.0.0 Vendor</div>
+  </div>
+  }
+</aside>

@@ -1,0 +1,194 @@
+<!-- Header -->
+<div class="mb-6 flex items-center gap-4">
+  <a routerLink="/products"
+    class="w-9 h-9 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors shadow-sm">
+    <mat-icon style="font-size:18px;width:18px;height:18px;line-height:18px">arrow_back</mat-icon>
+  </a>
+  <div>
+    <h1 class="text-2xl font-black text-slate-900 dark:text-white">Add New Product</h1>
+    <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Fill in the details to list your product</p>
+  </div>
+</div>
+
+<!-- Alerts -->
+@if (success) {
+<div class="mb-5 flex items-center gap-2 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 text-sm px-4 py-3 rounded-xl">
+  <mat-icon style="font-size:16px;width:16px;height:16px;line-height:16px">check_circle</mat-icon>
+  {{ success }}
+</div>
+}
+@if (error) {
+<div class="mb-5 flex items-center gap-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm px-4 py-3 rounded-xl">
+  <mat-icon style="font-size:16px;width:16px;height:16px;line-height:16px">error</mat-icon>
+  {{ error }}
+</div>
+}
+
+<div class="grid lg:grid-cols-3 gap-6">
+
+  <!-- Main form -->
+  <div class="lg:col-span-2 space-y-5">
+
+    <!-- Basic info -->
+    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6">
+      <h2 class="text-sm font-bold text-slate-900 dark:text-white mb-5 flex items-center gap-2">
+        <mat-icon class="text-indigo-500" style="font-size:18px;width:18px;height:18px;line-height:18px">info</mat-icon>
+        Basic Information
+      </h2>
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Product Name *</label>
+          <input type="text" [(ngModel)]="form.name" placeholder="e.g. Wireless Headphones"
+            class="w-full border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 text-sm bg-white dark:bg-slate-700
+                   text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-colors" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Description</label>
+          <textarea [(ngModel)]="form.description" placeholder="Describe your product..." rows="4"
+            class="w-full border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 text-sm bg-white dark:bg-slate-700
+                   text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-colors resize-none"></textarea>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Tags</label>
+          <input type="text" [(ngModel)]="form.tags" placeholder="electronics, wireless, audio (comma separated)"
+            class="w-full border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 text-sm bg-white dark:bg-slate-700
+                   text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-colors" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Pricing & inventory -->
+    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6">
+      <h2 class="text-sm font-bold text-slate-900 dark:text-white mb-5 flex items-center gap-2">
+        <mat-icon class="text-emerald-500" style="font-size:18px;width:18px;height:18px;line-height:18px">attach_money</mat-icon>
+        Pricing & Inventory
+      </h2>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Price ($) *</label>
+          <div class="relative">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
+            <input type="number" [(ngModel)]="form.price" placeholder="0.00" min="0" step="0.01"
+              class="w-full border border-slate-200 dark:border-slate-600 rounded-xl pl-8 pr-4 py-3 text-sm bg-white dark:bg-slate-700
+                     text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-colors" />
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Stock *</label>
+          <input type="number" [(ngModel)]="form.stock" placeholder="0" min="0"
+            class="w-full border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 text-sm bg-white dark:bg-slate-700
+                   text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-colors" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">SKU</label>
+          <input type="text" [(ngModel)]="form.sku" placeholder="SKU-12345"
+            class="w-full border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 text-sm bg-white dark:bg-slate-700
+                   text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-colors" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Weight (kg)</label>
+          <input type="number" [(ngModel)]="form.weight" placeholder="0.5" min="0" step="0.1"
+            class="w-full border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 text-sm bg-white dark:bg-slate-700
+                   text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-colors" />
+        </div>
+      </div>
+    </div>
+
+    <!-- Categories -->
+    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6">
+      <h2 class="text-sm font-bold text-slate-900 dark:text-white mb-5 flex items-center gap-2">
+        <mat-icon class="text-violet-500" style="font-size:18px;width:18px;height:18px;line-height:18px">category</mat-icon>
+        Category
+      </h2>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Category</label>
+          <select [(ngModel)]="form.category" (ngModelChange)="onCategoryChange()"
+            class="w-full border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 text-sm bg-white dark:bg-slate-700
+                   text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500 transition-colors cursor-pointer">
+            <option value="">Select category</option>
+            @for (cat of categories; track cat._id) {
+            <option [value]="cat._id">{{ cat.name }}</option>
+            }
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Subcategory</label>
+          <select [(ngModel)]="form.subcategory" [disabled]="!form.category"
+            class="w-full border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 text-sm bg-white dark:bg-slate-700
+                   text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500 transition-colors cursor-pointer disabled:opacity-50">
+            <option value="">Select subcategory</option>
+            @for (sub of filteredSubcategories; track sub._id) {
+            <option [value]="sub._id">{{ sub.name }}</option>
+            }
+          </select>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Right panel: images + submit -->
+  <div class="space-y-5">
+
+    <!-- Image upload -->
+    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6">
+      <h2 class="text-sm font-bold text-slate-900 dark:text-white mb-1 flex items-center gap-2">
+        <mat-icon class="text-amber-500" style="font-size:18px;width:18px;height:18px;line-height:18px">photo_library</mat-icon>
+        Product Images
+      </h2>
+      <p class="text-[11px] text-slate-400 mb-4">Up to 6 images. First image is the cover.</p>
+
+      <!-- Previews grid -->
+      @if (previews.length > 0) {
+      <div class="grid grid-cols-3 gap-2 mb-3">
+        @for (preview of previews; track $index) {
+        <div class="relative aspect-square rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-700 group">
+          <img [src]="preview" alt="Preview" class="w-full h-full object-cover" />
+          <button (click)="removeFile($index)"
+            class="absolute top-1 right-1 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+            <mat-icon style="font-size:12px;width:12px;height:12px;line-height:12px">close</mat-icon>
+          </button>
+          @if ($index === 0) {
+          <div class="absolute bottom-1 left-1 text-[9px] bg-indigo-600 text-white px-1.5 py-0.5 rounded-full font-bold">Cover</div>
+          }
+        </div>
+        }
+      </div>
+      }
+
+      <!-- Upload button -->
+      @if (selectedFiles.length < 6) {
+      <label class="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-slate-200 dark:border-slate-600
+                    rounded-xl p-6 cursor-pointer hover:border-indigo-400 hover:bg-indigo-50/50 dark:hover:bg-indigo-900/10 transition-all">
+        <mat-icon class="text-slate-400" style="font-size:28px;width:28px;height:28px;line-height:28px">cloud_upload</mat-icon>
+        <span class="text-xs text-slate-500 dark:text-slate-400 text-center">
+          Click to upload<br/>
+          <span class="text-[10px]">{{ selectedFiles.length }}/6 selected</span>
+        </span>
+        <input type="file" accept="image/*" multiple class="hidden" (change)="onFilesSelected($event)" />
+      </label>
+      }
+    </div>
+
+    <!-- Submit -->
+    <button (click)="submit()" [disabled]="saving || !form.name || !form.price"
+      class="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500
+             disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl text-sm
+             transition-all flex items-center justify-center gap-2 shadow-xl shadow-indigo-500/25">
+      @if (saving) {
+      <mat-icon class="animate-spin" style="font-size:18px;width:18px;height:18px;line-height:18px">refresh</mat-icon>
+      Creating Product...
+      } @else {
+      <mat-icon style="font-size:18px;width:18px;height:18px;line-height:18px">add_circle</mat-icon>
+      Create Product
+      }
+    </button>
+
+    <a routerLink="/products"
+      class="w-full flex items-center justify-center gap-2 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-400
+             hover:bg-slate-50 dark:hover:bg-slate-700/50 font-semibold py-3 rounded-xl text-sm transition-colors">
+      Cancel
+    </a>
+  </div>
+</div>

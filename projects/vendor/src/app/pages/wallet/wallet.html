@@ -1,0 +1,149 @@
+<!-- Header -->
+<div class="mb-6">
+  <h1 class="text-2xl font-black text-slate-900 dark:text-white">Wallet</h1>
+  <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Manage your earnings and payouts</p>
+</div>
+
+<!-- Alerts -->
+@if (success) {
+<div class="mb-5 flex items-center gap-2 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 text-sm px-4 py-3 rounded-xl">
+  <mat-icon style="font-size:16px;width:16px;height:16px;line-height:16px">check_circle</mat-icon>
+  {{ success }}
+</div>
+}
+@if (error) {
+<div class="mb-5 flex items-center gap-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm px-4 py-3 rounded-xl">
+  <mat-icon style="font-size:16px;width:16px;height:16px;line-height:16px">error</mat-icon>
+  {{ error }}
+</div>
+}
+
+@if (loading) {
+<div class="grid md:grid-cols-3 gap-4">
+  @for (s of [1,2,3]; track s) {
+  <div class="h-32 bg-white dark:bg-slate-800 rounded-2xl animate-pulse border border-slate-100 dark:border-slate-700"></div>
+  }
+</div>
+} @else {
+
+<!-- Balance cards -->
+<div class="grid md:grid-cols-3 gap-4 mb-6">
+
+  <!-- Available balance (hero card) -->
+  <div class="bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-700 rounded-2xl p-6 text-white shadow-xl shadow-indigo-500/20 md:col-span-1">
+    <div class="flex items-center gap-2 mb-3">
+      <div class="w-8 h-8 rounded-lg bg-white/20 flex items-center justify-center">
+        <mat-icon style="font-size:18px;width:18px;height:18px;line-height:18px">account_balance_wallet</mat-icon>
+      </div>
+      <span class="text-xs font-bold uppercase tracking-widest opacity-80">Available</span>
+    </div>
+    <div class="text-4xl font-black mb-1">${{ availableBalance.toFixed(2) }}</div>
+    <div class="text-indigo-200 text-xs">Ready to withdraw</div>
+    <button (click)="showRequestModal = true" [disabled]="availableBalance <= 0"
+      class="mt-4 w-full flex items-center justify-center gap-2 bg-white/20 hover:bg-white/30 disabled:opacity-40
+             transition-all rounded-xl py-2.5 text-sm font-bold">
+      <mat-icon style="font-size:16px;width:16px;height:16px;line-height:16px">arrow_upward</mat-icon>
+      Request Payout
+    </button>
+  </div>
+
+  <!-- Locked balance -->
+  <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6">
+    <div class="flex items-center gap-2 mb-3">
+      <div class="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center">
+        <mat-icon class="text-amber-600 dark:text-amber-400" style="font-size:18px;width:18px;height:18px;line-height:18px">lock</mat-icon>
+      </div>
+      <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Locked</span>
+    </div>
+    <div class="text-3xl font-black text-slate-900 dark:text-white">${{ lockedBalance.toFixed(2) }}</div>
+    <p class="text-xs text-slate-400 mt-1">In-flight payouts</p>
+  </div>
+
+  <!-- Total earned -->
+  <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6">
+    <div class="flex items-center gap-2 mb-3">
+      <div class="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
+        <mat-icon class="text-emerald-600 dark:text-emerald-400" style="font-size:18px;width:18px;height:18px;line-height:18px">trending_up</mat-icon>
+      </div>
+      <span class="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Total Earned</span>
+    </div>
+    <div class="text-3xl font-black text-slate-900 dark:text-white">${{ totalEarned.toFixed(2) }}</div>
+    <p class="text-xs text-slate-400 mt-1">All time earnings</p>
+  </div>
+</div>
+
+<!-- Stripe status banner -->
+@if (!wallet?.stripeOnboarded) {
+<div class="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-2xl p-5 flex items-center justify-between gap-4">
+  <div class="flex items-center gap-3">
+    <div class="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center shrink-0">
+      <mat-icon class="text-amber-600 dark:text-amber-400" style="font-size:20px;width:20px;height:20px;line-height:20px">credit_score</mat-icon>
+    </div>
+    <div>
+      <div class="text-sm font-bold text-amber-800 dark:text-amber-300">Connect Stripe to enable payouts</div>
+      <p class="text-xs text-amber-600 dark:text-amber-400">You need to connect a Stripe account before requesting payouts.</p>
+    </div>
+  </div>
+  <a routerLink="/stripe"
+    class="shrink-0 bg-amber-500 hover:bg-amber-400 text-white font-bold px-4 py-2 rounded-xl text-xs transition-colors">
+    Connect Stripe →
+  </a>
+</div>
+}
+}
+
+<!-- Request payout modal -->
+@if (showRequestModal) {
+<div class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+  <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 w-full max-w-md p-6 shadow-2xl">
+    <div class="flex items-center justify-between mb-6">
+      <h3 class="text-base font-bold text-slate-900 dark:text-white">Request Payout</h3>
+      <button (click)="showRequestModal = false"
+        class="w-8 h-8 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 flex items-center justify-center text-slate-500 transition-colors">
+        <mat-icon style="font-size:18px;width:18px;height:18px;line-height:18px">close</mat-icon>
+      </button>
+    </div>
+
+    <div class="space-y-4">
+      <div>
+        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Amount ($)</label>
+        <div class="relative">
+          <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
+          <input type="number" [(ngModel)]="payoutForm.amount" [max]="availableBalance"
+            placeholder="0.00" min="1" step="0.01"
+            class="w-full border border-slate-200 dark:border-slate-600 rounded-xl pl-8 pr-4 py-3 text-sm bg-white dark:bg-slate-700
+                   text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-colors" />
+        </div>
+        <p class="text-[11px] text-slate-400 mt-1">Available: ${{ availableBalance.toFixed(2) }}</p>
+      </div>
+
+      <div>
+        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Method</label>
+        <select [(ngModel)]="payoutForm.method"
+          class="w-full border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 text-sm bg-white dark:bg-slate-700
+                 text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500 transition-colors cursor-pointer">
+          <option value="stripe">Stripe (Connected Account)</option>
+          <option value="bank">Bank Transfer</option>
+          <option value="paypal">PayPal</option>
+        </select>
+      </div>
+
+      <div class="flex gap-3 pt-2">
+        <button (click)="showRequestModal = false"
+          class="flex-1 border border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-400
+                 hover:bg-slate-50 dark:hover:bg-slate-700 font-semibold py-3 rounded-xl text-sm transition-colors">
+          Cancel
+        </button>
+        <button (click)="requestPayout()" [disabled]="requesting || !payoutForm.amount || (payoutForm.amount || 0) > availableBalance"
+          class="flex-1 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500
+                 disabled:opacity-50 text-white font-bold py-3 rounded-xl text-sm transition-all flex items-center justify-center gap-2">
+          @if (requesting) {
+          <mat-icon class="animate-spin" style="font-size:16px;width:16px;height:16px;line-height:16px">refresh</mat-icon>
+          }
+          Request
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+}

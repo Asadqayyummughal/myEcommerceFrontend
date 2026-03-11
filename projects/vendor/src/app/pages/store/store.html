@@ -1,0 +1,162 @@
+<!-- Header -->
+<div class="mb-6">
+  <h1 class="text-2xl font-black text-slate-900 dark:text-white">My Store</h1>
+  <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+    {{ store ? 'Manage your store settings' : 'Create your store to start selling' }}
+  </p>
+</div>
+
+@if (loading) {
+<div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-8 animate-pulse">
+  <div class="h-5 bg-slate-200 dark:bg-slate-700 rounded w-1/4 mb-6"></div>
+  <div class="space-y-4">
+    @for (s of [1,2,3]; track s) {
+    <div class="h-11 bg-slate-200 dark:bg-slate-700 rounded-xl"></div>
+    }
+  </div>
+</div>
+} @else {
+<div class="grid lg:grid-cols-3 gap-6">
+
+  <!-- Form -->
+  <div class="lg:col-span-2 bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6">
+    <div class="flex items-center justify-between mb-6">
+      <h2 class="text-base font-bold text-slate-900 dark:text-white">
+        {{ store ? 'Edit Store' : 'Create Store' }}
+      </h2>
+      @if (store?.status) {
+      <span [class]="'text-xs font-bold px-3 py-1 rounded-full capitalize ' + statusClass(store.status)">
+        {{ store.status }}
+      </span>
+      }
+    </div>
+
+    <!-- Alerts -->
+    @if (success) {
+    <div class="mb-5 flex items-center gap-2 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-400 text-sm px-4 py-3 rounded-xl">
+      <mat-icon style="font-size:16px;width:16px;height:16px;line-height:16px">check_circle</mat-icon>
+      {{ success }}
+    </div>
+    }
+    @if (error) {
+    <div class="mb-5 flex items-center gap-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm px-4 py-3 rounded-xl">
+      <mat-icon style="font-size:16px;width:16px;height:16px;line-height:16px">error</mat-icon>
+      {{ error }}
+    </div>
+    }
+
+    <div class="space-y-5">
+      <!-- Store Name -->
+      <div>
+        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Store Name *</label>
+        <input type="text" [(ngModel)]="form.name" placeholder="My Awesome Store"
+          class="w-full border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 text-sm bg-white dark:bg-slate-700
+                 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-colors" />
+      </div>
+
+      <!-- Description -->
+      <div>
+        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Description</label>
+        <textarea [(ngModel)]="form.description" placeholder="Tell customers about your store..." rows="4"
+          class="w-full border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 text-sm bg-white dark:bg-slate-700
+                 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-colors resize-none"></textarea>
+      </div>
+
+      <!-- Contact row -->
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Contact Email</label>
+          <input type="email" [(ngModel)]="form.contactEmail" placeholder="store@example.com"
+            class="w-full border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 text-sm bg-white dark:bg-slate-700
+                   text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-colors" />
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Contact Phone</label>
+          <input type="tel" [(ngModel)]="form.contactPhone" placeholder="+1 234 567 8900"
+            class="w-full border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 text-sm bg-white dark:bg-slate-700
+                   text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-colors" />
+        </div>
+      </div>
+
+      <!-- Slug (read-only if exists) -->
+      @if (store?.slug) {
+      <div>
+        <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Store URL Slug</label>
+        <div class="flex items-center gap-2 border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 bg-slate-50 dark:bg-slate-700/50">
+          <mat-icon class="text-slate-400" style="font-size:16px;width:16px;height:16px;line-height:16px">link</mat-icon>
+          <span class="text-sm text-slate-500 dark:text-slate-400 font-mono">{{ store.slug }}</span>
+          <span class="ml-1 text-[10px] bg-slate-200 dark:bg-slate-600 text-slate-500 dark:text-slate-400 px-2 py-0.5 rounded-full">auto-generated</span>
+        </div>
+      </div>
+      }
+
+      <!-- Save button -->
+      <button (click)="submit()" [disabled]="saving || !form.name"
+        class="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500
+               disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 rounded-xl text-sm
+               transition-all flex items-center justify-center gap-2 shadow-lg shadow-indigo-500/20">
+        @if (saving) {
+        <mat-icon class="animate-spin" style="font-size:18px;width:18px;height:18px;line-height:18px">refresh</mat-icon>
+        Saving...
+        } @else if (store) {
+        <mat-icon style="font-size:18px;width:18px;height:18px;line-height:18px">save</mat-icon>
+        Save Changes
+        } @else {
+        <mat-icon style="font-size:18px;width:18px;height:18px;line-height:18px">add</mat-icon>
+        Create Store
+        }
+      </button>
+    </div>
+  </div>
+
+  <!-- Info panel -->
+  <div class="space-y-4">
+    @if (store) {
+    <!-- Store stats preview -->
+    <div class="bg-gradient-to-br from-indigo-600 to-violet-700 rounded-2xl p-5 text-white shadow-xl shadow-indigo-500/20">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
+          <mat-icon style="font-size:24px;width:24px;height:24px;line-height:24px">storefront</mat-icon>
+        </div>
+        <div>
+          <div class="font-black text-lg">{{ store.name }}</div>
+          <div class="text-indigo-200 text-xs">Store ID: {{ store._id?.slice(-8) }}</div>
+        </div>
+      </div>
+      <div class="space-y-2 text-sm">
+        <div class="flex justify-between">
+          <span class="text-indigo-200">Status</span>
+          <span class="font-bold capitalize">{{ store.status }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-indigo-200">Slug</span>
+          <span class="font-bold font-mono text-xs">{{ store.slug }}</span>
+        </div>
+      </div>
+    </div>
+    }
+
+    <!-- Tips -->
+    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-5">
+      <h3 class="text-sm font-bold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+        <mat-icon class="text-amber-500" style="font-size:16px;width:16px;height:16px;line-height:16px">tips_and_updates</mat-icon>
+        Store Tips
+      </h3>
+      <ul class="space-y-2 text-xs text-slate-500 dark:text-slate-400">
+        <li class="flex items-start gap-2">
+          <mat-icon class="text-indigo-400 shrink-0" style="font-size:14px;width:14px;height:14px;line-height:14px">check</mat-icon>
+          Use a clear, memorable store name
+        </li>
+        <li class="flex items-start gap-2">
+          <mat-icon class="text-indigo-400 shrink-0" style="font-size:14px;width:14px;height:14px;line-height:14px">check</mat-icon>
+          Write a compelling description to attract customers
+        </li>
+        <li class="flex items-start gap-2">
+          <mat-icon class="text-indigo-400 shrink-0" style="font-size:14px;width:14px;height:14px;line-height:14px">check</mat-icon>
+          Add contact info to build customer trust
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+}

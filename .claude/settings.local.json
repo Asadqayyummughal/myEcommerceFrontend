@@ -3,7 +3,13 @@
     "allow": [
       "Bash(npx ng:*)",
       "mcp__ide__getDiagnostics",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(cd \"C:/study material/Ecommerce/ecommerce-frontend\" && ng build --project vendor 2>&1 | tail -50)",
+      "Bash(cd \"C:/study material/Ecommerce/ecommerce-frontend\" && ng build --project vendor 2>&1 | tail -30)",
+      "Bash(cd \"C:/study material/Ecommerce/ecommerce-frontend\" && node -e \"const a=require\\('./angular.json'\\); const v=a.projects.vendor.architect.build.options; console.log\\(JSON.stringify\\({styles: v.styles, stylePreprocessorOptions: v.stylePreprocessorOptions}, null, 2\\)\\)\")",
+      "Bash(cd \"C:/study material/Ecommerce/ecommerce-frontend\" && ng build --project vendor 2>&1 | tail -15)",
+      "Bash(cd \"C:/study material/Ecommerce/ecommerce-frontend\" && ng build --project vendor 2>&1 | tail -10)",
+      "Bash(cd \"C:/study material/Ecommerce/ecommerce-frontend\" && ng build --project vendor 2>&1 | grep -E \"\\(ERROR|WARNING|complete|failed\\)\")"
     ]
   }
 }

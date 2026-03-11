@@ -1,0 +1,173 @@
+<!-- Page header -->
+<div class="mb-6 flex items-center justify-between">
+  <div>
+    <h1 class="text-2xl font-black text-slate-900 dark:text-white">
+      Welcome back, {{ (authService.currentUser?.name ?? '').split(' ')[0] }} 👋
+    </h1>
+    <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Here's what's happening with your store today.</p>
+  </div>
+  @if (store) {
+  <div class="hidden sm:flex items-center gap-2 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800 rounded-xl px-4 py-2">
+    <mat-icon class="text-indigo-600 dark:text-indigo-400" style="font-size:18px;width:18px;height:18px;line-height:18px">storefront</mat-icon>
+    <span class="text-sm font-semibold text-indigo-700 dark:text-indigo-300">{{ store.name }}</span>
+    <span [class]="'text-[10px] font-bold px-2 py-0.5 rounded-full ml-1 ' +
+      (store.status === 'active' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700')">
+      {{ store.status }}
+    </span>
+  </div>
+  }
+</div>
+
+<!-- Stat cards -->
+@if (loading) {
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+  @for (s of [1,2,3,4]; track s) {
+  <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 animate-pulse border border-slate-100 dark:border-slate-700">
+    <div class="h-3 bg-slate-200 dark:bg-slate-700 rounded w-1/2 mb-3"></div>
+    <div class="h-7 bg-slate-200 dark:bg-slate-700 rounded w-3/4 mb-2"></div>
+    <div class="h-2 bg-slate-200 dark:bg-slate-700 rounded w-1/3"></div>
+  </div>
+  }
+</div>
+} @else {
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+  @for (card of stats; track card.label) {
+  <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-100 dark:border-slate-700 hover:shadow-lg hover:shadow-indigo-500/5 transition-all group">
+    <div class="flex items-center justify-between mb-4">
+      <div [class]="'w-10 h-10 rounded-xl flex items-center justify-center ' + card.bg">
+        <mat-icon [class]="card.color" style="font-size:20px;width:20px;height:20px;line-height:20px">{{ card.icon }}</mat-icon>
+      </div>
+    </div>
+    <div class="text-2xl font-black text-slate-900 dark:text-white">{{ card.value }}</div>
+    <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">{{ card.label }}</div>
+  </div>
+  }
+</div>
+}
+
+<!-- No store banner -->
+@if (!loading && !store) {
+<div class="mb-6 bg-gradient-to-r from-indigo-600 to-violet-600 rounded-2xl p-6 text-white flex items-center justify-between">
+  <div>
+    <div class="text-xs font-bold uppercase tracking-widest opacity-70 mb-1">Get Started</div>
+    <div class="text-xl font-black mb-1">Create Your Store</div>
+    <p class="text-indigo-200 text-sm">Set up your store to start selling products.</p>
+  </div>
+  <a routerLink="/store"
+    class="bg-white/20 hover:bg-white/30 text-white font-bold px-5 py-2.5 rounded-xl text-sm transition-all flex items-center gap-2 shrink-0">
+    <mat-icon style="font-size:18px;width:18px;height:18px;line-height:18px">add</mat-icon>
+    Create Store
+  </a>
+</div>
+}
+
+<!-- Main content grid -->
+<div class="grid lg:grid-cols-3 gap-6">
+
+  <!-- Recent Orders -->
+  <div class="lg:col-span-2 bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 overflow-hidden">
+    <div class="flex items-center justify-between px-5 py-4 border-b border-slate-100 dark:border-slate-700">
+      <h2 class="text-sm font-bold text-slate-900 dark:text-white">Recent Orders</h2>
+      <a routerLink="/orders" class="text-xs text-indigo-600 dark:text-indigo-400 font-semibold hover:underline">View All →</a>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-slate-50 dark:border-slate-700">
+            <th class="text-left text-xs text-slate-400 font-medium px-5 py-3">Order ID</th>
+            <th class="text-left text-xs text-slate-400 font-medium px-3 py-3">Customer</th>
+            <th class="text-left text-xs text-slate-400 font-medium px-3 py-3">Total</th>
+            <th class="text-left text-xs text-slate-400 font-medium px-3 py-3">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          @if (recentOrders.length === 0) {
+          <tr>
+            <td colspan="4" class="text-center py-12">
+              <mat-icon class="text-slate-300 dark:text-slate-600" style="font-size:40px;width:40px;height:40px;line-height:40px">receipt_long</mat-icon>
+              <p class="text-slate-400 text-sm mt-2">No orders yet</p>
+            </td>
+          </tr>
+          }
+          @for (order of recentOrders; track order._id) {
+          <tr class="border-b border-slate-50 dark:border-slate-700/50 hover:bg-slate-50 dark:hover:bg-slate-700/30 transition-colors">
+            <td class="px-5 py-3">
+              <span class="font-mono text-xs text-slate-600 dark:text-slate-400">#{{ order._id?.slice(-8)?.toUpperCase() }}</span>
+            </td>
+            <td class="px-3 py-3">
+              <span class="text-xs font-medium text-slate-800 dark:text-slate-200">
+                {{ order.shippingAddress?.fullName ?? order.user?.name ?? '—' }}
+              </span>
+            </td>
+            <td class="px-3 py-3">
+              <span class="text-xs font-bold text-slate-900 dark:text-white">
+                ${{ (order.vendorTotal ?? order.totalAmount ?? 0).toFixed(2) }}
+              </span>
+            </td>
+            <td class="px-3 py-3">
+              <span [class]="'text-[10px] font-bold px-2.5 py-1 rounded-full capitalize ' + statusClass(order.status)">
+                {{ order.status }}
+              </span>
+            </td>
+          </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Right column -->
+  <div class="space-y-4">
+
+    <!-- Quick actions -->
+    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-5">
+      <h2 class="text-sm font-bold text-slate-900 dark:text-white mb-4">Quick Actions</h2>
+      <div class="space-y-1.5">
+        @for (action of [
+          {label: 'Add New Product', icon: 'add_circle', route: '/products/new', color: 'text-indigo-600 bg-indigo-50 dark:bg-indigo-900/20'},
+          {label: 'Manage Store',    icon: 'storefront',  route: '/store',        color: 'text-violet-600 bg-violet-50 dark:bg-violet-900/20'},
+          {label: 'View Orders',     icon: 'receipt_long',route: '/orders',       color: 'text-blue-600 bg-blue-50 dark:bg-blue-900/20'},
+          {label: 'Request Payout',  icon: 'payments',    route: '/payouts',      color: 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/20'},
+        ]; track action.route) {
+        <a [routerLink]="action.route"
+          class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors group">
+          <div [class]="'w-8 h-8 rounded-lg flex items-center justify-center ' + action.color">
+            <mat-icon [class]="action.color.split(' ')[0]" style="font-size:16px;width:16px;height:16px;line-height:16px">{{ action.icon }}</mat-icon>
+          </div>
+          <span class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-slate-900 dark:group-hover:text-white transition-colors">
+            {{ action.label }}
+          </span>
+          <mat-icon class="ml-auto text-slate-300 dark:text-slate-600" style="font-size:16px;width:16px;height:16px;line-height:16px">chevron_right</mat-icon>
+        </a>
+        }
+      </div>
+    </div>
+
+    <!-- Wallet card -->
+    <div class="bg-gradient-to-br from-indigo-600 via-indigo-700 to-violet-700 rounded-2xl p-5 text-white shadow-xl shadow-indigo-500/20">
+      <div class="flex items-center gap-2 mb-4">
+        <mat-icon style="font-size:18px;width:18px;height:18px;line-height:18px">account_balance_wallet</mat-icon>
+        <span class="text-xs font-bold uppercase tracking-widest opacity-80">Wallet</span>
+      </div>
+      <div class="text-3xl font-black mb-1">
+        ${{ ((wallet?.balance ?? 0) / 100).toFixed(2) }}
+      </div>
+      <div class="text-indigo-200 text-xs mb-4">Available balance</div>
+      <div class="grid grid-cols-2 gap-3">
+        <div class="bg-white/10 rounded-xl p-3">
+          <div class="text-[10px] opacity-70 mb-1">Locked</div>
+          <div class="text-sm font-bold">${{ ((wallet?.lockedBalance ?? 0) / 100).toFixed(2) }}</div>
+        </div>
+        <div class="bg-white/10 rounded-xl p-3">
+          <div class="text-[10px] opacity-70 mb-1">Total Earned</div>
+          <div class="text-sm font-bold">${{ ((wallet?.totalEarned ?? 0) / 100).toFixed(2) }}</div>
+        </div>
+      </div>
+      <a routerLink="/payouts"
+        class="mt-4 w-full flex items-center justify-center gap-2 bg-white/15 hover:bg-white/25 transition-all rounded-xl py-2.5 text-sm font-bold">
+        <mat-icon style="font-size:16px;width:16px;height:16px;line-height:16px">arrow_upward</mat-icon>
+        Request Payout
+      </a>
+    </div>
+  </div>
+</div>

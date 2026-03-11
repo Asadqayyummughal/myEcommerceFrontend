@@ -1,0 +1,25 @@
+<div class="flex h-screen bg-slate-50 dark:bg-slate-900 overflow-hidden">
+
+  <!-- Mobile backdrop -->
+  @if (mobileOpen()) {
+  <div class="fixed inset-0 bg-black/60 z-40 lg:hidden" (click)="mobileOpen.set(false)"></div>
+  }
+
+  <!-- Sidebar — fixed drawer on mobile, inline on desktop -->
+  <div [class]="'fixed inset-y-0 left-0 z-50 transition-transform duration-300 lg:relative lg:z-auto lg:translate-x-0 '
+    + (mobileOpen() ? 'translate-x-0' : '-translate-x-full lg:translate-x-0')">
+    <app-vendor-sidebar
+      [collapsed]="sidebarCollapsed()"
+      (closeMobile)="mobileOpen.set(false)">
+    </app-vendor-sidebar>
+  </div>
+
+  <!-- Main content area -->
+  <div class="flex flex-col flex-1 overflow-hidden min-w-0">
+    <app-vendor-header (toggleSidebar)="toggleSidebar()"></app-vendor-header>
+
+    <main class="flex-1 overflow-y-auto p-4 lg:p-6 bg-slate-50 dark:bg-slate-900">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
