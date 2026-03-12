@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { RouterLink } from '@angular/router';
 import { AuthService } from '@core/services/auth.service';
 import { VendorService } from '../../services/vendor.service';
 
 @Component({
   selector: 'app-orders',
   standalone: true,
-  imports: [CommonModule, MatIconModule],
+  imports: [CommonModule, MatIconModule, RouterLink],
   templateUrl: './orders.html',
 })
 export class Orders implements OnInit {

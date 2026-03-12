@@ -22,6 +22,7 @@ export class VendorSidebar {
   navItems: NavItem[] = [
     { label: 'Dashboard',    icon: 'dashboard',              route: '/dashboard' },
     { label: 'My Store',     icon: 'storefront',             route: '/store' },
+    { label: 'Analytics',    icon: 'bar_chart',              route: '/store/analytics' },
     { label: 'Products',     icon: 'inventory_2',            route: '/products' },
     { label: 'Orders',       icon: 'receipt_long',           route: '/orders' },
     { label: 'Wallet',       icon: 'account_balance_wallet', route: '/wallet' },

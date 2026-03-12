@@ -57,9 +57,25 @@ export class VendorService {
     return this.api.get(`vendor/store/${vendorId}/orders`);
   }
 
+  getVendorProfile(): Observable<any> {
+    return this.api.get('vendor/profile');
+  }
+
   // ── Products ──────────────────────────────────────────
   createProduct(formData: FormData): Observable<any> {
     return this.api.postFormData('vendor/product', formData);
+  }
+
+  getProduct(productId: string): Observable<any> {
+    return this.api.get(`products/${productId}`);
+  }
+
+  updateProduct(productId: string, payload: any): Observable<any> {
+    return this.api.put(`products/${productId}`, payload);
+  }
+
+  getOrderDetail(orderId: string): Observable<any> {
+    return this.api.get(`order/${orderId}`);
   }
 
   getCategories(): Observable<any> {

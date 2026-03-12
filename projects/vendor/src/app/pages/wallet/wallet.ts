@@ -21,8 +21,12 @@ export class Wallet implements OnInit {
   showRequestModal = false;
 
   payoutForm = {
-    amount: null as number | null,
-    method: 'stripe',
+    amount:       null as number | null,
+    method:       'stripe',
+    bankName:     '',
+    accountNumber: '',
+    iban:         '',
+    paypalEmail:  '',
   };
 
   constructor(
@@ -64,14 +68,26 @@ export class Wallet implements OnInit {
     this.requesting = true;
     this.error = '';
 
+    let payoutDetails: any = undefined;
+    if (this.payoutForm.method === 'bank') {
+      payoutDetails = {
+        bankName:      this.payoutForm.bankName.trim() || undefined,
+        accountNumber: this.payoutForm.accountNumber.trim() || undefined,
+        iban:          this.payoutForm.iban.trim() || undefined,
+      };
+    } else if (this.payoutForm.method === 'paypal') {
+      payoutDetails = { paypalEmail: this.payoutForm.paypalEmail.trim() || undefined };
+    }
+
     this.vendorService.requestPayout({
-      amount: this.payoutForm.amount * 100, // convert to cents
+      amount: this.payoutForm.amount * 100,
       method: this.payoutForm.method,
+      payoutDetails,
     }).subscribe({
       next: () => {
         this.success = 'Payout request submitted successfully!';
         this.showRequestModal = false;
-        this.payoutForm = { amount: null, method: 'stripe' };
+        this.payoutForm = { amount: null, method: 'stripe', bankName: '', accountNumber: '', iban: '', paypalEmail: '' };
         this.requesting = false;
         this.loadWallet();
       },

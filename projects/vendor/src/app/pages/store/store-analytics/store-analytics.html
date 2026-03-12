@@ -1,0 +1,101 @@
+<!-- Header -->
+<div class="mb-6 flex items-center gap-4">
+  <a routerLink="/store"
+    class="w-9 h-9 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700
+           flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors shadow-sm">
+    <mat-icon style="font-size:18px;width:18px;height:18px;line-height:18px">arrow_back</mat-icon>
+  </a>
+  <div>
+    <h1 class="text-2xl font-black text-slate-900 dark:text-white">Store Analytics</h1>
+    @if (store?.name) {
+    <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{{ store.name }}</p>
+    }
+  </div>
+</div>
+
+@if (error) {
+<div class="flex items-center gap-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800
+            text-red-700 dark:text-red-400 text-sm px-4 py-3 rounded-xl mb-5">
+  <mat-icon style="font-size:16px;width:16px;height:16px;line-height:16px">error</mat-icon>
+  {{ error }}
+</div>
+}
+
+<!-- Stat cards grid -->
+@if (loading) {
+<div class="grid grid-cols-2 lg:grid-cols-3 gap-4">
+  @for (s of [1,2,3,4,5,6]; track s) {
+  <div class="h-28 bg-white dark:bg-slate-800 rounded-2xl animate-pulse border border-slate-100 dark:border-slate-700"></div>
+  }
+</div>
+} @else if (!analytics) {
+<div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-12 text-center">
+  <mat-icon class="text-slate-300 dark:text-slate-600" style="font-size:48px;width:48px;height:48px;line-height:48px">bar_chart</mat-icon>
+  <p class="text-slate-400 text-sm mt-3">No analytics data yet. Start selling to see your stats.</p>
+</div>
+} @else {
+<div class="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+  @for (card of statCards; track card.label) {
+  <div class="bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-100 dark:border-slate-700
+              hover:shadow-lg hover:shadow-indigo-500/5 transition-all">
+    <div class="flex items-center gap-3 mb-4">
+      <div [class]="'w-10 h-10 rounded-xl flex items-center justify-center ' + card.bg">
+        <mat-icon [class]="card.color" style="font-size:20px;width:20px;height:20px;line-height:20px">{{ card.icon }}</mat-icon>
+      </div>
+    </div>
+    <div class="text-2xl font-black text-slate-900 dark:text-white">{{ card.value }}</div>
+    <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">{{ card.label }}</div>
+  </div>
+  }
+</div>
+
+<!-- Revenue by status breakdown -->
+@if (analytics.ordersByStatus) {
+<div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6 mb-6">
+  <h2 class="text-sm font-bold text-slate-900 dark:text-white mb-5 flex items-center gap-2">
+    <div class="w-7 h-7 rounded-lg bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center">
+      <mat-icon class="text-indigo-500" style="font-size:16px;width:16px;height:16px;line-height:16px">pie_chart</mat-icon>
+    </div>
+    Orders by Status
+  </h2>
+  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+    @for (entry of (analytics.ordersByStatus | keyvalue); track entry.key) {
+    <div class="bg-slate-50 dark:bg-slate-700/40 rounded-xl p-4 text-center">
+      <div class="text-2xl font-black text-slate-900 dark:text-white">{{ entry.value }}</div>
+      <div class="text-[10px] text-slate-400 mt-1 capitalize">{{ entry.key }}</div>
+    </div>
+    }
+  </div>
+</div>
+}
+
+<!-- Top products -->
+@if (analytics.topProducts?.length > 0) {
+<div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 overflow-hidden">
+  <div class="px-5 py-4 border-b border-slate-100 dark:border-slate-700">
+    <h2 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+      <div class="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center">
+        <mat-icon class="text-amber-500" style="font-size:16px;width:16px;height:16px;line-height:16px">star</mat-icon>
+      </div>
+      Top Products
+    </h2>
+  </div>
+  <div class="divide-y divide-slate-50 dark:divide-slate-700/50">
+    @for (p of analytics.topProducts; track p._id ?? $index; let i = $index) {
+    <div class="flex items-center gap-4 px-5 py-3.5">
+      <div class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-xs font-bold text-slate-500 shrink-0">
+        {{ i + 1 }}
+      </div>
+      <div class="flex-1 min-w-0">
+        <p class="text-sm font-semibold text-slate-800 dark:text-slate-200 truncate">{{ p.title ?? p.name ?? '—' }}</p>
+      </div>
+      <div class="text-right shrink-0">
+        <p class="text-sm font-black text-slate-900 dark:text-white">${{ (p.revenue ?? 0).toFixed(2) }}</p>
+        <p class="text-[10px] text-slate-400">{{ p.unitsSold ?? 0 }} sold</p>
+      </div>
+    </div>
+    }
+  </div>
+</div>
+}
+}

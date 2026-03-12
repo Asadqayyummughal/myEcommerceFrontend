@@ -1,0 +1,447 @@
+<!-- Header -->
+<div class="mb-6 flex items-center gap-4">
+  <a routerLink="/products"
+    class="w-9 h-9 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700
+           flex items-center justify-center text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors shadow-sm">
+    <mat-icon style="font-size:18px;width:18px;height:18px;line-height:18px">arrow_back</mat-icon>
+  </a>
+  <div>
+    <h1 class="text-2xl font-black text-slate-900 dark:text-white">Edit Product</h1>
+    <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Update your product details</p>
+  </div>
+</div>
+
+<!-- Alerts -->
+@if (success) {
+<div class="mb-5 flex items-center gap-2 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800
+            text-emerald-700 dark:text-emerald-400 text-sm px-4 py-3 rounded-xl">
+  <mat-icon style="font-size:16px;width:16px;height:16px;line-height:16px">check_circle</mat-icon>
+  {{ success }}
+</div>
+}
+@if (error) {
+<div class="mb-5 flex items-center gap-2 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800
+            text-red-700 dark:text-red-400 text-sm px-4 py-3 rounded-xl">
+  <mat-icon style="font-size:16px;width:16px;height:16px;line-height:16px">error</mat-icon>
+  {{ error }}
+</div>
+}
+
+@if (loading) {
+<div class="space-y-4">
+  @for (s of [1,2,3]; track s) {
+  <div class="h-48 bg-white dark:bg-slate-800 rounded-2xl animate-pulse border border-slate-100 dark:border-slate-700"></div>
+  }
+</div>
+} @else {
+
+<div class="grid lg:grid-cols-3 gap-6">
+
+  <!-- ══ Main column ══════════════════════════════════════ -->
+  <div class="lg:col-span-2 space-y-5">
+
+    <!-- ── Basic Information ── -->
+    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6">
+      <h2 class="text-sm font-bold text-slate-900 dark:text-white mb-5 flex items-center gap-2">
+        <div class="w-7 h-7 rounded-lg bg-indigo-100 dark:bg-indigo-900/40 flex items-center justify-center">
+          <mat-icon class="text-indigo-500" style="font-size:16px;width:16px;height:16px;line-height:16px">info</mat-icon>
+        </div>
+        Basic Information
+      </h2>
+      <div class="space-y-4">
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">
+            Product Title <span class="text-red-400">*</span>
+          </label>
+          <input type="text" [(ngModel)]="form.title" placeholder="e.g. Wireless Noise-Cancelling Headphones"
+            class="w-full border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 text-sm bg-white dark:bg-slate-700
+                   text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-colors" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Slug</label>
+          <div class="relative">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm select-none">/</span>
+            <input type="text" [(ngModel)]="form.slug" placeholder="product-slug"
+              class="w-full border border-slate-200 dark:border-slate-600 rounded-xl pl-7 pr-4 py-3 text-sm bg-white dark:bg-slate-700
+                     text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-colors" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Short Description</label>
+          <input type="text" [(ngModel)]="form.shortDescription" placeholder="One-line summary shown in listings"
+            class="w-full border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 text-sm bg-white dark:bg-slate-700
+                   text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-colors" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Description</label>
+          <textarea [(ngModel)]="form.description" placeholder="Describe your product in detail..." rows="4"
+            class="w-full border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 text-sm bg-white dark:bg-slate-700
+                   text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-colors resize-none"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Tags</label>
+          <input type="text" [(ngModel)]="form.tags" placeholder="electronics, wireless, audio (comma-separated)"
+            class="w-full border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 text-sm bg-white dark:bg-slate-700
+                   text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-colors" />
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── Pricing & Inventory ── -->
+    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6">
+      <h2 class="text-sm font-bold text-slate-900 dark:text-white mb-5 flex items-center gap-2">
+        <div class="w-7 h-7 rounded-lg bg-emerald-100 dark:bg-emerald-900/40 flex items-center justify-center">
+          <mat-icon class="text-emerald-500" style="font-size:16px;width:16px;height:16px;line-height:16px">attach_money</mat-icon>
+        </div>
+        Pricing & Inventory
+      </h2>
+      <div class="grid grid-cols-2 gap-4">
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">
+            Price <span class="text-red-400">*</span>
+          </label>
+          <div class="relative">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
+            <input type="number" [(ngModel)]="form.price" placeholder="0.00" min="0" step="0.01"
+              class="w-full border border-slate-200 dark:border-slate-600 rounded-xl pl-8 pr-4 py-3 text-sm bg-white dark:bg-slate-700
+                     text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-colors" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Sale Price</label>
+          <div class="relative">
+            <span class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
+            <input type="number" [(ngModel)]="form.salePrice" placeholder="Optional" min="0" step="0.01"
+              class="w-full border border-slate-200 dark:border-slate-600 rounded-xl pl-8 pr-4 py-3 text-sm bg-white dark:bg-slate-700
+                     text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-colors" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Currency</label>
+          <select [(ngModel)]="form.currency"
+            class="w-full border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 text-sm bg-white dark:bg-slate-700
+                   text-slate-900 dark:text-white focus:outline-none focus:border-indigo-500 transition-colors cursor-pointer">
+            @for (c of currencies; track c) {
+            <option [value]="c">{{ c }}</option>
+            }
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">
+            Stock <span class="text-red-400">*</span>
+          </label>
+          <input type="number" [(ngModel)]="form.stock" placeholder="0" min="0"
+            class="w-full border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 text-sm bg-white dark:bg-slate-700
+                   text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-colors" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">SKU</label>
+          <input type="text" [(ngModel)]="form.sku" placeholder="e.g. SKU-12345"
+            class="w-full border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 text-sm bg-white dark:bg-slate-700
+                   text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-colors" />
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5 uppercase tracking-wider">Brand</label>
+          <input type="text" [(ngModel)]="form.brand" placeholder="e.g. Sony"
+            class="w-full border border-slate-200 dark:border-slate-600 rounded-xl px-4 py-3 text-sm bg-white dark:bg-slate-700
+                   text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-colors" />
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── Categories ── -->
+    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6">
+      <h2 class="text-sm font-bold text-slate-900 dark:text-white mb-5 flex items-center gap-2">
+        <div class="w-7 h-7 rounded-lg bg-violet-100 dark:bg-violet-900/40 flex items-center justify-center">
+          <mat-icon class="text-violet-500" style="font-size:16px;width:16px;height:16px;line-height:16px">category</mat-icon>
+        </div>
+        Categories
+        @if (form.categories.length > 0) {
+        <span class="ml-auto inline-flex items-center justify-center min-w-[20px] h-5 rounded-full bg-indigo-600 text-white text-[10px] font-bold px-1.5">
+          {{ form.categories.length }}
+        </span>
+        }
+      </h2>
+
+      @if (categories.length === 0) {
+      <p class="text-xs text-slate-400 italic">Loading categories…</p>
+      } @else {
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-5">
+        @for (cat of categories; track cat._id) {
+        <label
+          [class]="'flex items-center gap-2.5 px-3 py-2.5 rounded-xl border cursor-pointer transition-all ' +
+            (isCategorySelected(cat._id)
+              ? 'bg-indigo-50 dark:bg-indigo-900/30 border-indigo-300 dark:border-indigo-700'
+              : 'bg-slate-50 dark:bg-slate-700/40 border-slate-200 dark:border-slate-600 hover:border-indigo-300')">
+          <input type="checkbox" [checked]="isCategorySelected(cat._id)"
+            (change)="toggleCategory(cat._id)" class="w-3.5 h-3.5 rounded accent-indigo-600 cursor-pointer" />
+          <span [class]="'text-xs font-medium truncate ' +
+            (isCategorySelected(cat._id) ? 'text-indigo-700 dark:text-indigo-300' : 'text-slate-600 dark:text-slate-300')">
+            {{ cat.name }}
+          </span>
+        </label>
+        }
+      </div>
+      }
+
+      @if (form.categories.length > 0) {
+      <div class="border-t border-slate-100 dark:border-slate-700 pt-4">
+        <div class="flex items-center gap-2 mb-3">
+          <mat-icon class="text-slate-400" style="font-size:14px;width:14px;height:14px;line-height:14px">account_tree</mat-icon>
+          <span class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Subcategories</span>
+        </div>
+        @for (cat of categories; track cat._id) {
+          @if (isCategorySelected(cat._id) && subcategoriesForCategory(cat._id).length > 0) {
+          <div class="mb-4 last:mb-0">
+            <div class="flex items-center gap-1.5 mb-2">
+              <mat-icon class="text-slate-300 dark:text-slate-600" style="font-size:12px;width:12px;height:12px;line-height:12px">subdirectory_arrow_right</mat-icon>
+              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ cat.name }}</span>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              @for (sub of subcategoriesForCategory(cat._id); track sub._id) {
+              <button type="button" (click)="toggleSubcategory(sub._id)"
+                [class]="'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all ' +
+                  (isSubcategorySelected(sub._id)
+                    ? 'bg-indigo-600 border-indigo-600 text-white shadow-sm shadow-indigo-500/30'
+                    : 'bg-white dark:bg-slate-700 border-slate-200 dark:border-slate-600 text-slate-600 dark:text-slate-300 hover:border-indigo-400')">
+                @if (isSubcategorySelected(sub._id)) {
+                <mat-icon style="font-size:11px;width:11px;height:11px;line-height:11px">check</mat-icon>
+                } @else {
+                <mat-icon style="font-size:11px;width:11px;height:11px;line-height:11px">add</mat-icon>
+                }
+                {{ sub.name }}
+              </button>
+              }
+            </div>
+          </div>
+          }
+        }
+        @if (!hasVisibleSubcategories()) {
+        <p class="text-xs text-slate-400 italic">No subcategories for the selected categories</p>
+        }
+      </div>
+      }
+    </div>
+
+    <!-- ── Variants ── -->
+    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6">
+      <div class="flex items-center justify-between mb-5">
+        <h2 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+          <div class="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-900/40 flex items-center justify-center">
+            <mat-icon class="text-amber-500" style="font-size:16px;width:16px;height:16px;line-height:16px">layers</mat-icon>
+          </div>
+          Variants <span class="text-slate-400 font-normal text-xs">(optional)</span>
+        </h2>
+        <button type="button" (click)="addVariant()"
+          class="flex items-center gap-1.5 text-xs font-bold text-indigo-600 dark:text-indigo-400
+                 hover:text-indigo-700 bg-indigo-50 dark:bg-indigo-900/30 hover:bg-indigo-100 px-3 py-1.5 rounded-lg transition-all">
+          <mat-icon style="font-size:14px;width:14px;height:14px;line-height:14px">add</mat-icon>
+          Add Variant
+        </button>
+      </div>
+
+      @if (form.variants.length === 0) {
+      <div class="border-2 border-dashed border-slate-200 dark:border-slate-600 rounded-xl py-8 text-center">
+        <mat-icon class="text-slate-300 dark:text-slate-600" style="font-size:32px;width:32px;height:32px;line-height:32px">layers</mat-icon>
+        <p class="text-sm text-slate-400 mt-2 font-medium">No variants</p>
+        <p class="text-xs text-slate-400 mt-0.5">Add variants for sizes, colors, etc.</p>
+      </div>
+      } @else {
+      <div class="space-y-4">
+        @for (variant of form.variants; track $index; let vi = $index) {
+        <div class="border border-slate-200 dark:border-slate-600 rounded-xl p-4 bg-slate-50 dark:bg-slate-700/30">
+          <div class="flex items-center justify-between mb-3">
+            <span class="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Variant {{ vi + 1 }}</span>
+            <button type="button" (click)="removeVariant(vi)"
+              class="flex items-center gap-1 text-[11px] font-semibold text-red-400 hover:text-red-600
+                     hover:bg-red-50 dark:hover:bg-red-900/20 px-2 py-1 rounded-lg transition-all">
+              <mat-icon style="font-size:12px;width:12px;height:12px;line-height:12px">delete_outline</mat-icon>
+              Remove
+            </button>
+          </div>
+          <div class="grid grid-cols-3 gap-3 mb-3">
+            <div>
+              <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">SKU *</label>
+              <input [(ngModel)]="variant.sku" [name]="'vsku'+vi" placeholder="VAR-001"
+                class="w-full px-3 py-2 text-xs border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700
+                       text-slate-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors" />
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Price</label>
+              <div class="relative">
+                <span class="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">$</span>
+                <input [(ngModel)]="variant.price" [name]="'vprice'+vi" type="number" min="0" step="0.01" placeholder="Inherit"
+                  class="w-full pl-5 pr-3 py-2 text-xs border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700
+                         text-slate-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors" />
+              </div>
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Stock *</label>
+              <input [(ngModel)]="variant.stock" [name]="'vstock'+vi" type="number" min="0" placeholder="0"
+                class="w-full px-3 py-2 text-xs border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700
+                       text-slate-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors" />
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Attributes</span>
+              <button type="button" (click)="addAttribute(vi)"
+                class="flex items-center gap-0.5 text-[10px] font-bold text-indigo-500 hover:text-indigo-700 transition-colors">
+                <mat-icon style="font-size:11px;width:11px;height:11px;line-height:11px">add</mat-icon>
+                Add
+              </button>
+            </div>
+            @if (variant.attributes.length === 0) {
+            <p class="text-[10px] text-slate-400 italic">No attributes — click Add to define options</p>
+            } @else {
+            <div class="space-y-2">
+              @for (attr of variant.attributes; track $index; let ai = $index) {
+              <div class="flex items-center gap-2">
+                <input [(ngModel)]="attr.key" [name]="'akey'+vi+'_'+ai" placeholder="key"
+                  class="flex-1 px-2.5 py-1.5 text-xs border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700
+                         text-slate-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors" />
+                <span class="text-slate-300 text-sm shrink-0">:</span>
+                <input [(ngModel)]="attr.value" [name]="'aval'+vi+'_'+ai" placeholder="value"
+                  class="flex-1 px-2.5 py-1.5 text-xs border border-slate-200 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700
+                         text-slate-800 dark:text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors" />
+                <button type="button" (click)="removeAttribute(vi, ai)"
+                  class="p-1 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors shrink-0">
+                  <mat-icon style="font-size:13px;width:13px;height:13px;line-height:13px">close</mat-icon>
+                </button>
+              </div>
+              }
+            </div>
+            }
+          </div>
+        </div>
+        }
+      </div>
+      }
+    </div>
+
+  </div>
+
+  <!-- ══ Sidebar ══════════════════════════════════════════ -->
+  <div class="space-y-5">
+
+    <!-- ── Product Images ── -->
+    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6">
+      <h2 class="text-sm font-bold text-slate-900 dark:text-white mb-1 flex items-center gap-2">
+        <div class="w-7 h-7 rounded-lg bg-rose-100 dark:bg-rose-900/40 flex items-center justify-center">
+          <mat-icon class="text-rose-500" style="font-size:16px;width:16px;height:16px;line-height:16px">photo_library</mat-icon>
+        </div>
+        Product Images
+      </h2>
+      <p class="text-[11px] text-slate-400 mb-4 ml-9">{{ totalImageCount }}/6 · first is the cover</p>
+
+      <!-- Existing images -->
+      @if (existingImages.length > 0) {
+      <div class="grid grid-cols-3 gap-2 mb-3">
+        @for (img of existingImages; track img) {
+        <div class="relative aspect-square rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-700 group">
+          <img [src]="imageUrl(img)" alt="Existing" class="w-full h-full object-cover" />
+          <button type="button" (click)="removeExistingImage(img)"
+            class="absolute top-1 right-1 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center
+                   opacity-0 group-hover:opacity-100 transition-opacity">
+            <mat-icon style="font-size:11px;width:11px;height:11px;line-height:11px">close</mat-icon>
+          </button>
+        </div>
+        }
+      </div>
+      }
+
+      <!-- New file previews -->
+      @if (newPreviews.length > 0) {
+      <div class="grid grid-cols-3 gap-2 mb-3">
+        @for (preview of newPreviews; track $index) {
+        <div class="relative aspect-square rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-700 group ring-2 ring-indigo-400">
+          <img [src]="preview" alt="New" class="w-full h-full object-cover" />
+          <button type="button" (click)="removeNewFile($index)"
+            class="absolute top-1 right-1 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center
+                   opacity-0 group-hover:opacity-100 transition-opacity">
+            <mat-icon style="font-size:11px;width:11px;height:11px;line-height:11px">close</mat-icon>
+          </button>
+          <div class="absolute bottom-1 left-1 text-[9px] bg-indigo-600 text-white px-1.5 py-0.5 rounded-full font-bold">New</div>
+        </div>
+        }
+      </div>
+      }
+
+      <!-- Upload zone -->
+      @if (totalImageCount < 6) {
+      <label class="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-slate-200 dark:border-slate-600
+                    rounded-xl p-6 cursor-pointer hover:border-indigo-400 hover:bg-indigo-50/50 dark:hover:bg-indigo-900/10 transition-all">
+        <mat-icon class="text-slate-400" style="font-size:28px;width:28px;height:28px;line-height:28px">cloud_upload</mat-icon>
+        <span class="text-xs text-slate-500 dark:text-slate-400 text-center">
+          Click to add more<br />
+          <span class="text-[10px]">{{ 6 - totalImageCount }} slot{{ (6 - totalImageCount) !== 1 ? 's' : '' }} remaining</span>
+        </span>
+        <input type="file" accept="image/*" multiple class="hidden" (change)="onFilesSelected($event)" />
+      </label>
+      }
+    </div>
+
+    <!-- ── Visibility ── -->
+    <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6">
+      <h2 class="text-sm font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+        <div class="w-7 h-7 rounded-lg bg-sky-100 dark:bg-sky-900/40 flex items-center justify-center">
+          <mat-icon class="text-sky-500" style="font-size:16px;width:16px;height:16px;line-height:16px">visibility</mat-icon>
+        </div>
+        Visibility
+      </h2>
+      <label class="flex items-center justify-between cursor-pointer gap-3">
+        <div>
+          <p class="text-sm font-semibold text-slate-700 dark:text-slate-300">Active</p>
+          <p class="text-[11px] text-slate-400 mt-0.5">Product is visible in the store</p>
+        </div>
+        <div class="relative shrink-0">
+          <input type="checkbox" [(ngModel)]="form.isActive" class="sr-only peer" />
+          <div (click)="form.isActive = !form.isActive"
+            [class]="'w-11 h-6 rounded-full cursor-pointer transition-colors ' +
+              (form.isActive ? 'bg-indigo-600' : 'bg-slate-200 dark:bg-slate-600')">
+          </div>
+          <div (click)="form.isActive = !form.isActive"
+            [class]="'absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform cursor-pointer ' +
+              (form.isActive ? 'translate-x-5' : 'translate-x-0')">
+          </div>
+        </div>
+      </label>
+    </div>
+
+    <!-- ── Submit ── -->
+    <button type="button" (click)="submit()" [disabled]="saving || !form.title || form.price === null"
+      class="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500
+             disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3.5 rounded-xl text-sm
+             transition-all flex items-center justify-center gap-2 shadow-xl shadow-indigo-500/25">
+      @if (saving) {
+      <mat-icon class="animate-spin" style="font-size:18px;width:18px;height:18px;line-height:18px">refresh</mat-icon>
+      Saving Changes...
+      } @else {
+      <mat-icon style="font-size:18px;width:18px;height:18px;line-height:18px">save</mat-icon>
+      Save Changes
+      }
+    </button>
+
+    <a routerLink="/products"
+      class="w-full flex items-center justify-center gap-2 border border-slate-200 dark:border-slate-600
+             text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50
+             font-semibold py-3 rounded-xl text-sm transition-colors">
+      Cancel
+    </a>
+
+  </div>
+</div>
+}

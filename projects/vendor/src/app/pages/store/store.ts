@@ -17,7 +17,7 @@ export class Store implements OnInit {
   error = '';
   success = '';
 
-  readonly apiUrl = 'http://localhost:3000';
+  readonly apiUrl = 'http://localhost:3000/';
 
   form = {
     name: '',
@@ -33,10 +33,12 @@ export class Store implements OnInit {
   // logo
   logoFile: File | null = null;
   logoPreview: string | null = null;
+  logoRemoved = false;
 
   // banner
   bannerFile: File | null = null;
   bannerPreview: string | null = null;
+  bannerRemoved = false;
 
   constructor(private vendorService: VendorService) {}
 
@@ -47,7 +49,7 @@ export class Store implements OnInit {
   loadStore(): void {
     this.vendorService.getMyStore().subscribe({
       next: (res: any) => {
-        this.store = res.data ?? res;
+        this.store = res.data;
         if (this.store) {
           this.form.name = this.store.name ?? '';
           this.form.slug = this.store.slug ?? '';
@@ -98,6 +100,7 @@ export class Store implements OnInit {
   removeLogo(): void {
     this.logoFile = null;
     this.logoPreview = null;
+    if (this.store?.logo) this.logoRemoved = true;
   }
 
   onBannerSelected(event: Event): void {
@@ -113,6 +116,28 @@ export class Store implements OnInit {
   removeBanner(): void {
     this.bannerFile = null;
     this.bannerPreview = null;
+    if (this.store?.banner) this.bannerRemoved = true;
+  }
+
+  // ── Discard changes ───────────────────────────────────
+  discardChanges(): void {
+    if (!this.store) return;
+    this.form.name        = this.store.name ?? '';
+    this.form.slug        = this.store.slug ?? '';
+    this.form.description = this.store.description ?? '';
+    this.form.policies    = {
+      shipping: this.store.policies?.shipping ?? '',
+      returns:  this.store.policies?.returns  ?? '',
+      warranty: this.store.policies?.warranty ?? '',
+    };
+    this.logoFile    = null;
+    this.logoRemoved = false;
+    this.logoPreview = this.resolveUrl(this.store.logo) ?? null;
+    this.bannerFile    = null;
+    this.bannerRemoved = false;
+    this.bannerPreview = this.resolveUrl(this.store.banner) ?? null;
+    this.error   = '';
+    this.success = '';
   }
 
   // ── Submit ────────────────────────────────────────────
@@ -121,7 +146,7 @@ export class Store implements OnInit {
     this.saving = true;
     this.error = '';
     this.success = '';
-    const hasFiles = this.logoFile || this.bannerFile;
+    const hasFiles = this.logoFile || this.bannerFile || this.logoRemoved || this.bannerRemoved;
     if (hasFiles) {
       const fd = new FormData();
       fd.append('name', this.form.name.trim());
@@ -133,8 +158,10 @@ export class Store implements OnInit {
         fd.append('policies[returns]', this.form.policies.returns.trim());
       if (this.form.policies.warranty.trim())
         fd.append('policies[warranty]', this.form.policies.warranty.trim());
-      if (this.logoFile) fd.append('logo', this.logoFile);
-      if (this.bannerFile) fd.append('banner', this.bannerFile);
+      if (this.logoFile)      fd.append('logo',          this.logoFile);
+      if (this.logoRemoved)   fd.append('removeLogo',    'true');
+      if (this.bannerFile)    fd.append('banner',        this.bannerFile);
+      if (this.bannerRemoved) fd.append('removeBanner',  'true');
       this.doSave(fd);
     } else {
       const payload: any = {
@@ -142,7 +169,7 @@ export class Store implements OnInit {
         description: this.form.description.trim() || undefined,
         policies: {
           shipping: this.form.policies.shipping.trim() || undefined,
-          returns: this.form.policies.returns.trim() || undefined,
+          returns:  this.form.policies.returns.trim()  || undefined,
           warranty: this.form.policies.warranty.trim() || undefined,
         },
       };
@@ -162,17 +189,31 @@ export class Store implements OnInit {
         this.store = res.data ?? res;
         this.success = isNew ? 'Store created successfully!' : 'Store updated successfully!';
         this.saving = false;
-        // refresh previews from saved data
-        this.logoPreview = this.resolveUrl(this.store.logo) ?? null;
+        this.logoFile    = null;
+        this.logoRemoved = false;
+        this.bannerFile    = null;
+        this.bannerRemoved = false;
+        this.logoPreview   = this.resolveUrl(this.store.logo)   ?? null;
         this.bannerPreview = this.resolveUrl(this.store.banner) ?? null;
-        this.logoFile = null;
-        this.bannerFile = null;
       },
       error: (err: any) => {
         this.error = err?.error?.message ?? 'Failed to save store.';
         this.saving = false;
       },
     });
+  }
+
+  get isDirty(): boolean {
+    if (!this.store) return false;
+    return (
+      this.form.name        !== (this.store.name        ?? '')  ||
+      this.form.description !== (this.store.description ?? '')  ||
+      this.form.policies.shipping !== (this.store.policies?.shipping ?? '') ||
+      this.form.policies.returns  !== (this.store.policies?.returns  ?? '') ||
+      this.form.policies.warranty !== (this.store.policies?.warranty ?? '') ||
+      !!this.logoFile   || this.logoRemoved   ||
+      !!this.bannerFile || this.bannerRemoved
+    );
   }
 
   statusClass(status: string): string {

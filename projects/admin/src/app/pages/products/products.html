@@ -12,9 +12,11 @@
 </div>
 
 <!-- Toolbar -->
-<div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-4 mb-4 flex items-center gap-3">
+<div
+  class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-4 mb-4 flex items-center gap-3">
   <div class="flex-1 relative">
-    <mat-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" style="font-size:18px;width:18px;height:18px;line-height:18px">search</mat-icon>
+    <mat-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+      style="font-size:18px;width:18px;height:18px;line-height:18px">search</mat-icon>
     <input [(ngModel)]="searchQuery" (ngModelChange)="onSearch()" placeholder="Search products..."
       class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700
              text-gray-800 dark:text-gray-200 placeholder-gray-400 focus:outline-none focus:border-blue-500 transition-colors" />
@@ -60,13 +62,15 @@
         @if (products.length === 0) {
         <tr>
           <td colspan="7" class="text-center py-12">
-            <mat-icon class="text-gray-300 dark:text-gray-600" style="font-size:40px;width:40px;height:40px;line-height:40px">inventory_2</mat-icon>
+            <mat-icon class="text-gray-300 dark:text-gray-600"
+              style="font-size:40px;width:40px;height:40px;line-height:40px">inventory_2</mat-icon>
             <p class="text-gray-400 text-sm mt-2">No products found</p>
           </td>
         </tr>
         }
         @for (product of products; track product._id) {
-        <tr class="border-b border-gray-50 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
+        <tr
+          class="border-b border-gray-50 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
           <td class="px-5 py-3">
             <div class="flex items-center gap-3">
               <div class="w-10 h-10 rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-700 shrink-0">
@@ -75,12 +79,14 @@
                   [alt]="product.title" class="w-full h-full object-cover" />
                 } @else {
                 <div class="w-full h-full flex items-center justify-center">
-                  <mat-icon class="text-gray-400" style="font-size:16px;width:16px;height:16px;line-height:16px">image</mat-icon>
+                  <mat-icon class="text-gray-400"
+                    style="font-size:16px;width:16px;height:16px;line-height:16px">image</mat-icon>
                 </div>
                 }
               </div>
               <div>
-                <p class="text-xs font-semibold text-gray-800 dark:text-gray-200 line-clamp-1 max-w-[180px]">{{ product.title }}</p>
+                <p class="text-xs font-semibold text-gray-800 dark:text-gray-200 line-clamp-1 max-w-[180px]">{{
+                  product.title }}</p>
                 <p class="text-[10px] text-gray-400">{{ product.brand ?? '—' }}</p>
               </div>
             </div>
@@ -101,7 +107,7 @@
           </td>
           <td class="px-3 py-3">
             <span class="text-xs text-gray-500 dark:text-gray-400">
-              {{ product.variants?.length ?? 0 }}
+              {{ product?.variants?.length ?? 0 }}
             </span>
           </td>
           <td class="px-3 py-3">
@@ -132,24 +138,23 @@
   <!-- Pagination -->
   @if (totalPages > 1) {
   <div class="flex items-center justify-between px-5 py-3 border-t border-gray-100 dark:border-gray-700">
-    <span class="text-xs text-gray-500 dark:text-gray-400">Page {{ currentPage }} of {{ totalPages }} · {{ total }} total</span>
+    <span class="text-xs text-gray-500 dark:text-gray-400">Page {{ currentPage }} of {{ totalPages }} · {{ total }}
+      total</span>
     <div class="flex items-center gap-1">
-      <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1"
-        class="px-3 py-1.5 text-xs rounded-lg border border-gray-200 dark:border-gray-600 disabled:opacity-40
+      <button (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1" class="px-3 py-1.5 text-xs rounded-lg border border-gray-200 dark:border-gray-600 disabled:opacity-40
                hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 transition-colors">‹</button>
       @for (page of pageNumbers; track $index) {
-        @if (page === '...') {
-        <span class="px-2 text-gray-400">…</span>
-        } @else {
-        <button (click)="goToPage(+page)"
-          [class]="'px-3 py-1.5 text-xs rounded-lg border transition-colors ' +
+      @if (page === '...') {
+      <span class="px-2 text-gray-400">…</span>
+      } @else {
+      <button (click)="goToPage(+page)"
+        [class]="'px-3 py-1.5 text-xs rounded-lg border transition-colors ' +
             (page === currentPage ? 'bg-blue-600 border-blue-600 text-white' : 'border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400')">
-          {{ page }}
-        </button>
-        }
+        {{ page }}
+      </button>
       }
-      <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages"
-        class="px-3 py-1.5 text-xs rounded-lg border border-gray-200 dark:border-gray-600 disabled:opacity-40
+      }
+      <button (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages" class="px-3 py-1.5 text-xs rounded-lg border border-gray-200 dark:border-gray-600 disabled:opacity-40
                hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400 transition-colors">›</button>
     </div>
   </div>
@@ -159,16 +164,18 @@
 
 <!-- ===== Add / Edit Modal ===== -->
 @if (showModal) {
-<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm" (click)="closeModal()">
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm"
+  (click)="closeModal()">
   <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[92vh] flex flex-col"
-       (click)="$event.stopPropagation()">
+    (click)="$event.stopPropagation()">
 
     <!-- Modal header -->
     <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-gray-700 shrink-0">
       <h2 class="text-base font-black text-gray-900 dark:text-white">
         {{ editingProduct ? 'Edit Product' : 'Add Product' }}
       </h2>
-      <button (click)="closeModal()" class="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 transition-colors">
+      <button (click)="closeModal()"
+        class="p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 transition-colors">
         <mat-icon style="font-size:18px;width:18px;height:18px;line-height:18px">close</mat-icon>
       </button>
     </div>
@@ -183,9 +190,9 @@
 
           <!-- Title -->
           <div>
-            <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Title <span class="text-red-500">*</span></label>
-            <input [(ngModel)]="form.title" (input)="autoSlug()" placeholder="Product title"
-              class="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700
+            <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Title <span
+                class="text-red-500">*</span></label>
+            <input [(ngModel)]="form.title" (input)="autoSlug()" placeholder="Product title" class="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700
                      text-gray-800 dark:text-gray-200 focus:outline-none focus:border-blue-500 transition-colors" />
           </div>
 
@@ -196,8 +203,7 @@
             </label>
             <div class="relative">
               <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm select-none">/</span>
-              <input [(ngModel)]="form.slug" placeholder="product-slug"
-                class="w-full pl-6 pr-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700
+              <input [(ngModel)]="form.slug" placeholder="product-slug" class="w-full pl-6 pr-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700
                        text-gray-800 dark:text-gray-200 focus:outline-none focus:border-blue-500 transition-colors" />
             </div>
           </div>
@@ -205,8 +211,7 @@
           <!-- Short Description -->
           <div>
             <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Short Description</label>
-            <input [(ngModel)]="form.shortDescription" placeholder="Brief one-liner about the product"
-              class="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700
+            <input [(ngModel)]="form.shortDescription" placeholder="Brief one-liner about the product" class="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700
                      text-gray-800 dark:text-gray-200 focus:outline-none focus:border-blue-500 transition-colors" />
           </div>
 
@@ -225,21 +230,19 @@
         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Pricing</p>
         <div class="grid grid-cols-3 gap-3">
           <div>
-            <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Price <span class="text-red-500">*</span></label>
-            <input [(ngModel)]="form.price" type="number" min="0" step="0.01" placeholder="0.00"
-              class="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700
+            <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Price <span
+                class="text-red-500">*</span></label>
+            <input [(ngModel)]="form.price" type="number" min="0" step="0.01" placeholder="0.00" class="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700
                      text-gray-800 dark:text-gray-200 focus:outline-none focus:border-blue-500 transition-colors" />
           </div>
           <div>
             <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Sale Price</label>
-            <input [(ngModel)]="form.salePrice" type="number" min="0" step="0.01" placeholder="Optional"
-              class="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700
+            <input [(ngModel)]="form.salePrice" type="number" min="0" step="0.01" placeholder="Optional" class="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700
                      text-gray-800 dark:text-gray-200 focus:outline-none focus:border-blue-500 transition-colors" />
           </div>
           <div>
             <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Currency</label>
-            <select [(ngModel)]="form.currency"
-              class="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700
+            <select [(ngModel)]="form.currency" class="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700
                      text-gray-800 dark:text-gray-200 focus:outline-none focus:border-blue-500 transition-colors">
               @for (c of currencies; track c) {
               <option [value]="c">{{ c }}</option>
@@ -254,21 +257,19 @@
         <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3">Inventory</p>
         <div class="grid grid-cols-3 gap-3">
           <div>
-            <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Stock <span class="text-red-500">*</span></label>
-            <input [(ngModel)]="form.stock" type="number" min="0" placeholder="0"
-              class="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700
+            <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Stock <span
+                class="text-red-500">*</span></label>
+            <input [(ngModel)]="form.stock" type="number" min="0" placeholder="0" class="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700
                      text-gray-800 dark:text-gray-200 focus:outline-none focus:border-blue-500 transition-colors" />
           </div>
           <div>
             <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">SKU</label>
-            <input [(ngModel)]="form.sku" placeholder="Optional"
-              class="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700
+            <input [(ngModel)]="form.sku" placeholder="Optional" class="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700
                      text-gray-800 dark:text-gray-200 focus:outline-none focus:border-blue-500 transition-colors" />
           </div>
           <div>
             <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Brand</label>
-            <input [(ngModel)]="form.brand" placeholder="Brand name"
-              class="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700
+            <input [(ngModel)]="form.brand" placeholder="Brand name" class="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700
                      text-gray-800 dark:text-gray-200 focus:outline-none focus:border-blue-500 transition-colors" />
           </div>
         </div>
@@ -281,9 +282,9 @@
 
           <!-- Tags -->
           <div>
-            <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Tags <span class="font-normal text-gray-400">(comma-separated)</span></label>
-            <input [(ngModel)]="form.tags" placeholder="e.g. summer, sale, new"
-              class="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700
+            <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Tags <span
+                class="font-normal text-gray-400">(comma-separated)</span></label>
+            <input [(ngModel)]="form.tags" placeholder="e.g. summer, sale, new" class="w-full px-3 py-2 text-sm border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700
                      text-gray-800 dark:text-gray-200 focus:outline-none focus:border-blue-500 transition-colors" />
           </div>
 
@@ -293,14 +294,15 @@
             @if (categories.length === 0) {
             <p class="text-xs text-gray-400 italic">No categories available</p>
             } @else {
-            <div class="border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 p-3 max-h-40 overflow-y-auto">
+            <div
+              class="border border-gray-200 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-700 p-3 max-h-40 overflow-y-auto">
               <div class="grid grid-cols-2 gap-1.5">
                 @for (cat of categories; track cat._id) {
                 <label class="flex items-center gap-2 cursor-pointer group">
-                  <input type="checkbox" [checked]="isCategorySelected(cat._id)"
-                    (change)="toggleCategory(cat._id)"
+                  <input type="checkbox" [checked]="isCategorySelected(cat._id)" (change)="toggleCategory(cat._id)"
                     class="w-3.5 h-3.5 rounded accent-blue-600 cursor-pointer" />
-                  <span class="text-xs text-gray-700 dark:text-gray-300 group-hover:text-blue-600 transition-colors truncate">
+                  <span
+                    class="text-xs text-gray-700 dark:text-gray-300 group-hover:text-blue-600 transition-colors truncate">
                     {{ cat.name }}
                   </span>
                 </label>
@@ -316,7 +318,8 @@
             <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-2">
               Subcategories
               @if (form.subcategories.length > 0) {
-              <span class="ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full bg-blue-600 text-white text-[9px] font-bold">
+              <span
+                class="ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full bg-blue-600 text-white text-[9px] font-bold">
                 {{ form.subcategories.length }}
               </span>
               }
@@ -327,30 +330,32 @@
             } @else {
             <!-- Group chips by parent category -->
             @for (cat of categories; track cat._id) {
-              @if (isCategorySelected(cat._id) && subcategoriesForCategory(cat._id).length > 0) {
-              <div class="mb-3 last:mb-0">
-                <!-- Parent label -->
-                <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1.5 flex items-center gap-1">
-                  <mat-icon style="font-size:10px;width:10px;height:10px;line-height:10px">subdirectory_arrow_right</mat-icon>
-                  {{ cat.name }}
-                </p>
-                <!-- Chip grid -->
-                <div class="flex flex-wrap gap-1.5">
-                  @for (sub of subcategoriesForCategory(cat._id); track sub._id) {
-                  <button type="button" (click)="toggleSubcategory(sub._id)"
-                    [class]="'inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium border transition-all ' +
+            @if (isCategorySelected(cat._id) && subcategoriesForCategory(cat._id).length > 0) {
+            <div class="mb-3 last:mb-0">
+              <!-- Parent label -->
+              <p
+                class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-1.5 flex items-center gap-1">
+                <mat-icon
+                  style="font-size:10px;width:10px;height:10px;line-height:10px">subdirectory_arrow_right</mat-icon>
+                {{ cat.name }}
+              </p>
+              <!-- Chip grid -->
+              <div class="flex flex-wrap gap-1.5">
+                @for (sub of subcategoriesForCategory(cat._id); track sub._id) {
+                <button type="button" (click)="toggleSubcategory(sub._id)"
+                  [class]="'inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium border transition-all ' +
                       (isSubcategorySelected(sub._id)
                         ? 'bg-blue-600 border-blue-600 text-white shadow-sm'
                         : 'bg-white dark:bg-gray-700 border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 hover:border-blue-400 hover:text-blue-600')">
-                    @if (isSubcategorySelected(sub._id)) {
-                    <mat-icon style="font-size:11px;width:11px;height:11px;line-height:11px">check</mat-icon>
-                    }
-                    {{ sub.name }}
-                  </button>
+                  @if (isSubcategorySelected(sub._id)) {
+                  <mat-icon style="font-size:11px;width:11px;height:11px;line-height:11px">check</mat-icon>
                   }
-                </div>
+                  {{ sub.name }}
+                </button>
+                }
               </div>
-              }
+            </div>
+            }
             }
             }
           </div>
@@ -373,7 +378,8 @@
 
         @if (form.variants.length === 0) {
         <div class="border-2 border-dashed border-gray-200 dark:border-gray-600 rounded-xl py-6 text-center">
-          <mat-icon class="text-gray-300" style="font-size:28px;width:28px;height:28px;line-height:28px">layers</mat-icon>
+          <mat-icon class="text-gray-300"
+            style="font-size:28px;width:28px;height:28px;line-height:28px">layers</mat-icon>
           <p class="text-xs text-gray-400 mt-1">No variants — product uses base stock & price</p>
         </div>
         } @else {
@@ -391,19 +397,22 @@
             <!-- SKU + Price + Stock -->
             <div class="grid grid-cols-3 gap-2 mb-3">
               <div>
-                <label class="block text-[10px] font-semibold text-gray-500 mb-1">SKU <span class="text-red-400">*</span></label>
+                <label class="block text-[10px] font-semibold text-gray-500 mb-1">SKU <span
+                    class="text-red-400">*</span></label>
                 <input [(ngModel)]="variant.sku" [name]="'vsku'+vi" placeholder="VAR-001"
                   class="w-full px-2.5 py-1.5 text-xs border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700
                          text-gray-800 dark:text-gray-200 focus:outline-none focus:border-blue-500 transition-colors" />
               </div>
               <div>
                 <label class="block text-[10px] font-semibold text-gray-500 mb-1">Price</label>
-                <input [(ngModel)]="variant.price" [name]="'vprice'+vi" type="number" min="0" step="0.01" placeholder="Inherit"
+                <input [(ngModel)]="variant.price" [name]="'vprice'+vi" type="number" min="0" step="0.01"
+                  placeholder="Inherit"
                   class="w-full px-2.5 py-1.5 text-xs border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700
                          text-gray-800 dark:text-gray-200 focus:outline-none focus:border-blue-500 transition-colors" />
               </div>
               <div>
-                <label class="block text-[10px] font-semibold text-gray-500 mb-1">Stock <span class="text-red-400">*</span></label>
+                <label class="block text-[10px] font-semibold text-gray-500 mb-1">Stock <span
+                    class="text-red-400">*</span></label>
                 <input [(ngModel)]="variant.stock" [name]="'vstock'+vi" type="number" min="0" placeholder="0"
                   class="w-full px-2.5 py-1.5 text-xs border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700
                          text-gray-800 dark:text-gray-200 focus:outline-none focus:border-blue-500 transition-colors" />
@@ -413,7 +422,8 @@
             <!-- Attributes -->
             <div>
               <div class="flex items-center justify-between mb-1.5">
-                <label class="text-[10px] font-semibold text-gray-500">Attributes <span class="font-normal text-gray-400">(e.g. size, color)</span></label>
+                <label class="text-[10px] font-semibold text-gray-500">Attributes <span
+                    class="font-normal text-gray-400">(e.g. size, color)</span></label>
                 <button type="button" (click)="addAttribute(vi)"
                   class="text-[10px] font-semibold text-blue-600 hover:text-blue-700 flex items-center gap-0.5 transition-colors">
                   <mat-icon style="font-size:11px;width:11px;height:11px;line-height:11px">add</mat-icon>
@@ -460,10 +470,12 @@
             <img [src]="img.previewUrl" alt="preview" class="w-full h-full object-cover" />
             <button type="button" (click)="removeImage($index)"
               class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
-              <mat-icon class="text-white" style="font-size:18px;width:18px;height:18px;line-height:18px">close</mat-icon>
+              <mat-icon class="text-white"
+                style="font-size:18px;width:18px;height:18px;line-height:18px">close</mat-icon>
             </button>
             @if (!img.isExisting) {
-            <span class="absolute bottom-0 left-0 right-0 text-[8px] font-bold text-center bg-blue-600 text-white py-0.5">NEW</span>
+            <span
+              class="absolute bottom-0 left-0 right-0 text-[8px] font-bold text-center bg-blue-600 text-white py-0.5">NEW</span>
             }
           </div>
           }
@@ -473,7 +485,8 @@
         <label
           class="flex flex-col items-center justify-center gap-2 w-full h-24 border-2 border-dashed border-gray-200 dark:border-gray-600
                  rounded-xl cursor-pointer hover:border-blue-400 hover:bg-blue-50/50 dark:hover:bg-blue-900/10 transition-colors">
-          <mat-icon class="text-gray-400" style="font-size:28px;width:28px;height:28px;line-height:28px">add_photo_alternate</mat-icon>
+          <mat-icon class="text-gray-400"
+            style="font-size:28px;width:28px;height:28px;line-height:28px">add_photo_alternate</mat-icon>
           <span class="text-xs text-gray-500 dark:text-gray-400">Click to add images</span>
           <input type="file" accept="image/*" multiple class="hidden" (change)="onFilesSelected($event)" />
         </label>
@@ -489,13 +502,11 @@
 
     <!-- Footer -->
     <div class="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100 dark:border-gray-700 shrink-0">
-      <button (click)="closeModal()"
-        class="px-4 py-2 text-sm font-semibold text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-600
+      <button (click)="closeModal()" class="px-4 py-2 text-sm font-semibold text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-600
                rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
         Cancel
       </button>
-      <button (click)="save()" [disabled]="saving"
-        class="flex items-center gap-2 px-5 py-2 text-sm font-semibold bg-blue-600 text-white rounded-xl
+      <button (click)="save()" [disabled]="saving" class="flex items-center gap-2 px-5 py-2 text-sm font-semibold bg-blue-600 text-white rounded-xl
                hover:bg-blue-700 disabled:opacity-60 transition-colors">
         @if (saving) {
         <mat-icon class="animate-spin" style="font-size:16px;width:16px;height:16px;line-height:16px">refresh</mat-icon>

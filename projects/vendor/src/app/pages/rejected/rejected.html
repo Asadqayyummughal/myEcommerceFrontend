@@ -1,0 +1,30 @@
+<div class="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center p-6">
+  <div class="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 shadow-xl p-10 max-w-md w-full text-center">
+    <div class="w-20 h-20 rounded-2xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center mx-auto mb-6">
+      <mat-icon class="text-amber-500 dark:text-amber-400" style="font-size:40px;width:40px;height:40px;line-height:40px">cancel</mat-icon>
+    </div>
+    <h1 class="text-2xl font-black text-slate-900 dark:text-white mb-2">Application Rejected</h1>
+    <p class="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-8">
+      Unfortunately your vendor application was not approved. You can reapply with updated information or contact support for more details.
+    </p>
+    <div class="space-y-3">
+      <a routerLink="/apply"
+        class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-indigo-600 to-violet-600
+               hover:from-indigo-500 hover:to-violet-500 text-white font-bold py-3 rounded-xl text-sm transition-all">
+        <mat-icon style="font-size:16px;width:16px;height:16px;line-height:16px">refresh</mat-icon>
+        Reapply
+      </a>
+      <a href="mailto:support@shopzone.com"
+        class="w-full flex items-center justify-center gap-2 border border-slate-200 dark:border-slate-600
+               text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-700/50
+               font-semibold py-3 rounded-xl text-sm transition-colors">
+        <mat-icon style="font-size:16px;width:16px;height:16px;line-height:16px">mail</mat-icon>
+        Contact Support
+      </a>
+      <button (click)="logout()"
+        class="w-full text-slate-400 hover:text-slate-600 font-medium py-2 text-sm transition-colors">
+        Sign Out
+      </button>
+    </div>
+  </div>
+</div>
