@@ -63,7 +63,7 @@ export class VendorService {
 
   // ── Products ──────────────────────────────────────────
   createProduct(formData: FormData): Observable<any> {
-    return this.api.postFormData('vendor/product', formData);
+    return this.api.postFormData('products', formData);
   }
 
   getProduct(productId: string): Observable<any> {

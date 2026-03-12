@@ -263,6 +263,42 @@
                      focus:outline-none focus:ring-2 focus:ring-blue-500 transition" />
           </div>
         </div>
+
+        <!-- Level -->
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1.5">
+            Level <span class="text-rose-500">*</span>
+            <span class="ml-1 font-normal text-gray-400">(1 = top-level, up to 4)</span>
+          </label>
+          <select [(ngModel)]="subForm.level"
+            class="w-full rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700
+                   text-gray-900 dark:text-white px-4 py-2.5 text-sm
+                   focus:outline-none focus:ring-2 focus:ring-blue-500 transition cursor-pointer">
+            <option [value]="1">1 — Top level</option>
+            <option [value]="2">2 — Second level</option>
+            <option [value]="3">3 — Third level</option>
+            <option [value]="4">4 — Fourth level</option>
+          </select>
+        </div>
+
+        <!-- Parent subcategory (only shown for level > 1) -->
+        @if (subForm.level > 1 && subcategoriesForSubCreate().length > 0) {
+        <div>
+          <label class="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1.5">
+            Parent Subcategory
+            @if (subForm.level > 1) { <span class="text-rose-500">*</span> }
+          </label>
+          <select [(ngModel)]="subForm.parent"
+            class="w-full rounded-xl border border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700
+                   text-gray-900 dark:text-white px-4 py-2.5 text-sm
+                   focus:outline-none focus:ring-2 focus:ring-blue-500 transition cursor-pointer">
+            <option value="">— Select parent subcategory —</option>
+            @for (sub of subcategoriesForSubCreate(); track sub._id) {
+            <option [value]="sub._id">{{ sub.name }} (level {{ sub.level }})</option>
+            }
+          </select>
+        </div>
+        }
       </div>
 
       <!-- Actions -->

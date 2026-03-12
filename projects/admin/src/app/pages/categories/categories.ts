@@ -20,7 +20,7 @@ export class Categories implements OnInit {
   editingCategory: any = null;
   saving = false;
   form = { name: '', description: '', slug: '' };
-  subForm = { name: '', category: '', slug: '' };
+  subForm = { name: '', category: '', slug: '', level: 1, parent: '' };
 
   readonly iconColors = [
     'bg-blue-100 text-blue-600',
@@ -155,8 +155,12 @@ export class Categories implements OnInit {
       .replace(/\s+/g, '-');
   }
 
+  subcategoriesForSubCreate(): any[] {
+    return this.subcategories.filter(s => (s.category?._id ?? s.category) === this.subForm.category);
+  }
+
   openSubCreate(cat: any): void {
-    this.subForm = { name: '', category: cat._id, slug: '' };
+    this.subForm = { name: '', category: cat._id, slug: '', level: 1, parent: '' };
     this.showSubModal = true;
   }
 
@@ -170,8 +174,13 @@ export class Categories implements OnInit {
       return;
     }
     this.saving = true;
-    const subPayload: any = { name: this.subForm.name.trim(), category: this.subForm.category };
+    const subPayload: any = {
+      name:     this.subForm.name.trim(),
+      category: this.subForm.category,
+      level:    this.subForm.level,
+    };
     if (this.subForm.slug.trim()) subPayload.slug = this.subForm.slug.trim();
+    if (this.subForm.parent)      subPayload.parent = this.subForm.parent;
     this.adminService.createSubcategory(subPayload).subscribe({
       next: () => {
         this.snackBar.open('Subcategory created', 'Close', { duration: 3000 });

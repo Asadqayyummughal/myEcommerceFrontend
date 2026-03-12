@@ -11,7 +11,8 @@
       "Bash(cd \"C:/study material/Ecommerce/ecommerce-frontend\" && ng build --project vendor 2>&1 | tail -10)",
       "Bash(cd \"C:/study material/Ecommerce/ecommerce-frontend\" && ng build --project vendor 2>&1 | grep -E \"\\(ERROR|WARNING|complete|failed\\)\")",
       "Bash(cd \"C:/study material/Ecommerce/ecommerce-frontend\" && ng build --project admin 2>&1 | grep -E \"\\(ERROR|WARNING NG|complete|failed\\)\" && ng build --project vendor 2>&1 | grep -E \"\\(ERROR|WARNING NG|complete|failed\\)\")",
-      "Bash(cd \"C:/study material/Ecommerce/ecommerce-frontend\" && ng build --project store 2>&1 | grep -E \"\\(ERROR|WARNING NG|complete|failed\\)\")"
+      "Bash(cd \"C:/study material/Ecommerce/ecommerce-frontend\" && ng build --project store 2>&1 | grep -E \"\\(ERROR|WARNING NG|complete|failed\\)\")",
+      "Bash(find \"c:/study material/Ecommerce/ecommerce-backend-apis/src\" -name \"subcatrgory.service.ts\" -o -name \"subcategory.service.ts\" | xargs cat 2>/dev/null)"
     ]
   }
 }

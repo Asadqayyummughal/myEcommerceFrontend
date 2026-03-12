@@ -54,8 +54,8 @@ export class EditProduct implements OnInit {
     sku:              '',
     brand:            '',
     tags:             '',
-    categories:       [] as string[],
-    subcategories:    [] as string[],
+    category:         '',
+    subCategory:      '',
     variants:         [] as VariantForm[],
     isActive:         true,
   };
@@ -94,11 +94,8 @@ export class EditProduct implements OnInit {
         this.form.tags             = Array.isArray(p.tags) ? p.tags.join(', ') : (p.tags ?? '');
         this.form.isActive         = p.isActive ?? true;
 
-        const rawCats = p.categories ?? [];
-        this.form.categories = rawCats.map((c: any) => c?._id ?? c);
-
-        const rawSubs = p.subcategories ?? [];
-        this.form.subcategories = rawSubs.map((s: any) => s?._id ?? s);
+        this.form.category    = p.category?._id    ?? p.category    ?? '';
+        this.form.subCategory = p.subCategory?._id ?? p.subCategory ?? '';
 
         this.existingImages = p.images ?? [];
 
@@ -124,37 +121,14 @@ export class EditProduct implements OnInit {
     // only rewrite slug if the user hasn't manually edited it
   }
 
-  // ── Categories ────────────────────────────────────────
-  toggleCategory(id: string): void {
-    const idx = this.form.categories.indexOf(id);
-    if (idx === -1) {
-      this.form.categories.push(id);
-    } else {
-      this.form.categories.splice(idx, 1);
-      const orphaned = this.subcategories
-        .filter(s => (s.category?._id ?? s.category) === id)
-        .map(s => s._id);
-      this.form.subcategories = this.form.subcategories.filter(sid => !orphaned.includes(sid));
-    }
+  // ── Category / Subcategory ────────────────────────────
+  onCategoryChange(): void {
+    this.form.subCategory = '';
   }
 
-  isCategorySelected(id: string): boolean { return this.form.categories.includes(id); }
-
-  // ── Subcategories ─────────────────────────────────────
-  subcategoriesForCategory(catId: string): any[] {
-    return this.subcategories.filter(s => (s.category?._id ?? s.category) === catId);
-  }
-
-  toggleSubcategory(id: string): void {
-    const idx = this.form.subcategories.indexOf(id);
-    if (idx === -1) this.form.subcategories.push(id);
-    else this.form.subcategories.splice(idx, 1);
-  }
-
-  isSubcategorySelected(id: string): boolean { return this.form.subcategories.includes(id); }
-
-  hasVisibleSubcategories(): boolean {
-    return this.form.categories.some(catId => this.subcategoriesForCategory(catId).length > 0);
+  get filteredSubcategories(): any[] {
+    if (!this.form.category) return [];
+    return this.subcategories.filter(s => (s.category?._id ?? s.category) === this.form.category);
   }
 
   // ── Existing images ───────────────────────────────────
@@ -237,8 +211,8 @@ export class EditProduct implements OnInit {
       if (this.form.brand.trim()) fd.append('brand', this.form.brand.trim());
       if (this.form.tags.trim())  fd.append('tags',  this.form.tags.trim());
       fd.append('isActive', String(this.form.isActive));
-      this.form.categories.forEach(id => fd.append('categories', id));
-      this.form.subcategories.forEach(id => fd.append('subcategories', id));
+      if (this.form.category)    fd.append('category',    this.form.category);
+      if (this.form.subCategory) fd.append('subCategory', this.form.subCategory);
       this.existingImages.forEach(url => fd.append('keepImages', url));
       this.selectedFiles.forEach(f => fd.append('images', f));
       const variants = this.buildVariantsPayload();
@@ -253,8 +227,8 @@ export class EditProduct implements OnInit {
         currency:         this.form.currency,
         stock:            Number(this.form.stock ?? 0),
         isActive:         this.form.isActive,
-        categories:       this.form.categories,
-        subcategories:    this.form.subcategories,
+        category:    this.form.category    || undefined,
+        subCategory: this.form.subCategory || undefined,
       };
       if (this.form.slug.trim())       payload.slug     = this.form.slug.trim();
       if (this.form.salePrice !== null) payload.salePrice = Number(this.form.salePrice);

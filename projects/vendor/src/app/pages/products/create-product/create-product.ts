@@ -46,8 +46,8 @@ export class CreateProduct implements OnInit {
     sku:              '',
     brand:            '',
     tags:             '',
-    categories:       [] as string[],
-    subcategories:    [] as string[],
+    category:         '',
+    subCategory:      '',
     variants:         [] as VariantForm[],
     isActive:         true,
   };
@@ -75,41 +75,14 @@ export class CreateProduct implements OnInit {
     }
   }
 
-  // ── Categories ────────────────────────────────────────
-  toggleCategory(id: string): void {
-    const idx = this.form.categories.indexOf(id);
-    if (idx === -1) {
-      this.form.categories.push(id);
-    } else {
-      this.form.categories.splice(idx, 1);
-      const orphaned = this.subcategories
-        .filter(s => (s.category?._id ?? s.category) === id)
-        .map(s => s._id);
-      this.form.subcategories = this.form.subcategories.filter(sid => !orphaned.includes(sid));
-    }
+  // ── Category / Subcategory ────────────────────────────
+  onCategoryChange(): void {
+    this.form.subCategory = '';
   }
 
-  isCategorySelected(id: string): boolean {
-    return this.form.categories.includes(id);
-  }
-
-  // ── Subcategories ─────────────────────────────────────
-  subcategoriesForCategory(catId: string): any[] {
-    return this.subcategories.filter(s => (s.category?._id ?? s.category) === catId);
-  }
-
-  toggleSubcategory(id: string): void {
-    const idx = this.form.subcategories.indexOf(id);
-    if (idx === -1) this.form.subcategories.push(id);
-    else this.form.subcategories.splice(idx, 1);
-  }
-
-  isSubcategorySelected(id: string): boolean {
-    return this.form.subcategories.includes(id);
-  }
-
-  hasVisibleSubcategories(): boolean {
-    return this.form.categories.some(catId => this.subcategoriesForCategory(catId).length > 0);
+  get filteredSubcategories(): any[] {
+    if (!this.form.category) return [];
+    return this.subcategories.filter(s => (s.category?._id ?? s.category) === this.form.category);
   }
 
   // ── Variants ──────────────────────────────────────────
@@ -183,8 +156,8 @@ export class CreateProduct implements OnInit {
     if (this.form.tags.trim())             fd.append('tags',  this.form.tags.trim());
     fd.append('isActive', String(this.form.isActive));
 
-    this.form.categories.forEach(id => fd.append('categories', id));
-    this.form.subcategories.forEach(id => fd.append('subcategories', id));
+    if (this.form.category)    fd.append('category',    this.form.category);
+    if (this.form.subCategory) fd.append('subCategory', this.form.subCategory);
 
     const variants = this.buildVariantsPayload();
     if (variants.length > 0) fd.append('variants', JSON.stringify(variants));

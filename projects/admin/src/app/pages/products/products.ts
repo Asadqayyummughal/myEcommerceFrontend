@@ -28,8 +28,8 @@ interface ProductForm {
   brand: string;
   tags: string;
   stock: number | null;
-  categories: string[];
-  subcategories: string[];
+  category: string;
+  subCategory: string;
   variants: VariantForm[];
   isActive: boolean;
 }
@@ -83,7 +83,7 @@ export class Products implements OnInit {
       title: '', slug: '', description: '', shortDescription: '',
       price: null, salePrice: null, currency: 'USD',
       sku: '', brand: '', tags: '', stock: null,
-      categories: [], subcategories: [],
+      category: '', subCategory: '',
       variants: [], isActive: true,
     };
   }
@@ -134,50 +134,14 @@ export class Products implements OnInit {
     }
   }
 
-  // ── Categories ────────────────────────────────────────
-  toggleCategory(id: string): void {
-    const idx = this.form.categories.indexOf(id);
-    if (idx === -1) {
-      this.form.categories.push(id);
-    } else {
-      this.form.categories.splice(idx, 1);
-      // deselect subcategories that belonged to this category
-      const orphaned = this.subcategories
-        .filter(s => (s.category?._id ?? s.category) === id)
-        .map(s => s._id);
-      this.form.subcategories = this.form.subcategories.filter(sid => !orphaned.includes(sid));
-    }
+  // ── Category / Subcategory ────────────────────────────
+  onCategoryChange(): void {
+    this.form.subCategory = '';
   }
 
-  isCategorySelected(id: string): boolean {
-    return this.form.categories.includes(id);
-  }
-
-  // ── Subcategories ─────────────────────────────────────
-  /** Returns subcategories whose parent category is currently selected */
-  visibleSubcategories(): any[] {
-    return this.subcategories.filter(s =>
-      this.form.categories.includes(s.category?._id ?? s.category)
-    );
-  }
-
-  toggleSubcategory(id: string): void {
-    const idx = this.form.subcategories.indexOf(id);
-    if (idx === -1) this.form.subcategories.push(id);
-    else this.form.subcategories.splice(idx, 1);
-  }
-
-  isSubcategorySelected(id: string): boolean {
-    return this.form.subcategories.includes(id);
-  }
-
-  subcategoriesForCategory(catId: string): any[] {
-    return this.subcategories.filter(s => (s.category?._id ?? s.category) === catId);
-  }
-
-  parentCategoryName(sub: any): string {
-    if (sub.category?.name) return sub.category.name;
-    return this.categories.find(c => c._id === sub.category)?.name ?? '';
+  get filteredSubcategories(): any[] {
+    if (!this.form.category) return [];
+    return this.subcategories.filter(s => (s.category?._id ?? s.category) === this.form.category);
   }
 
   // ── Variants ──────────────────────────────────────────
@@ -233,8 +197,8 @@ export class Products implements OnInit {
       brand:            product.brand ?? '',
       tags:             (product.tags ?? []).join(', '),
       stock:            product.stock ?? null,
-      categories:       (product.categories ?? []).map((c: any) => c?._id ?? c).filter(Boolean),
-      subcategories:    ((product as any).subcategories ?? []).map((s: any) => s?._id ?? s).filter(Boolean),
+      category:    (product as any).category?._id    ?? (product as any).category    ?? '',
+      subCategory: (product as any).subCategory?._id ?? (product as any).subCategory ?? '',
       variants:         (product.variants ?? []).map(v => ({
         sku:          v.sku ?? '',
         price:        v.price ?? null,
@@ -298,8 +262,8 @@ export class Products implements OnInit {
       sku:              this.form.sku.trim() || undefined,
       brand:            this.form.brand.trim() || undefined,
       tags:             this.form.tags ? this.form.tags.split(',').map(t => t.trim()).filter(Boolean) : [],
-      categories:       this.form.categories,
-      subcategories:    this.form.subcategories,
+      category:    this.form.category    || undefined,
+      subCategory: this.form.subCategory || undefined,
       stock:            Number(this.form.stock),
       images:           [...existingPaths, ...uploadedUrls],
       variants:         this.buildVariantsPayload(),
