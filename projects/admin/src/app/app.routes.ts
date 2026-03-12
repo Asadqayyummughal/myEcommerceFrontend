@@ -16,6 +16,7 @@ export const routes: Routes = [
       { path: 'categories', loadComponent: () => import('./pages/categories/categories').then(m => m.Categories) },
       { path: 'coupons',        loadComponent: () => import('./pages/coupons/coupons').then(m => m.Coupons) },
       { path: 'vendors',        loadComponent: () => import('./pages/vendors/vendors').then(m => m.Vendors) },
+      { path: 'stores',         loadComponent: () => import('./pages/stores/stores').then(m => m.Stores) },
       { path: 'shipments',      loadComponent: () => import('./pages/shipments/shipments').then(m => m.Shipments) },
       { path: 'notifications',  loadComponent: () => import('./pages/notifications/notifications').then(m => m.Notifications) },
       { path: 'roles',          loadComponent: () => import('./pages/roles/roles').then(m => m.Roles) },

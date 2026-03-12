@@ -1,0 +1,235 @@
+<!-- Header -->
+<div class="mb-6 flex items-center justify-between gap-4">
+  <div>
+    <h1 class="text-2xl font-black text-gray-900 dark:text-white">Stores</h1>
+    <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Manage vendor stores and approval status</p>
+  </div>
+  <!-- Search -->
+  <div class="relative w-64">
+    <mat-icon class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+      style="font-size:16px;width:16px;height:16px;line-height:16px">search</mat-icon>
+    <input type="text" [(ngModel)]="search" (input)="onSearch()" placeholder="Search stores…"
+      class="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-200 dark:border-gray-600 rounded-xl
+             bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400
+             focus:outline-none focus:border-blue-500 transition-colors" />
+  </div>
+</div>
+
+<!-- Tab Bar -->
+<div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 p-1.5 mb-4 flex gap-1 flex-wrap">
+  @for (tab of tabs; track tab.value) {
+  <button (click)="switchTab(tab.value)"
+    [class]="'flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium transition-all ' +
+      (activeTab === tab.value
+        ? 'bg-blue-600 text-white shadow-sm'
+        : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700')">
+    <mat-icon style="font-size:15px;width:15px;height:15px;line-height:15px">{{ tab.icon }}</mat-icon>
+    {{ tab.label }}
+    <span [class]="'text-[10px] font-bold px-1.5 py-0.5 rounded-full min-w-[18px] text-center ' +
+      (activeTab === tab.value ? 'bg-white/25 text-white' : 'bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400')">
+      {{ tabCount(tab.value) }}
+    </span>
+  </button>
+  }
+</div>
+
+<!-- Table -->
+<div class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+
+  @if (loading) {
+  <div class="p-8 space-y-4">
+    @for (s of [1,2,3,4,5]; track s) {
+    <div class="flex items-center gap-4 animate-pulse">
+      <div class="w-10 h-10 rounded-xl bg-gray-200 dark:bg-gray-700 shrink-0"></div>
+      <div class="flex-1 space-y-2">
+        <div class="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/4"></div>
+        <div class="h-2 bg-gray-200 dark:bg-gray-700 rounded w-1/6"></div>
+      </div>
+      <div class="w-20 h-7 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
+      <div class="w-24 h-7 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
+    </div>
+    }
+  </div>
+
+  } @else {
+  <div class="overflow-x-auto">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-700/20">
+          <th class="text-left text-xs text-gray-400 font-semibold px-5 py-3 uppercase tracking-wider">Store</th>
+          <th class="text-left text-xs text-gray-400 font-semibold px-3 py-3 uppercase tracking-wider">Slug</th>
+          <th class="text-left text-xs text-gray-400 font-semibold px-3 py-3 uppercase tracking-wider">Policies</th>
+          <th class="text-left text-xs text-gray-400 font-semibold px-3 py-3 uppercase tracking-wider">Status</th>
+          <th class="text-left text-xs text-gray-400 font-semibold px-3 py-3 uppercase tracking-wider">Created</th>
+          <th class="text-left text-xs text-gray-400 font-semibold px-3 py-3 uppercase tracking-wider">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        @if (filtered.length === 0) {
+        <tr>
+          <td colspan="6" class="text-center py-16">
+            <mat-icon class="text-gray-300 dark:text-gray-600" style="font-size:48px;width:48px;height:48px;line-height:48px">storefront</mat-icon>
+            <p class="text-gray-400 text-sm mt-3">No {{ activeTab === 'all' ? '' : activeTab }} stores found</p>
+          </td>
+        </tr>
+        }
+
+        @for (store of filtered; track store._id) {
+        <tr class="border-b border-gray-50 dark:border-gray-700/50 hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
+
+          <!-- Store name + logo -->
+          <td class="px-5 py-3.5">
+            <div class="flex items-center gap-3">
+              <!-- Logo -->
+              <div class="w-10 h-10 rounded-xl overflow-hidden bg-gray-100 dark:bg-gray-700 shrink-0">
+                @if (logoUrl(store.logo)) {
+                <img [src]="logoUrl(store.logo)!" [alt]="store.name" class="w-full h-full object-cover" />
+                } @else {
+                <div [class]="'w-full h-full flex items-center justify-center text-white text-xs font-bold ' + avatarColor(store.name)">
+                  {{ initials(store.name) }}
+                </div>
+                }
+              </div>
+              <div>
+                <p class="text-xs font-semibold text-gray-800 dark:text-gray-200">{{ store.name }}</p>
+                @if (store.description) {
+                <p class="text-[10px] text-gray-400 truncate max-w-[200px]">{{ store.description }}</p>
+                }
+              </div>
+            </div>
+          </td>
+
+          <!-- Slug -->
+          <td class="px-3 py-3.5">
+            <span class="font-mono text-[11px] text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-lg">
+              /{{ store.slug }}
+            </span>
+          </td>
+
+          <!-- Policies summary -->
+          <td class="px-3 py-3.5">
+            <div class="flex items-center gap-1.5">
+              @if (store.policies?.shipping) {
+              <span title="Shipping policy"
+                class="w-5 h-5 rounded-md bg-sky-100 dark:bg-sky-900/30 flex items-center justify-center">
+                <mat-icon class="text-sky-500" style="font-size:12px;width:12px;height:12px;line-height:12px">local_shipping</mat-icon>
+              </span>
+              }
+              @if (store.policies?.returns) {
+              <span title="Returns policy"
+                class="w-5 h-5 rounded-md bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center">
+                <mat-icon class="text-emerald-500" style="font-size:12px;width:12px;height:12px;line-height:12px">assignment_return</mat-icon>
+              </span>
+              }
+              @if (store.policies?.warranty) {
+              <span title="Warranty policy"
+                class="w-5 h-5 rounded-md bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center">
+                <mat-icon class="text-violet-500" style="font-size:12px;width:12px;height:12px;line-height:12px">verified_user</mat-icon>
+              </span>
+              }
+              @if (!store.policies?.shipping && !store.policies?.returns && !store.policies?.warranty) {
+              <span class="text-[10px] text-gray-400 italic">None</span>
+              }
+            </div>
+          </td>
+
+          <!-- Status -->
+          <td class="px-3 py-3.5">
+            <span [class]="'text-[10px] font-bold px-2.5 py-1 rounded-full capitalize ' + statusClass(store.status)">
+              {{ store.status }}
+            </span>
+          </td>
+
+          <!-- Created -->
+          <td class="px-3 py-3.5">
+            <span class="text-xs text-gray-500 dark:text-gray-400">{{ store.createdAt | date:'MMM d, y' }}</span>
+          </td>
+
+          <!-- Actions -->
+          <td class="px-3 py-3.5">
+            <div class="flex items-center gap-2">
+
+              <!-- Pending → Approve + Reject -->
+              @if (store.status === 'pending') {
+              <button (click)="setStatus(store, 'approved')" [disabled]="actingId === store._id"
+                class="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg
+                       bg-emerald-50 text-emerald-700 hover:bg-emerald-100
+                       dark:bg-emerald-900/20 dark:text-emerald-400 dark:hover:bg-emerald-900/40
+                       border border-emerald-200 dark:border-emerald-800
+                       disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                @if (actingId === store._id) {
+                <mat-icon class="animate-spin" style="font-size:13px;width:13px;height:13px;line-height:13px">sync</mat-icon>
+                } @else {
+                <mat-icon style="font-size:13px;width:13px;height:13px;line-height:13px">check_circle</mat-icon>
+                }
+                Approve
+              </button>
+              <button (click)="setStatus(store, 'rejected')" [disabled]="actingId === store._id"
+                class="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg
+                       bg-red-50 text-red-600 hover:bg-red-100
+                       dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/40
+                       border border-red-200 dark:border-red-800
+                       disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                <mat-icon style="font-size:13px;width:13px;height:13px;line-height:13px">cancel</mat-icon>
+                Reject
+              </button>
+              }
+
+              <!-- Approved → Suspend -->
+              @if (store.status === 'approved') {
+              <button (click)="setStatus(store, 'suspended')" [disabled]="actingId === store._id"
+                class="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg
+                       bg-amber-50 text-amber-700 hover:bg-amber-100
+                       dark:bg-amber-900/20 dark:text-amber-400 dark:hover:bg-amber-900/40
+                       border border-amber-200 dark:border-amber-800
+                       disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                @if (actingId === store._id) {
+                <mat-icon class="animate-spin" style="font-size:13px;width:13px;height:13px;line-height:13px">sync</mat-icon>
+                } @else {
+                <mat-icon style="font-size:13px;width:13px;height:13px;line-height:13px">block</mat-icon>
+                }
+                Suspend
+              </button>
+              }
+
+              <!-- Suspended → Reactivate -->
+              @if (store.status === 'suspended') {
+              <button (click)="setStatus(store, 'approved')" [disabled]="actingId === store._id"
+                class="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg
+                       bg-blue-50 text-blue-600 hover:bg-blue-100
+                       dark:bg-blue-900/20 dark:text-blue-400 dark:hover:bg-blue-900/40
+                       border border-blue-200 dark:border-blue-800
+                       disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                @if (actingId === store._id) {
+                <mat-icon class="animate-spin" style="font-size:13px;width:13px;height:13px;line-height:13px">sync</mat-icon>
+                } @else {
+                <mat-icon style="font-size:13px;width:13px;height:13px;line-height:13px">play_circle</mat-icon>
+                }
+                Reactivate
+              </button>
+              }
+
+              <!-- Rejected → Reconsider (back to pending) -->
+              @if (store.status === 'rejected') {
+              <button (click)="setStatus(store, 'pending')" [disabled]="actingId === store._id"
+                class="flex items-center gap-1 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg
+                       bg-gray-50 text-gray-600 hover:bg-gray-100
+                       dark:bg-gray-700 dark:text-gray-400 dark:hover:bg-gray-600
+                       border border-gray-200 dark:border-gray-600
+                       disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                <mat-icon style="font-size:13px;width:13px;height:13px;line-height:13px">refresh</mat-icon>
+                Reconsider
+              </button>
+              }
+
+            </div>
+          </td>
+        </tr>
+        }
+
+      </tbody>
+    </table>
+  </div>
+  }
+</div>

@@ -82,6 +82,11 @@ export class AdminService {
   getVendors(status?: string): Observable<any> { return this.api.get('vendor/getVendorsByStatus', status ? { status } : {}); }
   approveVendor(vendorId: string): Observable<any> { return this.api.put(`vendor/${vendorId}/approve`, {}); }
 
+  getStores(): Observable<any> { return this.api.get('vendor/store/listAllStores'); }
+  updateStoreStatus(storeId: string, status: string): Observable<any> {
+    return this.api.patch(`vendor/store/${storeId}/approve`, { status });
+  }
+
   createShipment(payload: any): Observable<any> { return this.api.post('admin/shipments', payload); }
   markShipped(id: string): Observable<any> { return this.api.put(`admin/shipments/${id}/ship`, {}); }
   markDelivered(id: string): Observable<any> { return this.api.put(`admin/shipments/${id}/deliver`, {}); }

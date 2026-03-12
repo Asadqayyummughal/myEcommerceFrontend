@@ -24,6 +24,7 @@ export class AdminSidebar {
     { label: 'Orders',        icon: 'receipt_long',    route: '/orders' },
     { label: 'Users',         icon: 'people',          route: '/users' },
     { label: 'Vendors',       icon: 'store',           route: '/vendors' },
+    { label: 'Stores',        icon: 'storefront',      route: '/stores' },
     { label: 'Categories',    icon: 'category',        route: '/categories' },
     { label: 'Coupons',       icon: 'local_offer',     route: '/coupons' },
     { label: 'Shipments',     icon: 'local_shipping',  route: '/shipments' },
