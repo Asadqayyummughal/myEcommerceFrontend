@@ -36,7 +36,7 @@ const CARD_PALETTES = [
 @Component({
   selector: 'app-category-grid',
   standalone: true,
-  imports: [CommonModule, MatIconModule, RouterLink],
+  imports: [CommonModule, MatIconModule],
   templateUrl: './category-grid.html',
   styleUrl: './category-grid.scss',
 })

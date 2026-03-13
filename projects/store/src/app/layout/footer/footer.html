@@ -1,34 +1,81 @@
-<footer class="bg-gray-900 text-white mt-10">
-    <div class="container mx-auto px-4 py-10 grid md:grid-cols-4 gap-8">
+<footer style="background:#1C1C1E" class="text-white pt-20 pb-12">
+  <div class="container mx-auto px-6 lg:px-12">
 
-        <div>
-            <h3 class="font-bold mb-3">Ecommere</h3>
-            <p class="text-gray-400 text-sm">
-                Multivendor marketplace platform.
-            </p>
+    <!-- Links grid -->
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-12 mb-20">
+
+      <!-- Brand -->
+      <div class="col-span-2 lg:col-span-2">
+        <div class="text-3xl font-black mb-6" style="font-family:'Sora',sans-serif;letter-spacing:-0.02em">
+          SHOP<span style="color:#E8420A">ZONE</span>
         </div>
-
-        <div>
-            <h4 class="font-semibold mb-3">Company</h4>
-            <ul class="space-y-2 text-sm text-gray-400">
-                <li>About</li>
-                <li>Contact</li>
-                <li>Careers</li>
-            </ul>
+        <p class="text-gray-400 max-w-xs mb-8 leading-relaxed text-sm">
+          The ultimate destination for discovery, commerce, and global connection.
+          Join millions of shoppers and vendors worldwide.
+        </p>
+        <div class="flex items-center gap-3">
+          @for (social of [
+            { label: 'IG', icon: 'M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069z' },
+            { label: 'TW', icon: 'M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z' },
+            { label: 'FB', icon: 'M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z' }
+          ]; track social.label) {
+          <a href="#"
+            class="w-10 h-10 rounded-full flex items-center justify-center transition-colors"
+            style="background:rgba(255,255,255,0.05)"
+            onmouseover="this.style.background='#E8420A'"
+            onmouseout="this.style.background='rgba(255,255,255,0.05)'">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" [attr.d]="social.icon" />
+            </svg>
+          </a>
+          }
         </div>
+      </div>
 
-        <div>
-            <h4 class="font-semibold mb-3">Support</h4>
-            <ul class="space-y-2 text-sm text-gray-400">
-                <li>Help Center</li>
-                <li>Returns</li>
-                <li>Privacy</li>
-            </ul>
-        </div>
+      <!-- Shop -->
+      <div>
+        <h5 class="text-[10px] font-black uppercase tracking-[0.2em] mb-8 text-gray-500">Shop</h5>
+        <ul class="space-y-4 text-sm font-medium text-gray-400">
+          @for (link of ['Categories','Flash Sales','Featured Stores','Trending']; track link) {
+          <li><a href="#" class="hover:text-white transition-colors">{{ link }}</a></li>
+          }
+        </ul>
+      </div>
 
+      <!-- Company -->
+      <div>
+        <h5 class="text-[10px] font-black uppercase tracking-[0.2em] mb-8 text-gray-500">Company</h5>
+        <ul class="space-y-4 text-sm font-medium text-gray-400">
+          @for (link of ['About Us','Careers','Our Blog','Contact']; track link) {
+          <li><a href="#" class="hover:text-white transition-colors">{{ link }}</a></li>
+          }
+        </ul>
+      </div>
+
+      <!-- Support -->
+      <div>
+        <h5 class="text-[10px] font-black uppercase tracking-[0.2em] mb-8 text-gray-500">Support</h5>
+        <ul class="space-y-4 text-sm font-medium text-gray-400">
+          @for (link of ['Help Center','Returns & Refunds','Shipping Info','Track Order']; track link) {
+          <li><a href="#" class="hover:text-white transition-colors">{{ link }}</a></li>
+          }
+        </ul>
+      </div>
     </div>
 
-    <div class="text-center py-4 text-sm bg-gray-800">
-        © 2026 Ecommerce. All rights reserved.
+    <!-- Bottom bar -->
+    <div class="flex flex-col md:flex-row items-center justify-between gap-6 pt-10"
+      style="border-top:1px solid rgba(255,255,255,0.05)">
+      <p class="text-[11px] text-gray-500 font-medium uppercase tracking-widest">
+        © 2026 SHOPZONE INC. ALL RIGHTS RESERVED.
+      </p>
+      <div class="flex items-center gap-4 text-gray-600 text-xs transition-all hover:text-gray-400">
+        <span class="font-bold">VISA</span>
+        <span class="font-bold">MASTERCARD</span>
+        <span class="font-bold">STRIPE</span>
+        <span class="font-bold">APPLE PAY</span>
+      </div>
     </div>
+
+  </div>
 </footer>

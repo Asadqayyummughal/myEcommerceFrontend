@@ -1,36 +1,32 @@
-<div class="mb-10">
-  <div class="flex items-center justify-between mb-5">
-    <div>
-      <h2 class="text-xl font-bold text-gray-900 dark:text-white">Shop by Category</h2>
-      <p class="text-sm text-gray-400 mt-0.5">Find what you're looking for</p>
-    </div>
-    <a routerLink="/products"
-      class="text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 transition-colors flex items-center gap-1">
-      View All <mat-icon class="text-base leading-none">chevron_right</mat-icon>
-    </a>
-  </div>
+<div class="mb-2">
+  <div class="flex items-center gap-5 overflow-x-auto pb-4" style="-ms-overflow-style:none;scrollbar-width:none">
 
-  <div class="flex gap-3 overflow-x-auto pb-2 scrollbar-none">
     @for (cat of categories; track cat._id; let i = $index) {
-
-    <!-- Each card gets a different gradient from a palette -->
     <button (click)="navigateToCategory(cat)"
-      class="flex flex-col items-center gap-2.5 flex-shrink-0 group">
+      class="flex-shrink-0 flex flex-col items-center gap-3 group">
 
-      <!-- Icon circle -->
-      <div [class]="'w-16 h-16 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-sm group-hover:shadow-md group-hover:scale-110 ' + getCardBg(i)">
-        <mat-icon [class]="'transition-all ' + getIconColor(i)"
-          style="font-size: 26px; width: 26px; height: 26px; line-height: 26px;">
-          {{ getIcon(cat.name) }}
-        </mat-icon>
+      <!-- Instagram-style circle with orange active border -->
+      <div class="w-20 h-20 rounded-full p-[3px] transition-all duration-300 group-hover:scale-105"
+        [style.background]="i === 0 ? '#E8420A' : 'transparent'"
+        [style.border]="i !== 0 ? '2px solid #E5E7EB' : 'none'"
+        [style.outline]="'none'"
+        (mouseenter)="$event.currentTarget && ($any($event.currentTarget).style.background = '#E8420A'); $event.currentTarget && ($any($event.currentTarget).style.border = 'none')"
+        (mouseleave)="$event.currentTarget && ($any($event.currentTarget).style.background = i === 0 ? '#E8420A' : 'transparent'); $event.currentTarget && ($any($event.currentTarget).style.border = i !== 0 ? '2px solid #E5E7EB' : 'none')">
+        <div class="w-full h-full bg-gray-100 rounded-full flex items-center justify-center overflow-hidden">
+          <mat-icon [class]="'transition-colors ' + getIconColor(i)"
+            style="font-size:26px;width:26px;height:26px;line-height:26px">
+            {{ getIcon(cat.name) }}
+          </mat-icon>
+        </div>
       </div>
 
-      <!-- Label -->
-      <span class="text-[11px] font-semibold text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors text-center max-w-[72px] leading-tight">
+      <span class="text-[11px] font-black uppercase tracking-wider text-center max-w-[80px] leading-tight"
+        [class.text-gray-400]="i !== 0"
+        [class.text-gray-900]="i === 0">
         {{ cat.name }}
       </span>
-
     </button>
     }
+
   </div>
 </div>

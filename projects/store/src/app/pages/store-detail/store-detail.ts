@@ -101,7 +101,7 @@ export class StoreDetail implements OnInit {
   }
 
   onQuickAdd(product: any): void {
-    this.cartService.addToCart({ productId: product._id, quantity: 1 }).subscribe();
+    this.cartService.addToCart(product._id, 1, '').subscribe();
   }
 
   imageUrl(path: string): string {

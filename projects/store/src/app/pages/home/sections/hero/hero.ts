@@ -1,12 +1,11 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-hero',
   standalone: true,
-  imports: [RouterLink, MatIconModule, CommonModule],
+  imports: [RouterLink, CommonModule],
   templateUrl: './hero.html',
   styleUrl: './hero.scss',
 })
@@ -14,81 +13,57 @@ export class Hero implements OnInit, OnDestroy {
   slides = [
     {
       id: 0,
-      badge: 'Summer Collection 2025',
-      line1: 'BIG SUMMER',
-      line2: 'SALE',
-      accent: '#fbbf24',
-      discountNum: '50',
-      ringColor: 'rgba(251,191,36,0.25)',
-      description:
-        'Discover our hottest deals on top-rated products. Limited time, unlimited savings.',
-      bg: 'linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #1e40af 100%)',
-      badgeBg: 'rgba(251,191,36,0.15)',
-      badgeColor: '#fbbf24',
+      badge:       'New Arrivals 2025',
+      line1:       'Everything.',
+      line2:       'Everywhere.',
+      description: 'Experience the next evolution of multi-vendor shopping. Premium quality meets global convenience.',
+      bgTint:      '#E8420A',
+      image:       'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&q=80&w=1200',
+      badgeLabel:  'Flash Deals',
+      badgeValue:  'Up to 70% Off',
     },
     {
       id: 1,
-      badge: 'Fresh Drops',
-      line1: 'NEW',
-      line2: 'COLLECTION',
-      accent: '#34d399',
-      discountNum: '40',
-      ringColor: 'rgba(52,211,153,0.25)',
+      badge:       'Fresh Drops',
+      line1:       'New',
+      line2:       'Collection.',
       description: 'Explore the latest arrivals curated for modern living. Style meets function.',
-      bg: 'linear-gradient(135deg, #064e3b 0%, #065f46 50%, #047857 100%)',
-      badgeBg: 'rgba(52,211,153,0.15)',
-      badgeColor: '#34d399',
+      bgTint:      '#0EA5E9',
+      image:       'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&q=80&w=1200',
+      badgeLabel:  'New In',
+      badgeValue:  '200+ Products',
     },
     {
       id: 2,
-      badge: 'Flash Deals',
-      line1: "TODAY'S",
-      line2: 'BEST DEALS',
-      accent: '#a78bfa',
-      discountNum: '30',
-      ringColor: 'rgba(167,139,250,0.25)',
-      description: "Lightning-fast deals on premium brands. Shop before they're gone.",
-      bg: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4338ca 100%)',
-      badgeBg: 'rgba(167,139,250,0.15)',
-      badgeColor: '#a78bfa',
+      badge:       'Best Sellers',
+      line1:       'Top',
+      line2:       'Picks.',
+      description: "Lightning-fast deals on premium brands — shop before they're gone.",
+      bgTint:      '#8B5CF6',
+      image:       'https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&q=80&w=1200',
+      badgeLabel:  'Top Rated',
+      badgeValue:  '4.8 ★ Average',
     },
   ];
+
   currentSlide = 0;
   isHovered = false;
   private intervalId: ReturnType<typeof setInterval> | null = null;
 
-  ngOnInit() {
-    this.startAutoPlay();
-  }
+  ngOnInit(): void  { this.startAutoPlay(); }
+  ngOnDestroy(): void { this.stopAutoPlay(); }
 
-  ngOnDestroy() {
-    this.stopAutoPlay();
-  }
-
-  private startAutoPlay() {
+  private startAutoPlay(): void {
     this.intervalId = setInterval(() => {
-      if (!this.isHovered) {
-        this.nextSlide();
-      }
+      if (!this.isHovered) this.nextSlide();
     }, 5000);
   }
 
-  private stopAutoPlay() {
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
-      this.intervalId = null;
-    }
+  private stopAutoPlay(): void {
+    if (this.intervalId) { clearInterval(this.intervalId); this.intervalId = null; }
   }
 
-  goToSlide(index: number) {
-    this.currentSlide = index;
-  }
-
-  nextSlide() {
-    this.currentSlide = (this.currentSlide + 1) % this.slides.length;
-  }
-
-  prevSlide() {
-    this.currentSlide = (this.currentSlide - 1 + this.slides.length) % this.slides.length;
-  }
+  goToSlide(index: number): void { this.currentSlide = index; }
+  nextSlide(): void { this.currentSlide = (this.currentSlide + 1) % this.slides.length; }
+  prevSlide(): void { this.currentSlide = (this.currentSlide - 1 + this.slides.length) % this.slides.length; }
 }

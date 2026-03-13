@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
@@ -9,7 +9,6 @@ import { ProductService } from '@core/services/product.service';
 import { CategoryService } from '@core/services/category-service';
 import { CartService } from '@core/services/cart.service';
 import { AuthService } from '@core/services/auth.service';
-import { ProductCard } from '@ui/components/product-card/product-card';
 import { Product } from '@models/product.model';
 import { Category } from '@models/category.model';
 import { FrontendCartItem } from '@models/cart.model';
@@ -17,7 +16,7 @@ import { FrontendCartItem } from '@models/cart.model';
 @Component({
   selector: 'app-products',
   standalone: true,
-  imports: [CommonModule, FormsModule, ProductCard, MatSnackBarModule],
+  imports: [CommonModule, CurrencyPipe, FormsModule, MatSnackBarModule],
   templateUrl: './products.html',
   styleUrl: './products.scss',
 })
@@ -25,6 +24,8 @@ export class Products implements OnInit, OnDestroy {
   products: Product[] = [];
   categories: Category[] = [];
   loading = false;
+
+  readonly apiUrl = 'http://localhost:3000';
 
   searchQuery = '';
   selectedCategories: string[] = [];
@@ -166,6 +167,21 @@ export class Products implements OnInit, OnDestroy {
 
   navigateToProduct(id: string): void {
     this.router.navigate(['/products', id]);
+  }
+
+  productImg(product: Product): string {
+    const img = (product.images ?? [])[0];
+    if (!img) return '';
+    return img.startsWith('http') ? img : `${this.apiUrl}/${img}`;
+  }
+
+  displayPrice(product: Product): number {
+    return product.salePrice ?? product.price ?? 0;
+  }
+
+  discountPercent(product: Product): number {
+    if (!product.salePrice || !product.price) return 0;
+    return Math.round(((product.price - product.salePrice) / product.price) * 100);
   }
 
   onQuickAdd(product: Product): void {

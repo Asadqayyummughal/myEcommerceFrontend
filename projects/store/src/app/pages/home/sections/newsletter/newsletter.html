@@ -1,67 +1,74 @@
-<!-- ── Newsletter + Footer ─────────────────────── -->
-<footer class="bg-gray-900 dark:bg-gray-950">
+<!-- ── Newsletter ──────────────────────────────────────────────── -->
+<section class="py-20">
+  <div class="container mx-auto px-6 lg:px-12">
+    <div class="rounded-[40px] p-12 lg:p-20 text-center relative overflow-hidden"
+      style="background:linear-gradient(135deg,#E8420A 0%,#FF6B3D 100%)">
 
-  <!-- Newsletter Strip -->
-  <div class="border-b border-white/10">
-    <div class="max-w-7xl mx-auto px-4 py-14">
-      <div class="flex flex-col lg:flex-row items-center justify-between gap-8">
+      <!-- Blurred orbs -->
+      <div class="absolute -top-20 -left-20 w-80 h-80 rounded-full pointer-events-none"
+        style="background:rgba(255,255,255,0.1);filter:blur(80px)"></div>
+      <div class="absolute -bottom-20 -right-20 w-80 h-80 rounded-full pointer-events-none"
+        style="background:rgba(0,0,0,0.1);filter:blur(80px)"></div>
 
-        <!-- Left copy -->
-        <div class="text-center lg:text-left">
-          <div class="inline-flex items-center gap-2 bg-blue-500/10 border border-blue-500/20
-                      text-blue-400 text-xs font-bold px-3 py-1.5 rounded-full mb-4 uppercase tracking-widest">
-            <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
-            Newsletter
-          </div>
-          <h2 class="text-2xl lg:text-3xl font-black text-white leading-tight mb-2">
-            Get Exclusive Deals &<br class="hidden lg:block"> Early Access
-          </h2>
-          <p class="text-gray-400 text-sm">Join 50,000+ shoppers. Unsubscribe anytime.</p>
-        </div>
+      <div class="relative z-10 flex flex-col items-center">
+        <span class="text-white/80 font-black uppercase tracking-[0.2em] text-xs mb-6">Stay In The Loop</span>
+        <h2 class="text-4xl lg:text-6xl font-black text-white mb-10 leading-tight max-w-2xl"
+          style="font-family:'Sora',sans-serif;letter-spacing:-0.02em">
+          Subscribe to get exclusive first-access.
+        </h2>
 
-        <!-- Right form -->
-        <div class="w-full max-w-md">
-          <div class="flex gap-2">
-            <input
-              type="email"
-              [(ngModel)]="email"
-              placeholder="Enter your email address"
-              class="flex-1 min-w-0 bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm
-                     text-white placeholder-gray-500 focus:outline-none focus:border-blue-500
-                     focus:bg-white/10 transition-all" />
-            <button
-              (click)="subscribe()"
-              class="bg-blue-600 hover:bg-blue-500 text-white font-bold px-5 py-3 rounded-xl text-sm
-                     transition-colors whitespace-nowrap flex items-center gap-2 shrink-0">
-              Subscribe
-            </button>
-          </div>
-          <p class="text-gray-600 text-xs mt-2 pl-1">
-            By subscribing you agree to our Privacy Policy.
-          </p>
-        </div>
+        <form class="flex flex-col md:flex-row gap-4 w-full max-w-lg" (submit)="subscribe(); $event.preventDefault()">
+          <input type="email" [(ngModel)]="email" name="email"
+            placeholder="Your best email address"
+            class="flex-1 bg-white rounded-2xl px-6 py-4 focus:outline-none text-gray-800 font-medium"
+            style="box-shadow:0 0 0 4px transparent"
+            onfocus="this.style.boxShadow='0 0 0 4px rgba(255,255,255,0.3)'"
+            onblur="this.style.boxShadow='0 0 0 4px transparent'" />
+          <button type="submit"
+            class="px-10 py-4 rounded-2xl font-black text-white hover:scale-105 active:scale-95 transition-transform whitespace-nowrap"
+            style="background:#1C1C1E">
+            Subscribe Now
+          </button>
+        </form>
 
+        <p class="text-white/60 text-[10px] mt-6 uppercase tracking-widest">
+          By subscribing, you agree to our privacy policy. No spam, ever.
+        </p>
       </div>
     </div>
   </div>
+</section>
 
-  <!-- Footer Links -->
-  <div class="max-w-7xl mx-auto px-4 py-10">
-    <div class="grid grid-cols-2 sm:grid-cols-4 gap-8 text-sm mb-10">
+<!-- ── Footer ──────────────────────────────────────────────────── -->
+<footer style="background:#1C1C1E" class="text-white pt-20 pb-12">
+  <div class="container mx-auto px-6 lg:px-12">
+
+    <!-- Links grid -->
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-12 mb-20">
 
       <!-- Brand -->
-      <div class="col-span-2 sm:col-span-1">
-        <div class="text-xl font-black text-white mb-3">ShopZone</div>
-        <p class="text-gray-500 text-xs leading-relaxed mb-4">
-          Your one-stop destination for everything you need. Fast shipping, easy returns.
+      <div class="col-span-2 lg:col-span-2">
+        <div class="text-3xl font-black mb-6" style="font-family:'Sora',sans-serif;letter-spacing:-0.02em">
+          SHOP<span style="color:#E8420A">ZONE</span>
+        </div>
+        <p class="text-gray-400 max-w-xs mb-8 leading-relaxed text-sm">
+          The ultimate destination for discovery, commerce, and global connection.
+          Join millions of shoppers and vendors worldwide.
         </p>
-        <!-- Socials -->
-        <div class="flex gap-3">
-          @for (s of [{label:'f',hover:'hover:bg-blue-600'},{label:'ig',hover:'hover:bg-pink-600'},{label:'tw',hover:'hover:bg-sky-500'}]; track s.label) {
+        <div class="flex items-center gap-3">
+          @for (social of [
+            { label: 'IG', icon: 'M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069z' },
+            { label: 'TW', icon: 'M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z' },
+            { label: 'FB', icon: 'M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z' }
+          ]; track social.label) {
           <a href="#"
-            class="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center
-                   text-gray-400 text-xs font-bold transition-all hover:text-white hover:border-transparent {{s.hover}}">
-            {{s.label}}
+            class="w-10 h-10 rounded-full flex items-center justify-center transition-colors"
+            style="background:rgba(255,255,255,0.05)"
+            onmouseover="this.style.background='#E8420A'"
+            onmouseout="this.style.background='rgba(255,255,255,0.05)'">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" [attr.d]="social.icon" />
+            </svg>
           </a>
           }
         </div>
@@ -69,47 +76,48 @@
 
       <!-- Shop -->
       <div>
-        <h4 class="text-xs font-bold text-gray-300 mb-4 uppercase tracking-widest">Shop</h4>
-        <ul class="space-y-2.5">
-          @for (link of ['New Arrivals','Best Sellers','Sale','All Products']; track link) {
-          <li><a href="#" class="text-gray-500 hover:text-white transition-colors text-xs">{{link}}</a></li>
+        <h5 class="text-[10px] font-black uppercase tracking-[0.2em] mb-8 text-gray-500">Shop</h5>
+        <ul class="space-y-4 text-sm font-medium text-gray-400">
+          @for (link of ['Categories','Flash Sales','Featured Stores','Trending']; track link) {
+          <li><a href="#" class="hover:text-white transition-colors">{{ link }}</a></li>
           }
         </ul>
       </div>
 
-      <!-- Help -->
+      <!-- Company -->
       <div>
-        <h4 class="text-xs font-bold text-gray-300 mb-4 uppercase tracking-widest">Help</h4>
-        <ul class="space-y-2.5">
-          @for (link of ['FAQ','Shipping','Returns','Track Order']; track link) {
-          <li><a href="#" class="text-gray-500 hover:text-white transition-colors text-xs">{{link}}</a></li>
+        <h5 class="text-[10px] font-black uppercase tracking-[0.2em] mb-8 text-gray-500">Company</h5>
+        <ul class="space-y-4 text-sm font-medium text-gray-400">
+          @for (link of ['About Us','Careers','Our Blog','Contact']; track link) {
+          <li><a href="#" class="hover:text-white transition-colors">{{ link }}</a></li>
           }
         </ul>
       </div>
 
-      <!-- Contact -->
+      <!-- Support -->
       <div>
-        <h4 class="text-xs font-bold text-gray-300 mb-4 uppercase tracking-widest">Contact</h4>
-        <ul class="space-y-2.5">
-          @for (link of ['Email Us','Terms','Privacy','Address']; track link) {
-          <li><a href="#" class="text-gray-500 hover:text-white transition-colors text-xs">{{link}}</a></li>
+        <h5 class="text-[10px] font-black uppercase tracking-[0.2em] mb-8 text-gray-500">Support</h5>
+        <ul class="space-y-4 text-sm font-medium text-gray-400">
+          @for (link of ['Help Center','Returns & Refunds','Shipping Info','Track Order']; track link) {
+          <li><a href="#" class="hover:text-white transition-colors">{{ link }}</a></li>
           }
         </ul>
       </div>
-
     </div>
 
     <!-- Bottom bar -->
-    <div class="border-t border-white/5 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-      <p class="text-gray-600 text-xs">© 2025 ShopZone. All rights reserved.</p>
-      <div class="flex items-center gap-3 text-gray-600 text-xs">
-        <span>🔒 Secure Payments</span>
-        <span>·</span>
-        <span>🚚 Fast Delivery</span>
-        <span>·</span>
-        <span>⭐ Trusted Store</span>
+    <div class="flex flex-col md:flex-row items-center justify-between gap-6 pt-10"
+      style="border-top:1px solid rgba(255,255,255,0.05)">
+      <p class="text-[11px] text-gray-500 font-medium uppercase tracking-widest">
+        © 2025 SHOPZONE INC. ALL RIGHTS RESERVED.
+      </p>
+      <div class="flex items-center gap-4 text-gray-600 text-xs transition-all hover:text-gray-400">
+        <span class="font-bold">VISA</span>
+        <span class="font-bold">MASTERCARD</span>
+        <span class="font-bold">STRIPE</span>
+        <span class="font-bold">APPLE PAY</span>
       </div>
     </div>
-  </div>
 
+  </div>
 </footer>

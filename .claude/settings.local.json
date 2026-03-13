@@ -14,7 +14,11 @@
       "Bash(cd \"C:/study material/Ecommerce/ecommerce-frontend\" && ng build --project store 2>&1 | grep -E \"\\(ERROR|WARNING NG|complete|failed\\)\")",
       "Bash(find \"c:/study material/Ecommerce/ecommerce-backend-apis/src\" -name \"subcatrgory.service.ts\" -o -name \"subcategory.service.ts\" | xargs cat 2>/dev/null)",
       "Bash(taskkill /F /IM node.exe 2>&1 || true)",
-      "Bash(taskkill -F -IM node.exe 2>&1 || true)"
+      "Bash(taskkill -F -IM node.exe 2>&1 || true)",
+      "Bash(cd \"C:/study material/Ecommerce/ecommerce-frontend\" && ng build --project store 2>&1 | tail -100)",
+      "Bash(cd \"C:/study material/Ecommerce/ecommerce-frontend\" && ng build --project store 2>&1 | grep -E \"ERROR|error TS|✔|failed|succeeded\")",
+      "Bash(cd \"C:/study material/Ecommerce/ecommerce-frontend\" && ng build --project store 2>&1 | grep -E \"ERROR|error TS|✔ Build|failed|succeeded|bundle\")",
+      "Bash(cd \"C:/study material/Ecommerce/ecommerce-frontend\" && ng build --project store 2>&1 | grep -c \"ERROR\")"
     ]
   }
 }
