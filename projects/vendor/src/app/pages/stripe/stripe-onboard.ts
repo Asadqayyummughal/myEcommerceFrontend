@@ -41,11 +41,12 @@ export class StripeOnboard implements OnInit {
 
     this.vendorService.onboardStripe().subscribe({
       next: (res: any) => {
-        const url = res.data?.url ?? res.url;
+        const data = res.data ?? res;
+        const url = data.url;
         if (url) {
           window.location.href = url;
         } else {
-          this.error = 'Failed to get Stripe onboarding link.';
+          this.error = 'Failed to get Stripe link.';
           this.connecting = false;
         }
       },
@@ -54,5 +55,12 @@ export class StripeOnboard implements OnInit {
         this.connecting = false;
       },
     });
+  }
+
+  get stripeButtonLabel(): string {
+    if (this.connecting) return '';
+    if (!this.wallet?.stripeOnboarded) return 'Connect with Stripe';
+    if (!this.wallet?.payoutsEnabled) return 'Complete Onboarding';
+    return 'Open Stripe Dashboard';
   }
 }
