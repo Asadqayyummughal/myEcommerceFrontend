@@ -71,7 +71,14 @@ export class VendorService {
   }
 
   updateProduct(productId: string, payload: any): Observable<any> {
-    return this.api.put(`products/${productId}`, payload);
+    if (payload instanceof FormData) {
+      return this.api.patchFormData(`products/${productId}`, payload);
+    }
+    return this.api.patch(`products/${productId}`, payload);
+  }
+
+  deleteProduct(productId: string): Observable<any> {
+    return this.api.delete(`products/${productId}`);
   }
 
   getOrderDetail(orderId: string): Observable<any> {

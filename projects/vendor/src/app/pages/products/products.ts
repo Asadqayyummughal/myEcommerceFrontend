@@ -54,4 +54,12 @@ export class Products implements OnInit {
     if (!img) return '';
     return img.startsWith('http') ? img : `${this.apiUrl}/${img}`;
   }
+
+  deleteProduct(id: string, title: string): void {
+    if (!confirm(`Delete "${title}"? This cannot be undone.`)) return;
+    this.vendorService.deleteProduct(id).subscribe({
+      next: () => { this.products = this.products.filter(p => p._id !== id); },
+      error: () => { alert('Failed to delete product. Please try again.'); },
+    });
+  }
 }

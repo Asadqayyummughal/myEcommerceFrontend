@@ -36,6 +36,10 @@ export class ApiService {
     return this.http.post<T>(`${this.baseUrl}/${endpoint}`, formData);
   }
 
+  patchFormData<T>(endpoint: string, formData: FormData): Observable<T> {
+    return this.http.patch<T>(`${this.baseUrl}/${endpoint}`, formData);
+  }
+
   private buildParams(params: any): HttpParams {
     let httpParams = new HttpParams();
     if (!params) return httpParams;

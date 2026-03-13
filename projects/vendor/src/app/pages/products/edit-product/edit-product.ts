@@ -180,11 +180,10 @@ export class EditProduct implements OnInit {
       const attrs: Record<string, string> = {};
       v.attributes.forEach(a => { if (a.key.trim()) attrs[a.key.trim()] = a.value.trim(); });
       return {
-        sku:          v.sku.trim(),
-        price:        v.price !== null ? Number(v.price) : undefined,
-        stock:        Number(v.stock ?? 0),
-        reservedStock: Number(v.reservedStock),
-        attributes:   Object.keys(attrs).length > 0 ? attrs : undefined,
+        sku:        v.sku.trim(),
+        price:      v.price !== null ? Number(v.price) : undefined,
+        stock:      Number(v.stock ?? 0),
+        attributes: Object.keys(attrs).length > 0 ? attrs : undefined,
       };
     }).filter(v => v.sku);
   }
@@ -209,7 +208,8 @@ export class EditProduct implements OnInit {
       fd.append('stock',    String(this.form.stock ?? 0));
       if (this.form.sku.trim())   fd.append('sku',   this.form.sku.trim());
       if (this.form.brand.trim()) fd.append('brand', this.form.brand.trim());
-      if (this.form.tags.trim())  fd.append('tags',  this.form.tags.trim());
+      this.form.tags.split(',').map(t => t.trim()).filter(Boolean)
+        .forEach(t => fd.append('tags', t));
       fd.append('isActive', String(this.form.isActive));
       if (this.form.category)    fd.append('category',    this.form.category);
       if (this.form.subCategory) fd.append('subCategory', this.form.subCategory);
@@ -234,7 +234,8 @@ export class EditProduct implements OnInit {
       if (this.form.salePrice !== null) payload.salePrice = Number(this.form.salePrice);
       if (this.form.sku.trim())        payload.sku      = this.form.sku.trim();
       if (this.form.brand.trim())      payload.brand    = this.form.brand.trim();
-      if (this.form.tags.trim())       payload.tags     = this.form.tags.trim();
+      const tagList = this.form.tags.split(',').map(t => t.trim()).filter(Boolean);
+      if (tagList.length > 0) payload.tags = tagList;
       const variants = this.buildVariantsPayload();
       if (variants.length > 0) payload.variants = variants;
       this.doUpdate(payload);
