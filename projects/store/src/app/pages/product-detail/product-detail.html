@@ -88,6 +88,21 @@
           }
         </div>
 
+        <!-- Visit Shop link -->
+        @if (product.vendor?._id || product.vendor) {
+        <a [routerLink]="['/stores', product.vendor?._id ?? product.vendor]"
+          class="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600
+                 hover:text-indigo-700 hover:bg-indigo-50 px-3 py-1.5 rounded-xl border
+                 border-indigo-100 transition-all w-fit">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184
+                 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+          Visit this shop
+        </a>
+        }
+
         <!-- Title -->
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white leading-snug">{{ product.title }}</h1>
 
@@ -266,14 +281,15 @@
 
         <!-- Reviews tab -->
         <mat-tab [label]="'Reviews (' + product.reviewCount + ')'">
-          <div class="p-6">
+          <div class="p-6 space-y-8">
 
+            <!-- ── Not logged in ── -->
             @if (!authService.isLoggedIn) {
-            <div class="text-center py-8">
-              <mat-icon class="text-gray-300 text-5xl mb-3">rate_review</mat-icon>
-              <p class="text-gray-500 text-sm mb-3">Sign in to see and write reviews</p>
+            <div class="text-center py-10">
+              <mat-icon class="text-gray-300 mb-3" style="font-size:48px;width:48px;height:48px;line-height:48px">rate_review</mat-icon>
+              <p class="text-gray-500 text-sm mb-4">Sign in to see and write reviews</p>
               <a routerLink="/auth/login"
-                class="inline-block bg-blue-600 text-white text-sm font-semibold px-5 py-2.5 rounded-lg hover:bg-blue-700 transition-colors">
+                class="inline-block bg-blue-600 text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-blue-700 transition-colors">
                 Sign In
               </a>
             </div>
@@ -281,6 +297,166 @@
 
             @if (authService.isLoggedIn) {
 
+            <!-- ── Rating summary ── -->
+            @if (!reviewsLoading && reviews.length > 0) {
+            <div class="flex flex-col sm:flex-row gap-6 pb-6 border-b border-gray-100">
+              <!-- Big score -->
+              <div class="flex flex-col items-center justify-center shrink-0 w-28">
+                <span class="text-5xl font-black text-gray-900">{{ averageRating | number:'1.1-1' }}</span>
+                <div class="flex my-1.5">
+                  @for (star of ratingStars; track star) {
+                  <mat-icon class="text-yellow-400" style="font-size:16px;width:16px;height:16px;line-height:16px">
+                    {{ getStarType(star, averageRating) }}
+                  </mat-icon>
+                  }
+                </div>
+                <span class="text-xs text-gray-400">{{ product.reviewCount }} reviews</span>
+              </div>
+              <!-- Breakdown bars -->
+              <div class="flex-1 space-y-1.5">
+                @for (row of ratingBreakdown; track row.star) {
+                <div class="flex items-center gap-2 text-xs text-gray-500">
+                  <span class="w-4 text-right font-medium">{{ row.star }}</span>
+                  <mat-icon class="text-yellow-400 shrink-0" style="font-size:13px;width:13px;height:13px;line-height:13px">star</mat-icon>
+                  <div class="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+                    <div class="h-full bg-yellow-400 rounded-full transition-all duration-500"
+                      [style.width.%]="row.percent"></div>
+                  </div>
+                  <span class="w-6 text-right">{{ row.count }}</span>
+                </div>
+                }
+              </div>
+            </div>
+            }
+
+            <!-- ── Write / Edit review ── -->
+            @if (!reviewsLoading) {
+
+              <!-- Already has a review → show edit/delete inline -->
+              @if (myReview) {
+              <div class="bg-blue-50 border border-blue-100 rounded-2xl p-4">
+                <div class="flex items-center justify-between mb-3">
+                  <span class="text-sm font-bold text-blue-800">Your Review</span>
+                  <div class="flex gap-2">
+                    @if (editingReviewId !== myReview._id) {
+                    <button (click)="startEdit(myReview)"
+                      class="text-xs font-semibold text-blue-600 hover:text-blue-800 px-2.5 py-1 rounded-lg hover:bg-blue-100 transition-colors">
+                      Edit
+                    </button>
+                    <button (click)="confirmDelete(myReview._id)"
+                      class="text-xs font-semibold text-red-500 hover:text-red-700 px-2.5 py-1 rounded-lg hover:bg-red-50 transition-colors">
+                      Delete
+                    </button>
+                    }
+                  </div>
+                </div>
+
+                @if (editingReviewId === myReview._id) {
+                <!-- Edit form -->
+                <div class="space-y-3">
+                  <div class="flex gap-1">
+                    @for (star of ratingStars; track star) {
+                    <button (click)="setEditRating(star)"
+                      (mouseenter)="setEditHover(star)" (mouseleave)="clearEditHover()">
+                      <mat-icon [class]="displayEditRating >= star ? 'text-yellow-400' : 'text-gray-300'"
+                        style="font-size:28px;width:28px;height:28px;line-height:28px">star</mat-icon>
+                    </button>
+                    }
+                  </div>
+                  <textarea [(ngModel)]="editForm.comment" rows="3" placeholder="Update your comment…"
+                    class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm resize-none
+                           focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"></textarea>
+                  <div class="flex gap-2">
+                    <button (click)="saveEdit()" [disabled]="updatingReview || editForm.rating === 0"
+                      class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white text-sm font-semibold
+                             px-4 py-2 rounded-xl transition-colors">
+                      {{ updatingReview ? 'Saving…' : 'Save' }}
+                    </button>
+                    <button (click)="cancelEdit()"
+                      class="text-sm text-gray-500 hover:text-gray-700 px-4 py-2 rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors">
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+                } @else {
+                <!-- Display own review -->
+                <div class="flex mb-1.5">
+                  @for (star of ratingStars; track star) {
+                  <mat-icon class="text-yellow-400" style="font-size:15px;width:15px;height:15px;line-height:15px">
+                    {{ getStarType(star, myReview.rating) }}
+                  </mat-icon>
+                  }
+                </div>
+                @if (myReview.comment) {
+                <p class="text-sm text-gray-700 leading-relaxed">{{ myReview.comment }}</p>
+                }
+                @if (!myReview.isApproved) {
+                <p class="text-xs text-amber-600 mt-1.5 flex items-center gap-1">
+                  <mat-icon style="font-size:13px;width:13px;height:13px;line-height:13px">schedule</mat-icon>
+                  Pending approval
+                </p>
+                }
+                }
+              </div>
+              }
+
+              <!-- No review yet → write form or purchase prompt -->
+              @if (!myReview) {
+              <div class="bg-gray-50 rounded-2xl p-5 border border-gray-100">
+                <h3 class="text-sm font-bold text-gray-900 mb-1">Write a Review</h3>
+
+                @if (loadingOrders) {
+                <p class="text-xs text-gray-400 animate-pulse py-2">Checking your orders…</p>
+                }
+
+                @if (ordersChecked && !eligibleOrderId) {
+                <div class="flex items-start gap-2 py-3">
+                  <mat-icon class="text-gray-400 text-base shrink-0">info</mat-icon>
+                  <p class="text-sm text-gray-500">You need to purchase and receive this product before leaving a review.</p>
+                </div>
+                }
+
+                @if (ordersChecked && eligibleOrderId) {
+                <!-- Star picker -->
+                <div class="flex gap-0.5 mb-3">
+                  @for (star of ratingStars; track star) {
+                  <button (click)="setReviewRating(star)"
+                    (mouseenter)="setHoverRating(star)" (mouseleave)="clearHover()">
+                    <mat-icon [class]="displayRating >= star ? 'text-yellow-400' : 'text-gray-300'"
+                      style="font-size:32px;width:32px;height:32px;line-height:32px;transition:color .1s">star</mat-icon>
+                  </button>
+                  }
+                  @if (reviewForm.rating > 0) {
+                  <span class="ml-2 text-sm text-gray-500 self-center">
+                    {{ ['', 'Poor', 'Fair', 'Good', 'Very good', 'Excellent'][reviewForm.rating] }}
+                  </span>
+                  }
+                </div>
+
+                <textarea [(ngModel)]="reviewForm.comment" rows="3"
+                  placeholder="Share your experience with this product… (optional)"
+                  class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm resize-none mb-3
+                         focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"></textarea>
+
+                @if (reviewError) {
+                <p class="text-xs text-red-500 mb-2">{{ reviewError }}</p>
+                }
+                @if (reviewSuccess) {
+                <p class="text-xs text-emerald-600 mb-2">{{ reviewSuccess }}</p>
+                }
+
+                <button (click)="submitReview()"
+                  [disabled]="submittingReview || reviewForm.rating === 0"
+                  class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed
+                         text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors">
+                  {{ submittingReview ? 'Submitting…' : 'Submit Review' }}
+                </button>
+                }
+              </div>
+              }
+            }
+
+            <!-- ── Review list ── -->
             @if (reviewsLoading) {
             <div class="space-y-4">
               @for (s of [1,2,3]; track s) {
@@ -296,17 +472,18 @@
             }
 
             @if (!reviewsLoading && reviews.length === 0) {
-            <div class="text-center py-8">
-              <mat-icon class="text-gray-300 text-5xl mb-3">chat_bubble_outline</mat-icon>
-              <p class="text-gray-500 text-sm">No reviews yet. Be the first!</p>
+            <div class="text-center py-10">
+              <mat-icon class="text-gray-300 mb-3" style="font-size:40px;width:40px;height:40px;line-height:40px">chat_bubble_outline</mat-icon>
+              <p class="text-gray-500 text-sm">No approved reviews yet.</p>
             </div>
             }
 
             @if (!reviewsLoading && reviews.length > 0) {
             <div class="space-y-5">
               @for (review of reviews; track review._id) {
+              <!-- Skip own review — already shown in the "Your Review" block above -->
+              @if (review._id !== myReview?._id) {
               <div class="flex gap-3 pb-5 border-b border-gray-50 last:border-0">
-                <!-- Avatar -->
                 <div class="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
                   <span class="text-blue-600 text-sm font-bold">
                     {{ review.user.name[0]?.toUpperCase() ?? 'U' }}
@@ -314,11 +491,9 @@
                 </div>
                 <div class="flex-1">
                   <div class="flex items-center justify-between mb-1">
-                    <span class="text-sm font-semibold text-gray-800">{{ review.user.name? review.user.name: 'User'
-                      }}</span>
+                    <span class="text-sm font-semibold text-gray-800">{{ review.user.name || 'User' }}</span>
                     <span class="text-xs text-gray-400">{{ review.createdAt | date:'mediumDate' }}</span>
                   </div>
-                  <!-- Stars -->
                   <div class="flex mb-1.5">
                     @for (star of ratingStars; track star) {
                     <mat-icon class="text-yellow-400" style="font-size:14px;width:14px;height:14px;line-height:14px">
@@ -332,10 +507,22 @@
                 </div>
               </div>
               }
+              }
+            </div>
+
+            <!-- Load more -->
+            @if (reviewPage < reviewTotalPages) {
+            <div class="text-center pt-2">
+              <button (click)="loadMoreReviews()" [disabled]="loadingMoreReviews"
+                class="text-sm text-blue-600 font-semibold border border-blue-200 hover:bg-blue-50
+                       disabled:opacity-50 px-5 py-2 rounded-xl transition-colors">
+                {{ loadingMoreReviews ? 'Loading…' : 'Load more reviews' }}
+              </button>
             </div>
             }
-
             }
+
+            }<!-- end isLoggedIn -->
           </div>
         </mat-tab>
 

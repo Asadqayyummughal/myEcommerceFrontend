@@ -11,6 +11,7 @@ import { CartService } from '@core/services/cart.service';
 import { WishlistService } from '@core/services/wishlist.service';
 import { ReviewService } from '@core/services/review.service';
 import { AuthService } from '@core/services/auth.service';
+import { ApiService } from '@core/services/api.service';
 import { Product, IProductVariant } from '@models/product.model';
 import { ProductReview } from '@models/review.model';
 import { FrontendCartItem, GuestWishlistItem } from '@models/cart.model';
@@ -45,6 +46,29 @@ export class ProductDetail implements OnInit {
 
   readonly apiUrl = 'http://localhost:3000';
 
+  // ── Review: write form ─────────────────────────────────
+  reviewForm = { rating: 0, comment: '' };
+  hoverRating = 0;
+  submittingReview = false;
+  reviewError = '';
+  reviewSuccess = '';
+
+  // ── Review: edit form ──────────────────────────────────
+  editingReviewId = '';
+  editForm = { rating: 0, comment: '' };
+  editHoverRating = 0;
+  updatingReview = false;
+
+  // ── Review: eligible delivered orders ─────────────────
+  eligibleOrderId = '';         // auto-selected order id
+  loadingOrders = false;
+  ordersChecked = false;        // true after the check is done
+
+  // ── Review: pagination ────────────────────────────────
+  reviewPage = 1;
+  reviewTotalPages = 1;
+  loadingMoreReviews = false;
+
   constructor(
     private route: ActivatedRoute,
     private productService: ProductService,
@@ -52,6 +76,7 @@ export class ProductDetail implements OnInit {
     private wishlistService: WishlistService,
     private reviewService: ReviewService,
     public authService: AuthService,
+    private api: ApiService,
     private snackBar: MatSnackBar,
   ) {}
 
@@ -66,7 +91,10 @@ export class ProductDetail implements OnInit {
       next: (res: any) => {
         this.product = res.data ?? res;
         this.loading = false;
-        this.loadReviews(id);
+        if (this.authService.isLoggedIn) {
+          this.loadReviews(id);
+          this.checkEligibleOrder(id);
+        }
       },
       error: () => {
         this.errorMessage = 'Product not found.';
@@ -75,28 +103,62 @@ export class ProductDetail implements OnInit {
     });
   }
 
-  loadReviews(productId: string): void {
-    if (!this.authService.isLoggedIn) return;
-    this.reviewsLoading = true;
-    this.reviewService.getProductReviews(productId).subscribe({
+  loadReviews(productId: string, page = 1): void {
+    if (page === 1) { this.reviewsLoading = true; this.reviews = []; }
+    else { this.loadingMoreReviews = true; }
+
+    this.reviewService.getProductReviews(productId, page, 5).subscribe({
       next: (res) => {
-        this.reviews = res.data;
+        this.reviews = page === 1 ? res.data : [...this.reviews, ...res.data];
+        this.reviewPage = res.pagination?.pageNo ?? page;
+        this.reviewTotalPages = res.pagination?.totalPages ?? 1;
         this.reviewsLoading = false;
+        this.loadingMoreReviews = false;
       },
-      error: () => (this.reviewsLoading = false),
+      error: () => {
+        this.reviewsLoading = false;
+        this.loadingMoreReviews = false;
+      },
     });
   }
 
-  // ── Image gallery ──────────────────────────────
+  loadMoreReviews(): void {
+    if (!this.product || this.reviewPage >= this.reviewTotalPages) return;
+    this.loadReviews(this.product._id, this.reviewPage + 1);
+  }
+
+  /** Finds first delivered order that contains this product — used as orderId when submitting a review */
+  private checkEligibleOrder(productId: string): void {
+    this.loadingOrders = true;
+    this.api.get<any>('order').subscribe({
+      next: (res) => {
+        const orders: any[] = res.data ?? res.orders ?? res ?? [];
+        const eligible = orders.find(
+          (o: any) =>
+            o.status === 'delivered' &&
+            o.items?.some((item: any) =>
+              (item.product?._id ?? item.product) === productId
+            )
+        );
+        this.eligibleOrderId = eligible?._id ?? '';
+        this.loadingOrders = false;
+        this.ordersChecked = true;
+      },
+      error: () => {
+        this.loadingOrders = false;
+        this.ordersChecked = true;
+      },
+    });
+  }
+
+  // ── Image gallery ──────────────────────────────────────
   get allImages(): string[] {
     const base = this.product?.images ?? [];
     const variantImgs = this.selectedVariant?.images ?? [];
     return [...new Set([...variantImgs, ...base])];
   }
 
-  setImage(index: number): void {
-    this.activeImageIndex = index;
-  }
+  setImage(index: number): void { this.activeImageIndex = index; }
 
   get activeImage(): string {
     const imgs = this.allImages;
@@ -107,11 +169,11 @@ export class ProductDetail implements OnInit {
     (event.target as HTMLImageElement).src = 'placeholderImage.jpg';
   }
 
-  // ── Variants ───────────────────────────────────
+  // ── Variants ──────────────────────────────────────────
   get attributeKeys(): string[] {
     const keys = new Set<string>();
     this.product?.variants.forEach((v) =>
-      Object.keys(v.attributes ?? {}).forEach((k) => keys.add(k)),
+      Object.keys(v.attributes ?? {}).forEach((k) => keys.add(k))
     );
     return Array.from(keys);
   }
@@ -128,7 +190,7 @@ export class ProductDetail implements OnInit {
     this.selectedAttributes = { ...this.selectedAttributes, [key]: value };
     this.selectedVariant =
       this.product?.variants.find((v) =>
-        Object.entries(this.selectedAttributes).every(([k, val]) => v.attributes?.[k] === val),
+        Object.entries(this.selectedAttributes).every(([k, val]) => v.attributes?.[k] === val)
       ) ?? null;
     this.activeImageIndex = 0;
   }
@@ -137,15 +199,10 @@ export class ProductDetail implements OnInit {
     return this.selectedAttributes[key] === value;
   }
 
-  get hasVariants(): boolean {
-    return (this.product?.variants.length ?? 0) > 0;
-  }
+  get hasVariants(): boolean { return (this.product?.variants.length ?? 0) > 0; }
+  get allAttributesSelected(): boolean { return this.attributeKeys.every((k) => !!this.selectedAttributes[k]); }
 
-  get allAttributesSelected(): boolean {
-    return this.attributeKeys.every((k) => !!this.selectedAttributes[k]);
-  }
-
-  // ── Price ──────────────────────────────────────
+  // ── Price ─────────────────────────────────────────────
   get displayPrice(): number {
     return this.selectedVariant?.price ?? this.product?.salePrice ?? this.product?.price ?? 0;
   }
@@ -160,23 +217,21 @@ export class ProductDetail implements OnInit {
     return Math.round(((this.originalPrice - this.displayPrice) / this.originalPrice) * 100);
   }
 
-  // ── Stock ──────────────────────────────────────
+  // ── Stock ─────────────────────────────────────────────
   get availableStock(): number {
     if (this.selectedVariant)
       return this.selectedVariant.stock - this.selectedVariant.reservedStock;
     return (this.product?.stock ?? 0) - (this.product?.reservedStock ?? 0);
   }
 
-  get inStock(): boolean {
-    return this.availableStock > 0;
-  }
+  get inStock(): boolean { return this.availableStock > 0; }
 
   changeQty(delta: number): void {
     const next = this.quantity + delta;
     if (next >= 1 && next <= this.availableStock) this.quantity = next;
   }
 
-  // ── Cart ───────────────────────────────────────
+  // ── Cart ──────────────────────────────────────────────
   get canAddToCart(): boolean {
     if (!this.product) return false;
     if (this.hasVariants && !this.allAttributesSelected) return false;
@@ -187,10 +242,8 @@ export class ProductDetail implements OnInit {
     if (!this.canAddToCart) return;
 
     if (!this.authService.isLoggedIn) {
-      // Guest flow: save to localStorage
       const variantLabel = Object.entries(this.selectedAttributes)
-        .map(([k, v]) => `${k}: ${v}`)
-        .join(' · ');
+        .map(([k, v]) => `${k}: ${v}`).join(' · ');
       const item: FrontendCartItem = {
         productId: this.product!._id,
         title: this.product!.title,
@@ -222,16 +275,14 @@ export class ProductDetail implements OnInit {
     });
   }
 
-  // ── Wishlist ───────────────────────────────────
+  // ── Wishlist ───────────────────────────────────────────
   get inWishlistCurrent(): boolean {
     return this.wishlistService.isInWishlist(this.product?._id ?? '');
   }
 
   toggleWishlist(): void {
     if (!this.product) return;
-
     if (!this.authService.isLoggedIn) {
-      // Guest flow
       const item: GuestWishlistItem = {
         productId: this.product._id,
         title: this.product.title,
@@ -243,7 +294,6 @@ export class ProductDetail implements OnInit {
       this.snackBar.open(added ? 'Saved to wishlist' : 'Removed from wishlist', '✓', { duration: 2000 });
       return;
     }
-
     this.wishlistLoading = true;
     this.wishlistService.toggle(this.product._id).subscribe({
       next: () => (this.wishlistLoading = false),
@@ -251,7 +301,7 @@ export class ProductDetail implements OnInit {
     });
   }
 
-  // ── 3D Image hover ─────────────────────────────
+  // ── 3D Image hover ────────────────────────────────────
   imageTransform = '';
 
   onImageMouseMove(event: MouseEvent): void {
@@ -261,18 +311,112 @@ export class ProductDetail implements OnInit {
     this.imageTransform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.03,1.03,1.03)`;
   }
 
-  onImageMouseLeave(): void {
-    this.imageTransform = '';
-  }
+  onImageMouseLeave(): void { this.imageTransform = ''; }
 
-  // ── Reviews ────────────────────────────────────
-  get ratingStars(): number[] {
-    return [1, 2, 3, 4, 5];
-  }
+  // ── Reviews: helpers ──────────────────────────────────
+  readonly ratingStars = [1, 2, 3, 4, 5];
 
   getStarType(star: number, rating: number): string {
     if (star <= Math.floor(rating)) return 'star';
     if (star - rating < 1 && rating % 1 >= 0.5) return 'star_half';
     return 'star_border';
+  }
+
+  get myReview(): ProductReview | undefined {
+    const userId = this.authService.currentUser?.id;
+    if (!userId) return undefined;
+    return this.reviews.find(r => (r.user as any)?._id === userId || (r.user as any)?.id === userId);
+  }
+
+  get ratingBreakdown(): { star: number; count: number; percent: number }[] {
+    return [5, 4, 3, 2, 1].map(star => {
+      const count = this.reviews.filter(r => Math.round(r.rating) === star).length;
+      const percent = this.reviews.length ? Math.round((count / this.reviews.length) * 100) : 0;
+      return { star, count, percent };
+    });
+  }
+
+  get averageRating(): number {
+    return Number(this.product?.averageRating ?? 0);
+  }
+
+  // ── Reviews: write ────────────────────────────────────
+  setReviewRating(r: number): void { this.reviewForm.rating = r; }
+  setHoverRating(r: number): void  { this.hoverRating = r; }
+  clearHover(): void               { this.hoverRating = 0; }
+
+  get displayRating(): number { return this.hoverRating || this.reviewForm.rating; }
+
+  submitReview(): void {
+    if (!this.product || !this.eligibleOrderId || this.reviewForm.rating === 0) return;
+    this.submittingReview = true;
+    this.reviewError = '';
+    this.reviewSuccess = '';
+
+    this.reviewService.createReview({
+      orderId:   this.eligibleOrderId,
+      productId: this.product._id,
+      rating:    this.reviewForm.rating,
+      comment:   this.reviewForm.comment.trim() || undefined,
+    }).subscribe({
+      next: () => {
+        this.reviewSuccess = 'Review submitted! It will appear after approval.';
+        this.reviewForm = { rating: 0, comment: '' };
+        this.submittingReview = false;
+        this.loadReviews(this.product!._id);
+      },
+      error: (err: any) => {
+        this.reviewError = err?.error?.message ?? 'Failed to submit review.';
+        this.submittingReview = false;
+      },
+    });
+  }
+
+  // ── Reviews: edit ─────────────────────────────────────
+  startEdit(review: ProductReview): void {
+    this.editingReviewId = review._id;
+    this.editForm = { rating: review.rating, comment: review.comment ?? '' };
+    this.editHoverRating = 0;
+  }
+
+  cancelEdit(): void { this.editingReviewId = ''; }
+
+  setEditHover(r: number): void  { this.editHoverRating = r; }
+  clearEditHover(): void         { this.editHoverRating = 0; }
+  setEditRating(r: number): void { this.editForm.rating = r; }
+  get displayEditRating(): number { return this.editHoverRating || this.editForm.rating; }
+
+  saveEdit(): void {
+    if (!this.editingReviewId || this.editForm.rating === 0) return;
+    this.updatingReview = true;
+    this.reviewService.updateReview(this.editingReviewId, {
+      rating:  this.editForm.rating,
+      comment: this.editForm.comment.trim(),
+    }).subscribe({
+      next: () => {
+        this.updatingReview = false;
+        this.editingReviewId = '';
+        this.loadReviews(this.product!._id);
+        this.snackBar.open('Review updated!', '✓', { duration: 2500 });
+      },
+      error: (err: any) => {
+        this.updatingReview = false;
+        this.snackBar.open(err?.error?.message ?? 'Could not update review.', 'Close', { duration: 3000 });
+      },
+    });
+  }
+
+  // ── Reviews: delete ───────────────────────────────────
+  confirmDelete(reviewId: string): void {
+    if (!confirm('Delete your review?')) return;
+    this.reviewService.deleteReview(reviewId).subscribe({
+      next: () => {
+        this.loadReviews(this.product!._id);
+        this.snackBar.open('Review deleted.', '✓', { duration: 2500 });
+      },
+      error: (err: any) => {
+        this.snackBar.open(err?.error?.message ?? 'Could not delete review.', 'Close', { duration: 3000 });
+      },
+    });
   }
 }

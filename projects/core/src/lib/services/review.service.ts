@@ -14,4 +14,16 @@ export class ReviewService {
   ): Observable<{ success: boolean; data: ProductReview[]; pagination: any }> {
     return this.api.get(`review/product/${productId}`, { page, limit });
   }
+
+  createReview(body: { orderId: string; productId: string; rating: number; comment?: string }): Observable<any> {
+    return this.api.post('review', body);
+  }
+
+  updateReview(reviewId: string, body: { rating: number; comment: string }): Observable<any> {
+    return this.api.put(`review/${reviewId}`, body);
+  }
+
+  deleteReview(reviewId: string): Observable<any> {
+    return this.api.delete(`review/${reviewId}`);
+  }
 }
