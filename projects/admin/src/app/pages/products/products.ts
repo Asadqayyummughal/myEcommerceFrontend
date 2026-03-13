@@ -28,8 +28,8 @@ interface ProductForm {
   brand: string;
   tags: string;
   stock: number | null;
-  category: string;
-  subCategory: string;
+  categories: string[];
+  subcategories: string[];
   variants: VariantForm[];
   isActive: boolean;
 }
@@ -83,7 +83,7 @@ export class Products implements OnInit {
       title: '', slug: '', description: '', shortDescription: '',
       price: null, salePrice: null, currency: 'USD',
       sku: '', brand: '', tags: '', stock: null,
-      category: '', subCategory: '',
+      categories: [], subcategories: [],
       variants: [], isActive: true,
     };
   }
@@ -135,13 +135,45 @@ export class Products implements OnInit {
   }
 
   // ── Category / Subcategory ────────────────────────────
-  onCategoryChange(): void {
-    this.form.subCategory = '';
+  isCategorySelected(id: string): boolean {
+    return this.form.categories.includes(id);
   }
 
-  get filteredSubcategories(): any[] {
-    if (!this.form.category) return [];
-    return this.subcategories.filter(s => (s.category?._id ?? s.category) === this.form.category);
+  toggleCategory(id: string): void {
+    const idx = this.form.categories.indexOf(id);
+    if (idx > -1) {
+      this.form.categories.splice(idx, 1);
+      this.form.subcategories = this.form.subcategories.filter(
+        s => !this.subcategories.find(sub => sub._id === s && (sub.category?._id ?? sub.category) === id)
+      );
+    } else {
+      this.form.categories.push(id);
+    }
+  }
+
+  isSubcategorySelected(id: string): boolean {
+    return this.form.subcategories.includes(id);
+  }
+
+  toggleSubcategory(id: string): void {
+    const idx = this.form.subcategories.indexOf(id);
+    if (idx > -1) {
+      this.form.subcategories.splice(idx, 1);
+    } else {
+      this.form.subcategories.push(id);
+    }
+  }
+
+  visibleSubcategories(): any[] {
+    return this.subcategories.filter(s =>
+      this.form.categories.includes(s.category?._id ?? s.category)
+    );
+  }
+
+  subcategoriesForCategory(categoryId: string): any[] {
+    return this.subcategories.filter(s =>
+      (s.category?._id ?? s.category) === categoryId
+    );
   }
 
   // ── Variants ──────────────────────────────────────────
@@ -197,8 +229,8 @@ export class Products implements OnInit {
       brand:            product.brand ?? '',
       tags:             (product.tags ?? []).join(', '),
       stock:            product.stock ?? null,
-      category:    (product as any).category?._id    ?? (product as any).category    ?? '',
-      subCategory: (product as any).subCategory?._id ?? (product as any).subCategory ?? '',
+      categories:    [(product as any).category?._id    ?? (product as any).category    ?? ''].filter(Boolean),
+      subcategories: [(product as any).subCategory?._id ?? (product as any).subCategory ?? ''].filter(Boolean),
       variants:         (product.variants ?? []).map(v => ({
         sku:          v.sku ?? '',
         price:        v.price ?? null,
@@ -262,8 +294,8 @@ export class Products implements OnInit {
       sku:              this.form.sku.trim() || undefined,
       brand:            this.form.brand.trim() || undefined,
       tags:             this.form.tags ? this.form.tags.split(',').map(t => t.trim()).filter(Boolean) : [],
-      category:    this.form.category    || undefined,
-      subCategory: this.form.subCategory || undefined,
+      category:    this.form.categories[0]    || undefined,
+      subCategory: this.form.subcategories[0] || undefined,
       stock:            Number(this.form.stock),
       images:           [...existingPaths, ...uploadedUrls],
       variants:         this.buildVariantsPayload(),
