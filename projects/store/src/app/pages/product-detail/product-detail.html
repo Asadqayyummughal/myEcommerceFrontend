@@ -24,7 +24,7 @@
 <div class="max-w-7xl mx-auto px-4 py-24 text-center">
   <mat-icon class="text-gray-300 text-6xl mb-4">inventory_2</mat-icon>
   <p class="text-gray-500 text-lg mb-2">{{ errorMessage }}</p>
-  <a routerLink="/products" class="text-blue-500 hover:underline text-sm">← Back to Products</a>
+  <a routerLink="/products" class="text-orange-500 hover:underline text-sm">← Back to Products</a>
 </div>
 }
 
@@ -64,7 +64,7 @@
         <div class="flex gap-2 overflow-x-auto pb-1">
           @for (img of allImages; track img; let i = $index) {
           <button (click)="setImage(i)" [class]="'shrink-0 w-16 h-16 rounded-xl border-2 overflow-hidden transition-all bg-white ' +
-              (i === activeImageIndex ? 'border-blue-500 shadow-md' : 'border-gray-200 hover:border-gray-400')">
+              (i === activeImageIndex ? 'border-orange-500 shadow-md' : 'border-gray-200 hover:border-gray-400')">
             <img [src]="apiUrl + img" [alt]="'Image ' + (i + 1)" (error)="onImgError($event)"
               class="w-full h-full object-contain p-1" />
           </button>
@@ -79,7 +79,7 @@
         <!-- Brand + tags -->
         <div class="flex flex-wrap gap-2">
           @if (product.brand) {
-          <span class="text-xs font-semibold text-blue-600 bg-blue-50 px-2.5 py-1 rounded-full">
+          <span class="text-xs font-semibold text-orange-600 bg-orange-50 px-2.5 py-1 rounded-full">
             {{ product.brand }}
           </span>
           }
@@ -91,9 +91,9 @@
         <!-- Visit Shop link -->
         @if (product.vendor) {
         <a [routerLink]="['/stores', product.vendor]"
-          class="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600
-                 hover:text-indigo-700 hover:bg-indigo-50 px-3 py-1.5 rounded-xl border
-                 border-indigo-100 transition-all w-fit">
+          class="inline-flex items-center gap-1.5 text-xs font-semibold text-orange-600
+                 hover:text-orange-700 hover:bg-orange-50 px-3 py-1.5 rounded-xl border
+                 border-orange-100 transition-all w-fit">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184
@@ -160,7 +160,7 @@
             @for (val of getAttributeValues(key); track val) {
             <button (click)="selectAttribute(key, val)" [class]="'px-3 py-1.5 rounded-lg border text-sm font-medium transition-all ' +
                 (isAttributeSelected(key, val)
-                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+                  ? 'border-orange-500 bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300'
                   : 'border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-gray-500')">
               {{ val }}
             </button>
@@ -196,7 +196,7 @@
 
           <!-- Add to cart -->
           <button (click)="addToCart()" [disabled]="!canAddToCart || addingToCart"
-            class="flex-1 flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm">
+            class="flex-1 flex items-center justify-center gap-2 bg-orange-600 hover:bg-orange-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-semibold py-3 px-6 rounded-xl transition-colors text-sm">
             @if (addingToCart) {
             <mat-icon class="animate-spin text-base">refresh</mat-icon>
             Adding...
@@ -289,7 +289,7 @@
               <mat-icon class="text-gray-300 mb-3" style="font-size:48px;width:48px;height:48px;line-height:48px">rate_review</mat-icon>
               <p class="text-gray-500 text-sm mb-4">Sign in to see and write reviews</p>
               <a routerLink="/auth/login"
-                class="inline-block bg-blue-600 text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-blue-700 transition-colors">
+                class="inline-block bg-orange-600 text-white text-sm font-semibold px-5 py-2.5 rounded-xl hover:bg-orange-700 transition-colors">
                 Sign In
               </a>
             </div>
@@ -334,13 +334,13 @@
 
               <!-- Already has a review → show edit/delete inline -->
               @if (myReview) {
-              <div class="bg-blue-50 border border-blue-100 rounded-2xl p-4">
+              <div class="bg-orange-50 dark:bg-orange-900/20 border border-orange-100 dark:border-orange-800 rounded-2xl p-4">
                 <div class="flex items-center justify-between mb-3">
-                  <span class="text-sm font-bold text-blue-800">Your Review</span>
+                  <span class="text-sm font-bold text-orange-800 dark:text-orange-300">Your Review</span>
                   <div class="flex gap-2">
                     @if (editingReviewId !== myReview._id) {
                     <button (click)="startEdit(myReview)"
-                      class="text-xs font-semibold text-blue-600 hover:text-blue-800 px-2.5 py-1 rounded-lg hover:bg-blue-100 transition-colors">
+                      class="text-xs font-semibold text-orange-600 hover:text-orange-800 px-2.5 py-1 rounded-lg hover:bg-orange-100 transition-colors">
                       Edit
                     </button>
                     <button (click)="confirmDelete(myReview._id)"
@@ -365,10 +365,10 @@
                   </div>
                   <textarea [(ngModel)]="editForm.comment" rows="3" placeholder="Update your comment…"
                     class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm resize-none
-                           focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"></textarea>
+                           focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100"></textarea>
                   <div class="flex gap-2">
                     <button (click)="saveEdit()" [disabled]="updatingReview || editForm.rating === 0"
-                      class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 text-white text-sm font-semibold
+                      class="bg-orange-600 hover:bg-orange-700 disabled:bg-gray-300 text-white text-sm font-semibold
                              px-4 py-2 rounded-xl transition-colors">
                       {{ updatingReview ? 'Saving…' : 'Save' }}
                     </button>
@@ -436,7 +436,7 @@
                 <textarea [(ngModel)]="reviewForm.comment" rows="3"
                   placeholder="Share your experience with this product… (optional)"
                   class="w-full border border-gray-300 rounded-xl px-3 py-2.5 text-sm resize-none mb-3
-                         focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100"></textarea>
+                         focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100"></textarea>
 
                 @if (reviewError) {
                 <p class="text-xs text-red-500 mb-2">{{ reviewError }}</p>
@@ -447,7 +447,7 @@
 
                 <button (click)="submitReview()"
                   [disabled]="submittingReview || reviewForm.rating === 0"
-                  class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed
+                  class="bg-orange-600 hover:bg-orange-700 disabled:bg-gray-300 disabled:cursor-not-allowed
                          text-white text-sm font-semibold px-5 py-2.5 rounded-xl transition-colors">
                   {{ submittingReview ? 'Submitting…' : 'Submit Review' }}
                 </button>
@@ -484,8 +484,8 @@
               <!-- Skip own review — already shown in the "Your Review" block above -->
               @if (review._id !== myReview?._id) {
               <div class="flex gap-3 pb-5 border-b border-gray-50 last:border-0">
-                <div class="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
-                  <span class="text-blue-600 text-sm font-bold">
+                <div class="w-9 h-9 rounded-full bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center shrink-0">
+                  <span class="text-orange-600 text-sm font-bold">
                     {{ review.user.name[0]?.toUpperCase() ?? 'U' }}
                   </span>
                 </div>
@@ -514,7 +514,7 @@
             @if (reviewPage < reviewTotalPages) {
             <div class="text-center pt-2">
               <button (click)="loadMoreReviews()" [disabled]="loadingMoreReviews"
-                class="text-sm text-blue-600 font-semibold border border-blue-200 hover:bg-blue-50
+                class="text-sm text-orange-600 font-semibold border border-orange-200 hover:bg-orange-50
                        disabled:opacity-50 px-5 py-2 rounded-xl transition-colors">
                 {{ loadingMoreReviews ? 'Loading…' : 'Load more reviews' }}
               </button>

@@ -48,11 +48,11 @@ export class Profile implements OnInit {
 
   get avatarColor(): string {
     const colors = [
-      'from-blue-500 to-indigo-600',
-      'from-violet-500 to-purple-600',
-      'from-emerald-500 to-teal-600',
-      'from-orange-500 to-red-600',
-      'from-pink-500 to-rose-600',
+      'from-orange-500 to-orange-700',
+      'from-orange-600 to-red-600',
+      'from-amber-500 to-orange-600',
+      'from-orange-500 to-red-500',
+      'from-orange-400 to-orange-600',
     ];
     const idx = (this.user?.name?.charCodeAt(0) ?? 0) % colors.length;
     return colors[idx];

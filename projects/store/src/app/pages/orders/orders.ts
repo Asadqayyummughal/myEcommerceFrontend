@@ -196,8 +196,8 @@ export class Orders implements OnInit {
   statusConfig(status: OrderStatus): { label: string; classes: string; icon: string } {
     const map: Record<OrderStatus, { label: string; classes: string; icon: string }> = {
       pending: { label: 'Pending', classes: 'bg-amber-50 text-amber-700 border-amber-200', icon: 'schedule' },
-      processing: { label: 'Processing', classes: 'bg-blue-50 text-blue-700 border-blue-200', icon: 'autorenew' },
-      shipped: { label: 'Shipped', classes: 'bg-indigo-50 text-indigo-700 border-indigo-200', icon: 'local_shipping' },
+      processing: { label: 'Processing', classes: 'bg-orange-50 text-orange-700 border-orange-200', icon: 'autorenew' },
+      shipped: { label: 'Shipped', classes: 'bg-orange-50 text-orange-700 border-orange-200', icon: 'local_shipping' },
       delivered: { label: 'Delivered', classes: 'bg-green-50 text-green-700 border-green-200', icon: 'check_circle' },
       cancelled: { label: 'Cancelled', classes: 'bg-red-50 text-red-700 border-red-200', icon: 'cancel' },
     };
