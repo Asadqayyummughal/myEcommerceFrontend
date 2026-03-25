@@ -59,6 +59,13 @@ body {
   }
 }
 
+/* Dark mode cart drawer */
+.dark .cart-dialog-panel {
+  .mdc-dialog__surface {
+    background-color: #111827 !important; /* gray-900 */
+  }
+}
+
 body {
   font-family: var(--font-family);
   background: var(--color-bg);

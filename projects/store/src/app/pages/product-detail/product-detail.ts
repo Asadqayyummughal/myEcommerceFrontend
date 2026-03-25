@@ -60,9 +60,9 @@ export class ProductDetail implements OnInit {
   updatingReview = false;
 
   // ── Review: eligible delivered orders ─────────────────
-  eligibleOrderId = '';         // auto-selected order id
+  eligibleOrderId = ''; // auto-selected order id
   loadingOrders = false;
-  ordersChecked = false;        // true after the check is done
+  ordersChecked = false; // true after the check is done
 
   // ── Review: pagination ────────────────────────────────
   reviewPage = 1;
@@ -104,8 +104,12 @@ export class ProductDetail implements OnInit {
   }
 
   loadReviews(productId: string, page = 1): void {
-    if (page === 1) { this.reviewsLoading = true; this.reviews = []; }
-    else { this.loadingMoreReviews = true; }
+    if (page === 1) {
+      this.reviewsLoading = true;
+      this.reviews = [];
+    } else {
+      this.loadingMoreReviews = true;
+    }
 
     this.reviewService.getProductReviews(productId, page, 5).subscribe({
       next: (res) => {
@@ -136,9 +140,7 @@ export class ProductDetail implements OnInit {
         const eligible = orders.find(
           (o: any) =>
             o.status === 'delivered' &&
-            o.items?.some((item: any) =>
-              (item.product?._id ?? item.product) === productId
-            )
+            o.items?.some((item: any) => (item.product?._id ?? item.product) === productId),
         );
         this.eligibleOrderId = eligible?._id ?? '';
         this.loadingOrders = false;
@@ -158,7 +160,9 @@ export class ProductDetail implements OnInit {
     return [...new Set([...variantImgs, ...base])];
   }
 
-  setImage(index: number): void { this.activeImageIndex = index; }
+  setImage(index: number): void {
+    this.activeImageIndex = index;
+  }
 
   get activeImage(): string {
     const imgs = this.allImages;
@@ -173,7 +177,7 @@ export class ProductDetail implements OnInit {
   get attributeKeys(): string[] {
     const keys = new Set<string>();
     this.product?.variants.forEach((v) =>
-      Object.keys(v.attributes ?? {}).forEach((k) => keys.add(k))
+      Object.keys(v.attributes ?? {}).forEach((k) => keys.add(k)),
     );
     return Array.from(keys);
   }
@@ -190,7 +194,7 @@ export class ProductDetail implements OnInit {
     this.selectedAttributes = { ...this.selectedAttributes, [key]: value };
     this.selectedVariant =
       this.product?.variants.find((v) =>
-        Object.entries(this.selectedAttributes).every(([k, val]) => v.attributes?.[k] === val)
+        Object.entries(this.selectedAttributes).every(([k, val]) => v.attributes?.[k] === val),
       ) ?? null;
     this.activeImageIndex = 0;
   }
@@ -199,8 +203,12 @@ export class ProductDetail implements OnInit {
     return this.selectedAttributes[key] === value;
   }
 
-  get hasVariants(): boolean { return (this.product?.variants.length ?? 0) > 0; }
-  get allAttributesSelected(): boolean { return this.attributeKeys.every((k) => !!this.selectedAttributes[k]); }
+  get hasVariants(): boolean {
+    return (this.product?.variants.length ?? 0) > 0;
+  }
+  get allAttributesSelected(): boolean {
+    return this.attributeKeys.every((k) => !!this.selectedAttributes[k]);
+  }
 
   // ── Price ─────────────────────────────────────────────
   get displayPrice(): number {
@@ -224,7 +232,9 @@ export class ProductDetail implements OnInit {
     return (this.product?.stock ?? 0) - (this.product?.reservedStock ?? 0);
   }
 
-  get inStock(): boolean { return this.availableStock > 0; }
+  get inStock(): boolean {
+    return this.availableStock > 0;
+  }
 
   changeQty(delta: number): void {
     const next = this.quantity + delta;
@@ -243,7 +253,8 @@ export class ProductDetail implements OnInit {
 
     if (!this.authService.isLoggedIn) {
       const variantLabel = Object.entries(this.selectedAttributes)
-        .map(([k, v]) => `${k}: ${v}`).join(' · ');
+        .map(([k, v]) => `${k}: ${v}`)
+        .join(' · ');
       const item: FrontendCartItem = {
         productId: this.product!._id,
         title: this.product!.title,
@@ -254,8 +265,10 @@ export class ProductDetail implements OnInit {
         quantity: this.quantity,
       };
       this.cartService.addGuestItem(item);
-      this.snackBar.open('Added to cart!', 'View Cart', { duration: 3000 })
-        .onAction().subscribe(() => this.cartService.openDrawer());
+      this.snackBar
+        .open('Added to cart!', 'View Cart', { duration: 3000 })
+        .onAction()
+        .subscribe(() => this.cartService.openDrawer());
       return;
     }
 
@@ -265,11 +278,15 @@ export class ProductDetail implements OnInit {
       next: () => {
         this.cartService.loadAuthCart();
         this.addingToCart = false;
-        this.snackBar.open('Added to cart!', 'View Cart', { duration: 3000 })
-          .onAction().subscribe(() => this.cartService.openDrawer());
+        this.snackBar
+          .open('Added to cart!', 'View Cart', { duration: 3000 })
+          .onAction()
+          .subscribe(() => this.cartService.openDrawer());
       },
       error: (err) => {
-        this.snackBar.open(err?.error?.message ?? 'Could not add to cart', 'Close', { duration: 3000 });
+        this.snackBar.open(err?.error?.message ?? 'Could not add to cart', 'Close', {
+          duration: 3000,
+        });
         this.addingToCart = false;
       },
     });
@@ -291,7 +308,9 @@ export class ProductDetail implements OnInit {
       };
       this.wishlistService.toggleGuest(item);
       const added = this.wishlistService.isInWishlist(this.product._id);
-      this.snackBar.open(added ? 'Saved to wishlist' : 'Removed from wishlist', '✓', { duration: 2000 });
+      this.snackBar.open(added ? 'Saved to wishlist' : 'Removed from wishlist', '✓', {
+        duration: 2000,
+      });
       return;
     }
     this.wishlistLoading = true;
@@ -311,7 +330,9 @@ export class ProductDetail implements OnInit {
     this.imageTransform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.03,1.03,1.03)`;
   }
 
-  onImageMouseLeave(): void { this.imageTransform = ''; }
+  onImageMouseLeave(): void {
+    this.imageTransform = '';
+  }
 
   // ── Reviews: helpers ──────────────────────────────────
   readonly ratingStars = [1, 2, 3, 4, 5];
@@ -325,12 +346,14 @@ export class ProductDetail implements OnInit {
   get myReview(): ProductReview | undefined {
     const userId = this.authService.currentUser?.id;
     if (!userId) return undefined;
-    return this.reviews.find(r => (r.user as any)?._id === userId || (r.user as any)?.id === userId);
+    return this.reviews.find(
+      (r) => (r.user as any)?._id === userId || (r.user as any)?.id === userId,
+    );
   }
 
   get ratingBreakdown(): { star: number; count: number; percent: number }[] {
-    return [5, 4, 3, 2, 1].map(star => {
-      const count = this.reviews.filter(r => Math.round(r.rating) === star).length;
+    return [5, 4, 3, 2, 1].map((star) => {
+      const count = this.reviews.filter((r) => Math.round(r.rating) === star).length;
       const percent = this.reviews.length ? Math.round((count / this.reviews.length) * 100) : 0;
       return { star, count, percent };
     });
@@ -341,11 +364,19 @@ export class ProductDetail implements OnInit {
   }
 
   // ── Reviews: write ────────────────────────────────────
-  setReviewRating(r: number): void { this.reviewForm.rating = r; }
-  setHoverRating(r: number): void  { this.hoverRating = r; }
-  clearHover(): void               { this.hoverRating = 0; }
+  setReviewRating(r: number): void {
+    this.reviewForm.rating = r;
+  }
+  setHoverRating(r: number): void {
+    this.hoverRating = r;
+  }
+  clearHover(): void {
+    this.hoverRating = 0;
+  }
 
-  get displayRating(): number { return this.hoverRating || this.reviewForm.rating; }
+  get displayRating(): number {
+    return this.hoverRating || this.reviewForm.rating;
+  }
 
   submitReview(): void {
     if (!this.product || !this.eligibleOrderId || this.reviewForm.rating === 0) return;
@@ -353,23 +384,25 @@ export class ProductDetail implements OnInit {
     this.reviewError = '';
     this.reviewSuccess = '';
 
-    this.reviewService.createReview({
-      orderId:   this.eligibleOrderId,
-      productId: this.product._id,
-      rating:    this.reviewForm.rating,
-      comment:   this.reviewForm.comment.trim() || undefined,
-    }).subscribe({
-      next: () => {
-        this.reviewSuccess = 'Review submitted! It will appear after approval.';
-        this.reviewForm = { rating: 0, comment: '' };
-        this.submittingReview = false;
-        this.loadReviews(this.product!._id);
-      },
-      error: (err: any) => {
-        this.reviewError = err?.error?.message ?? 'Failed to submit review.';
-        this.submittingReview = false;
-      },
-    });
+    this.reviewService
+      .createReview({
+        orderId: this.eligibleOrderId,
+        productId: this.product._id,
+        rating: this.reviewForm.rating,
+        comment: this.reviewForm.comment.trim() || undefined,
+      })
+      .subscribe({
+        next: () => {
+          this.reviewSuccess = 'Review submitted! It will appear after approval.';
+          this.reviewForm = { rating: 0, comment: '' };
+          this.submittingReview = false;
+          this.loadReviews(this.product!._id);
+        },
+        error: (err: any) => {
+          this.reviewError = err?.error?.message ?? 'Failed to submit review.';
+          this.submittingReview = false;
+        },
+      });
   }
 
   // ── Reviews: edit ─────────────────────────────────────
@@ -379,31 +412,45 @@ export class ProductDetail implements OnInit {
     this.editHoverRating = 0;
   }
 
-  cancelEdit(): void { this.editingReviewId = ''; }
+  cancelEdit(): void {
+    this.editingReviewId = '';
+  }
 
-  setEditHover(r: number): void  { this.editHoverRating = r; }
-  clearEditHover(): void         { this.editHoverRating = 0; }
-  setEditRating(r: number): void { this.editForm.rating = r; }
-  get displayEditRating(): number { return this.editHoverRating || this.editForm.rating; }
+  setEditHover(r: number): void {
+    this.editHoverRating = r;
+  }
+  clearEditHover(): void {
+    this.editHoverRating = 0;
+  }
+  setEditRating(r: number): void {
+    this.editForm.rating = r;
+  }
+  get displayEditRating(): number {
+    return this.editHoverRating || this.editForm.rating;
+  }
 
   saveEdit(): void {
     if (!this.editingReviewId || this.editForm.rating === 0) return;
     this.updatingReview = true;
-    this.reviewService.updateReview(this.editingReviewId, {
-      rating:  this.editForm.rating,
-      comment: this.editForm.comment.trim(),
-    }).subscribe({
-      next: () => {
-        this.updatingReview = false;
-        this.editingReviewId = '';
-        this.loadReviews(this.product!._id);
-        this.snackBar.open('Review updated!', '✓', { duration: 2500 });
-      },
-      error: (err: any) => {
-        this.updatingReview = false;
-        this.snackBar.open(err?.error?.message ?? 'Could not update review.', 'Close', { duration: 3000 });
-      },
-    });
+    this.reviewService
+      .updateReview(this.editingReviewId, {
+        rating: this.editForm.rating,
+        comment: this.editForm.comment.trim(),
+      })
+      .subscribe({
+        next: () => {
+          this.updatingReview = false;
+          this.editingReviewId = '';
+          this.loadReviews(this.product!._id);
+          this.snackBar.open('Review updated!', '✓', { duration: 2500 });
+        },
+        error: (err: any) => {
+          this.updatingReview = false;
+          this.snackBar.open(err?.error?.message ?? 'Could not update review.', 'Close', {
+            duration: 3000,
+          });
+        },
+      });
   }
 
   // ── Reviews: delete ───────────────────────────────────
@@ -415,7 +462,9 @@ export class ProductDetail implements OnInit {
         this.snackBar.open('Review deleted.', '✓', { duration: 2500 });
       },
       error: (err: any) => {
-        this.snackBar.open(err?.error?.message ?? 'Could not delete review.', 'Close', { duration: 3000 });
+        this.snackBar.open(err?.error?.message ?? 'Could not delete review.', 'Close', {
+          duration: 3000,
+        });
       },
     });
   }

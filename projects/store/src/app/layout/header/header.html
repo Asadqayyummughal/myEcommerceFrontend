@@ -7,7 +7,7 @@
         <div class="w-10 h-10 rounded-full bg-gradient-to-br from-orange-600 to-orange-400 flex items-center justify-center">
           <mat-icon class="text-white text-lg">shopping_bag</mat-icon>
         </div>
-        <span class="font-semibold text-xl text-gray-900">MyEcommerce</span>
+        <span class="font-semibold text-xl text-gray-900 dark:text-white">MyEcommerce</span>
       </a>
 
       <!-- Search -->
@@ -70,13 +70,13 @@
 
         <!-- Logged IN -->
         @if (authService.isLoggedIn) {
-        <button [matMenuTriggerFor]="userMenu" class="flex items-center gap-2 hover:bg-gray-50 rounded-lg px-2 py-1.5 transition-colors">
+        <button [matMenuTriggerFor]="userMenu" class="flex items-center gap-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg px-2 py-1.5 transition-colors">
           <div class="w-8 h-8 rounded-full bg-orange-600 flex items-center justify-center">
             <span class="text-white text-xs font-bold">
               {{ (authService.currentUser?.name || 'U')[0].toUpperCase() }}
             </span>
           </div>
-          <span class="text-sm font-medium text-gray-700 hidden md:block max-w-24 truncate">
+          <span class="text-sm font-medium text-gray-700 dark:text-gray-200 hidden md:block max-w-24 truncate">
             {{ authService.currentUser?.name }}
           </span>
           <mat-icon class="text-gray-400 text-base">expand_more</mat-icon>

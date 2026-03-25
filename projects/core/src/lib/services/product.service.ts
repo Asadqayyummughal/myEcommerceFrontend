@@ -29,7 +29,10 @@ export class ProductService {
     maxPrice?: number;
     categories?: string;
     sort?: string;
-  }): Observable<{ success: boolean; data: { items: Product[]; meta: { total: number; page: number; limit: number; pages: number } } }> {
+  }): Observable<{
+    success: boolean;
+    data: { items: Product[]; meta: { total: number; page: number; limit: number; pages: number } };
+  }> {
     return this.apiService.get(this.apiUrl, params);
   }
 
