@@ -39,13 +39,17 @@ export class StoreDetail implements OnInit {
 
   ngOnInit(): void {
     this.storeId = this.route.snapshot.paramMap.get('id') ?? '';
-    if (!this.storeId) { this.error = 'Store not found.'; this.loading = false; return; }
+    if (!this.storeId) {
+      this.error = 'Store not found.';
+      this.loading = false;
+      return;
+    }
     this.loadStore();
     this.loadProducts();
   }
 
   private loadStore(): void {
-    this.api.get<any>(`vendor/store/${this.storeId}`).subscribe({
+    this.api.get<any>(`vendor/store/${this.storeId}/products`).subscribe({
       next: (res) => {
         this.store = res.data ?? res;
         this.loading = false;
@@ -76,25 +80,33 @@ export class StoreDetail implements OnInit {
 
     if (this.searchQuery.trim()) {
       const q = this.searchQuery.toLowerCase();
-      result = result.filter(p =>
-        p.title?.toLowerCase().includes(q) ||
-        p.description?.toLowerCase().includes(q) ||
-        p.tags?.some((t: string) => t.toLowerCase().includes(q))
+      result = result.filter(
+        (p) =>
+          p.title?.toLowerCase().includes(q) ||
+          p.description?.toLowerCase().includes(q) ||
+          p.tags?.some((t: string) => t.toLowerCase().includes(q)),
       );
     }
 
-    if (this.sortBy === 'price_asc')  result.sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
+    if (this.sortBy === 'price_asc') result.sort((a, b) => (a.price ?? 0) - (b.price ?? 0));
     if (this.sortBy === 'price_desc') result.sort((a, b) => (b.price ?? 0) - (a.price ?? 0));
-    if (this.sortBy === 'newest')     result.sort((a, b) =>
-      new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime()
-    );
+    if (this.sortBy === 'newest')
+      result.sort(
+        (a, b) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime(),
+      );
 
     this.filteredProducts = result;
   }
 
-  onSearchChange(): void { this.applyFilters(); }
-  onSortChange(): void   { this.applyFilters(); }
-  setTab(tab: StoreTab): void { this.activeTab = tab; }
+  onSearchChange(): void {
+    this.applyFilters();
+  }
+  onSortChange(): void {
+    this.applyFilters();
+  }
+  setTab(tab: StoreTab): void {
+    this.activeTab = tab;
+  }
 
   navigateToProduct(id: string): void {
     this.router.navigate(['/products', id]);
@@ -111,10 +123,13 @@ export class StoreDetail implements OnInit {
 
   get memberSince(): string {
     if (!this.store?.createdAt) return '';
-    return new Date(this.store.createdAt).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    return new Date(this.store.createdAt).toLocaleDateString('en-US', {
+      month: 'long',
+      year: 'numeric',
+    });
   }
 
   get activeProductCount(): number {
-    return this.allProducts.filter(p => p.isActive !== false).length;
+    return this.allProducts.filter((p) => p.isActive !== false).length;
   }
 }

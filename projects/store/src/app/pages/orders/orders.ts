@@ -195,11 +195,11 @@ export class Orders implements OnInit {
   // ── Status helpers ─────────────────────────────────
   statusConfig(status: OrderStatus): { label: string; classes: string; icon: string } {
     const map: Record<OrderStatus, { label: string; classes: string; icon: string }> = {
-      pending: { label: 'Pending', classes: 'bg-amber-50 text-amber-700 border-amber-200', icon: 'schedule' },
-      processing: { label: 'Processing', classes: 'bg-orange-50 text-orange-700 border-orange-200', icon: 'autorenew' },
-      shipped: { label: 'Shipped', classes: 'bg-orange-50 text-orange-700 border-orange-200', icon: 'local_shipping' },
-      delivered: { label: 'Delivered', classes: 'bg-green-50 text-green-700 border-green-200', icon: 'check_circle' },
-      cancelled: { label: 'Cancelled', classes: 'bg-red-50 text-red-700 border-red-200', icon: 'cancel' },
+      pending: { label: 'Pending', classes: 'bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800', icon: 'schedule' },
+      processing: { label: 'Processing', classes: 'bg-orange-50 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 border-orange-200 dark:border-orange-800', icon: 'autorenew' },
+      shipped: { label: 'Shipped', classes: 'bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800', icon: 'local_shipping' },
+      delivered: { label: 'Delivered', classes: 'bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800', icon: 'check_circle' },
+      cancelled: { label: 'Cancelled', classes: 'bg-red-50 dark:bg-red-900/30 text-red-700 dark:text-red-400 border-red-200 dark:border-red-800', icon: 'cancel' },
     };
     return map[status] ?? map['pending'];
   }
