@@ -12,7 +12,7 @@
         [style.outline]="'none'"
         (mouseenter)="$event.currentTarget && ($any($event.currentTarget).style.background = '#E8420A'); $event.currentTarget && ($any($event.currentTarget).style.border = 'none')"
         (mouseleave)="$event.currentTarget && ($any($event.currentTarget).style.background = i === 0 ? '#E8420A' : 'transparent'); $event.currentTarget && ($any($event.currentTarget).style.border = i !== 0 ? '2px solid #E5E7EB' : 'none')">
-        <div class="w-full h-full bg-gray-100 rounded-full flex items-center justify-center overflow-hidden">
+        <div class="w-full h-full bg-gray-100 dark:bg-gray-700 rounded-full flex items-center justify-center overflow-hidden">
           <mat-icon [class]="'transition-colors ' + getIconColor(i)"
             style="font-size:26px;width:26px;height:26px;line-height:26px">
             {{ getIcon(cat.name) }}
@@ -22,7 +22,9 @@
 
       <span class="text-[11px] font-black uppercase tracking-wider text-center max-w-[80px] leading-tight"
         [class.text-gray-400]="i !== 0"
-        [class.text-gray-900]="i === 0">
+        [class.dark:text-gray-500]="i !== 0"
+        [class.text-gray-900]="i === 0"
+        [class.dark:text-white]="i === 0">
         {{ cat.name }}
       </span>
     </button>

@@ -28,7 +28,7 @@
       <!-- Image -->
       <div class="relative bg-gray-100 dark:bg-gray-700 overflow-hidden" style="aspect-ratio: 1;">
         <img
-          [src]="product.images.length > 0 ? apiUrl + product.images[0] : 'placeholderImage.jpg'"
+          [src]="product.images[0] ? apiUrl + product.images[0] : 'placeholderImage.jpg'"
           [alt]="product.title" (error)="onImgError($event)"
           class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-400" />
         @if (discountPct(product) > 0) {
@@ -93,7 +93,7 @@
       class="bg-white/5 hover:bg-white/10 rounded-2xl overflow-hidden border border-white/10
              hover:border-white/20 transition-all group block">
       <div class="relative overflow-hidden" style="aspect-ratio: 1;">
-        <img [src]="product.images.length > 0 ? apiUrl + product.images[0] : 'placeholderImage.jpg'"
+        <img [src]="product.images[0] ? apiUrl + product.images[0] : 'placeholderImage.jpg'"
           [alt]="product.title" (error)="onImgError($event)"
           class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-400 p-3 bg-white/5" />
         <span class="absolute top-2 right-2 bg-red-500 text-white text-[10px] font-black px-2 py-0.5 rounded-full">HOT</span>
@@ -141,7 +141,7 @@
       class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100
              dark:border-gray-700 overflow-hidden hover:shadow-lg transition-all duration-300 group block">
       <div class="relative overflow-hidden bg-gray-100 dark:bg-gray-700" style="aspect-ratio: 4/3;">
-        <img [src]="product.images.length > 0 ? apiUrl + product.images[0] : 'placeholderImage.jpg'"
+        <img [src]="product.images[0] ? apiUrl + product.images[0] : 'placeholderImage.jpg'"
           [alt]="product.title" (error)="onImgError($event)"
           class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-400" />
         <span class="absolute top-2 right-2 bg-orange-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">DEAL</span>
@@ -171,7 +171,7 @@
       class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100
              dark:border-gray-700 overflow-hidden hover:shadow-lg transition-all duration-300 group block">
       <div class="relative overflow-hidden bg-gray-100 dark:bg-gray-700" style="aspect-ratio: 4/3;">
-        <img [src]="product.images.length > 0 ? apiUrl + product.images[0] : 'placeholderImage.jpg'"
+        <img [src]="product.images[0] ? apiUrl + product.images[0] : 'placeholderImage.jpg'"
           [alt]="product.title" (error)="onImgError($event)"
           class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-400" />
       </div>

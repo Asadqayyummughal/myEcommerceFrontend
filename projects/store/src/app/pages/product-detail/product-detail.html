@@ -84,7 +84,7 @@
             {{ product.brand }}
           </span>
           }
-          @for (tag of (product.tags ?? []).slice(0, 3); track tag) {
+          @for (tag of product.tags.slice(0, 3); track tag) {
           <span
             class="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2.5 py-1 rounded-full">{{
             tag }}</span>
@@ -93,7 +93,7 @@
 
         <!-- Visit Shop link -->
         @if (product.vendor) {
-        <a [routerLink]="['/stores', product.vendor]" class="inline-flex items-center gap-1.5 text-xs font-semibold text-orange-600
+        <a [routerLink]="['/stores', product.store]" class="inline-flex items-center gap-1.5 text-xs font-semibold text-orange-600
                  hover:text-orange-700 hover:bg-orange-50 px-3 py-1.5 rounded-xl border
                  border-orange-100 transition-all w-fit">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
